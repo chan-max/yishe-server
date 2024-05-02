@@ -18,7 +18,7 @@ export type IPageResult<T> = {
   size?: number; // 每页显示数量
   total?: number; // 查询总数
   current?: number; // 当前分页
-  records?: T[]; // 分页列表数据
+  list?: T[]; // 分页列表数据
 };
 
 export type ISqlOptions<T> = {
@@ -34,7 +34,7 @@ export class Pagination<T> {
     size: 10, // 每页显示数量
     total: 0, // 总条数
     current: 1, // 当前分页
-    records: [], // 分页列表数据
+    list: [], // 分页列表数据
   };
 
   constructor(params: IPageResult<T>, entity: any) {
@@ -49,7 +49,7 @@ export class Pagination<T> {
     // 总页数
     const pages = Math.ceil(total / this.Page.size);
     // 返回分页数据
-    const result = { ...this.Page, ...{ records: data, total, pages } };
+    const result = { ...this.Page, ...{ list: data, total, pages } };
     return result;
   }
 
@@ -78,7 +78,7 @@ export class Pagination<T> {
     const page = (this.Page.current - 1) * this.Page.size;
     sql = `${sql} limit ${page},${this.Page.size}`;
     // 查询结果数据
-    this.Page.records = await getConnection().query(sql, parameters);
+    this.Page.list = await getConnection().query(sql, parameters);
 
     return this.Page;
   }

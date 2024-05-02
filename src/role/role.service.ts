@@ -63,10 +63,10 @@ export class RoleService {
 
   // 查询角色列表(分页)
   async getPage(query: QueryRoleDto): Promise<IPageResult<RoleEntity>> {
-    const page = (query.pageNo - 1) * query.pageSize;
+    const page = (query.pageIndex - 1) * query.pageSize;
     const limit = page + query.pageSize;
     const pagination = new Pagination<RoleEntity>(
-      { current: query.pageNo, size: query.pageSize },
+      { current: query.pageIndex, size: query.pageSize },
       RoleEntity,
     );
     const db = this.RoleRepository.createQueryBuilder('role')

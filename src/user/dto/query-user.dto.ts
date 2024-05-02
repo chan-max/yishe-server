@@ -5,7 +5,7 @@ import { PaginationDto } from 'src/utils/common';
 
 export class QueryUserDto extends PartialType(PaginationDto) {
   @ApiPropertyOptional({ description: '用户名称', default: '' })
-  readonly username: string;
+  readonly account: string;
 
   @ApiPropertyOptional({ description: '用户昵称', default: '' })
   readonly nickname: string;

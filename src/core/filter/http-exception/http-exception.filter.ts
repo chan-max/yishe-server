@@ -21,7 +21,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const errorResponse = {
       code: code || status,
       data: null,
-      msg: message,
+      message: message,
       status: true,
     };
 

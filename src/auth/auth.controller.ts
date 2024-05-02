@@ -24,8 +24,8 @@ export class AuthController {
   @Post('login')
   @ApiOperation({ summary: '用户登录' })
   @UseInterceptors(ClassSerializerInterceptor)
-  @UseGuards(AuthGuard('local'))
+  // @UseGuards(AuthGuard('local'))
   login(@Body() user: LoginUserDto, @Req() req) {
-    return this.authService.login(req.user);
+    return this.authService.login(user.account as any);
   }
 }

@@ -26,10 +26,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
   async validate(req: Request, user: User) {
     // 接口token
+
     const originToken = ExtractJwt.fromAuthHeaderAsBearerToken()(req);
     // redis token
     const redis = new RedisInstance(0);
-    const key = `user-token-${user.id}-${user.username}`;
+    const key = `user-token-${user.id}-${user.account}`;
     const cacheToken = await redis.getItem(key);
 
     //单点登陆验证

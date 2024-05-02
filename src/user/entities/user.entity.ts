@@ -17,39 +17,35 @@ export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-
   @Column({ length: 100 })
   account: string; // 用户名
 
-  @Column({ length: 100 })
-  username: string; // 用户名
-
-  @Column({ length: 100, default: '' })
+  @Column({ length: 100, default: '',nullable:true })
   nickname: string; //昵称
 
-  @Column('bigint')
+  @Column({type:'bigint',nullable:true})
   phone: number; // 手机号
 
-  @Column()
-  sex: number; // 性别 0:男 1:女
+  @Column({type:'boolean',nullable:true})
+  sex: number; // 性别 1:男 0:女
 
   @Column({ nullable: true })
   birthday: Date; // 出生日期
 
-  @Column() // 表示查询时隐藏此列
+  @Column({ nullable: true }) // 表示查询时隐藏此列
   @Exclude() // 返回数据时忽略password，配合ClassSerializerInterceptor使用
   password: string; // 密码
 
-  @Column({ default: '' })
+  @Column({ default: '',nullable:true })
   avatar: string; //头像
 
-  @Column({ default: '' })
+  @Column({ default: '',nullable:true })
   email: string;
 
-  @Column({ default: '' })
+  @Column({ default: '',nullable:true })
   organizationId: string;
 
-  @Column({ default: '' })
+  @Column({ default: '',nullable:true })
   roleId: string;
 
   @Column({

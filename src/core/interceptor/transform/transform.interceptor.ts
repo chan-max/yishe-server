@@ -27,7 +27,7 @@ export class TransformInterceptor implements NestInterceptor {
         return {
           data: data.result || data,
           code: 0,
-          msg: data.msg,
+          message: data.message,
           status: true,
         };
       }),

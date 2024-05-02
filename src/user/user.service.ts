@@ -32,8 +32,9 @@ export class UserService {
 
   // 用户注册
   async register(createUserDto: CreateUserDto) {
-    const { username } = createUserDto;
-    const data = await this.userRepository.findOne({ where: { username } });
+    const { account } = createUserDto;
+
+    const data = await this.userRepository.findOne({ where: { account } });
     if (data) {
       throw new HttpException({ message: '用户已存在', code: 400 }, 200);
     }
@@ -74,7 +75,7 @@ export class UserService {
   // 注销登录
   async logout(user: Partial<User>) {
     const redis = new RedisInstance(0);
-    redis.removeItem(`user-token-${user.id}-${user.username}`);
+    redis.removeItem(`user-token-${user.id}-${user.account}`);
     return '注销成功！';
   }
 
@@ -97,24 +98,24 @@ export class UserService {
       .execute();
     // 清空用户redis
     const redis = new RedisInstance(0);
-    redis.removeItem(`user-token-${user.id}-${user.username}`);
+    redis.removeItem(`user-token-${user.id}-${user.account}`);
 
     return {};
   }
 
   // 获取用户列表
   async getPage(query: QueryUserDto): Promise<IPageResult<User>> {
-    const page = (query.pageNo - 1) * query.pageSize;
+    const page = (query.pageIndex - 1) * query.pageSize;
     const pagination = new Pagination<User>(
-      { current: query.pageNo, size: query.pageSize },
+      { current: query.pageIndex, size: query.pageSize },
       User,
     );
     // const result = pagination.findByPageSql<any>({
     //   sql: getUserPageSql(),
-    //   parameters: ['u.username = :name', { name: 'chenxin' }],
+    //   parameters: ['u.account = :name', { name: 'chenxin' }],
     // });
     const where = createQueryCondition(query, [
-      'username',
+      'account',
       'nickname',
       'phone',
       'roleId',
@@ -130,7 +131,7 @@ export class UserService {
       )
       .leftJoinAndSelect(RoleEntity, 'role', 'role.id = user.roleId')
       .select(
-        `user.id, user.username, user.nickname, user.avatar, user.email, user.create_time, user.phone, user.organizationId, user.roleId, user.birthday, user.sex, 
+        `user.id, user.account, user.nickname, user.avatar, user.email, user.create_time, user.phone, user.organizationId, user.roleId, user.birthday, user.sex, 
         organ.name as organizationName, 
         role.name as roleName  
       `,

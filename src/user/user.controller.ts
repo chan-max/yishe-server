@@ -44,6 +44,8 @@ export class UserController {
     return await this.userService.register(createUserDto);
   }
 
+
+
   @Post('update')
   @ApiOperation({ summary: '修改用户信息' })
   @ApiBearerAuth() // swagger文档设置token
@@ -81,8 +83,8 @@ export class UserController {
   @Post('getPage')
   @ApiOperation({ summary: '用户列表' })
   @ApiBearerAuth()
-  @UseGuards(AuthGuard('jwt'))
-  async getPage(@Body() data: QueryUserDto) {
+  // @UseGuards(AuthGuard('jwt'))
+  async getPage(@Body() data) {
     return await this.userService.getPage(data);
   }
 
