@@ -2,11 +2,11 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import * as express from 'express';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { AppModule } from './app.module';
-import { HttpExceptionFilter } from './core/filter/http-exception/http-exception.filter';
-import { TransformInterceptor } from './core/interceptor/transform/transform.interceptor';
-import { AllExceptionsFilter } from './core/filter/any-exception/any-exception.filter';
-import { LoggerMiddleware } from './middleware/logger/logger.middleware';
+import { AppModule } from './src/app.module';
+import { HttpExceptionFilter } from './src/core/filter/http-exception/http-exception.filter';
+import { TransformInterceptor } from './src/core/interceptor/transform/transform.interceptor';
+import { AllExceptionsFilter } from './src/core/filter/any-exception/any-exception.filter';
+import { LoggerMiddleware } from './src/middleware/logger/logger.middleware';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
