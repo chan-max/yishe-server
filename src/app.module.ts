@@ -8,6 +8,9 @@ import { AuthModule } from './auth/auth.module';
 import { MenuModule } from './menu/menu.module';
 import { RoleModule } from './role/role.module';
 import { FileModule } from './file/file.module';
+import { ProductModelModule } from './product_model/product_model.module';
+import { ImageModule } from './image/image.module';
+import { StickerModule } from './sticker/sticker.module';
 
 
 // 环境配置信息
@@ -22,6 +25,9 @@ import envConfig from '../config';
     MenuModule,
     RoleModule,
     FileModule,
+    ProductModelModule,
+    ImageModule,
+    StickerModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -8,33 +8,25 @@ import {
     JoinColumn,
     BeforeUpdate,
 } from 'typeorm';
+import { Exclude } from 'class-transformer';
+import { OrganizationEntity } from 'src/organization/entities/organization.entity';
+import { RoleEntity } from 'src/role/entities/role.entity';
 const bcrypt = require('bcryptjs');
 
-@Entity('file')
-export class File {
+@Entity('image')
+export class Image {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Column({ length: 200 })
+    @Column({ length: 100 })
     url: string; // 文件路径
 
     @Column({ length: 100, default: '', nullable: true })
     name: string; //文件类型
 
     @Column({ length: 100, default: '', nullable: true })
-    rawName: string; // 文件原始名称
-
-    @Column({ length: 100, default: '', nullable: true })
-    type: string; //文件类型
-
-    @Column({ length: 100, default: '', nullable: true })
-    thumbnail: string; // 缩略图
-
-    @Column({ length: 100, default: '', nullable: true })
     description: string; // 描述
 
-    @Column({ length: 100, default: '', nullable: true })
-    tags: string; // 描述
 
     @Column({  nullable: true ,type:'json'})
     meta: any; // 元数据

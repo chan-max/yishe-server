@@ -29,8 +29,6 @@ export class User {
   @Column({ type: 'boolean', nullable: true })
   sex: number; // 性别 1:男 0:女
 
-
-
   @Column({ nullable: true })
   birthday: Date; // 出生日期
 

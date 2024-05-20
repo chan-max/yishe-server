@@ -14,7 +14,6 @@ export class CreateUserDto {
   @IsNotEmpty({ message: '密码不能为空' })
   readonly password: string;
 
-
   // @ApiPropertyOptional({ description: '用户手机号' })
   // @IsNumber({}, { message: '手机号只能为数字' })
   // readonly phone: number;
@@ -30,7 +29,6 @@ export class CreateUserDto {
 
   // @ApiProperty({ description: '所属机构id' })
   // readonly organizationId: string;
-
 
   // @ApiPropertyOptional({ description: '用户头像' })
   // readonly avatar: string;

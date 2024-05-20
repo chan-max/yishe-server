@@ -41,6 +41,7 @@ export class UserController {
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiResponse({ status: 201, type: [User] })
   async register(@Body() createUserDto: CreateUserDto) {
+    debugger
     return await this.userService.register(createUserDto);
   }
 

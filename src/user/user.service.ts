@@ -105,9 +105,9 @@ export class UserService {
 
   // 获取用户列表
   async getPage(query: QueryUserDto): Promise<IPageResult<User>> {
-    const page = (query.pageIndex - 1) * query.pageSize;
+    const page = (query.currentPage - 1) * query.pageSize;
     const pagination = new Pagination<User>(
-      { current: query.pageIndex, size: query.pageSize },
+      { current: query.currentPage, size: query.pageSize },
       User,
     );
     // const result = pagination.findByPageSql<any>({

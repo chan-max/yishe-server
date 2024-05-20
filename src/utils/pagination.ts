@@ -37,7 +37,7 @@ export class Pagination<T> {
     list: [], // 分页列表数据
   };
 
-  constructor(params: IPageResult<T>, entity: any) {
+  constructor(params: IPageResult<T>, entity?: any) {
     Object.assign(this.Page, params);
     this.entity = entity;
   }
@@ -49,8 +49,19 @@ export class Pagination<T> {
     // 总页数
     const pages = Math.ceil(total / this.Page.size);
     // 返回分页数据
+
+
     const result = { ...this.Page, ...{ list: data, total, pages } };
-    return result;
+
+    const res = {
+      currentPage:result.current,
+      list:result.list,
+      pageSize:result.size,
+      total:result.total,
+      totalPage:result.pages
+    }
+    
+    return res;
   }
 
   //分页查询(原生)
@@ -79,6 +90,7 @@ export class Pagination<T> {
     sql = `${sql} limit ${page},${this.Page.size}`;
     // 查询结果数据
     this.Page.list = await getConnection().query(sql, parameters);
+
 
     return this.Page;
   }

@@ -7,24 +7,38 @@ import { UpdateFileDto } from './dto/update-file.dto';
 export class FileController {
   constructor(private readonly fileService: FileService) {}
 
-  @Post()
-  create(@Body() createFileDto: CreateFileDto) {
-    return this.fileService.create(createFileDto);
+  @Post('create')
+  create(@Body() post: any) {
+    return this.fileService.create(post);
   }
-  
+
+
   @Get()
   findAll() {
     return this.fileService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.fileService.findOne(+id);
+  @Post('all')
+  findAllByPost(){
+  }
+
+
+  @Post('page')
+  getPage(@Body() post){
+    return this.fileService.getPage({
+      post
+    })
+  }
+
+
+  @Post('findOne')
+  findOne(@Body() post) {
+    return this.fileService.findOne(post);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateFileDto: UpdateFileDto) {
-    return this.fileService.update(+id, updateFileDto);
+  update(@Param('id') id: string, @Body() post ) {
+    return this.fileService.update(+id, post);
   }
 
   @Delete(':id')
