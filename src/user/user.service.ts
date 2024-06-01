@@ -28,7 +28,8 @@ export class UserService {
     private userRepository: Repository<User>,
     private readonly organizationService: OrganizationService,
     private readonly roleService: RoleService,
-  ) {}
+  ) {
+  }
 
   // 用户注册
   async register(createUserDto: CreateUserDto) {

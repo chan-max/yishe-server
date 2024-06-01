@@ -21,8 +21,8 @@ export class ProductModelService {
     return `This action returns all productModel`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} productModel`;
+  async findOne(id: number) {
+    return await this.productModelRepository.findOne({id});
   }
 
   update(id: number, updateProductModelDto: UpdateProductModelDto) {

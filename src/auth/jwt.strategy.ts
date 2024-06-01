@@ -11,7 +11,7 @@ import { RedisInstance } from 'src/cache/redis';
 import { HttpException, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from './auth.service';
 
-export class JwtStrategy extends PassportStrategy(Strategy) {
+export class JwtStrategy extends PassportStrategy(Strategy,'local') {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
@@ -26,7 +26,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
   async validate(req: Request, user: User) {
     // 接口token
-
     const originToken = ExtractJwt.fromAuthHeaderAsBearerToken()(req);
     // redis token
     const redis = new RedisInstance(0);

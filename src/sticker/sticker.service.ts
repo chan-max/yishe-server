@@ -5,51 +5,47 @@ import { IPageResult, Pagination, } from 'src/utils/pagination';
 import { createQueryCondition } from 'src/utils/utils';
 import { InjectRepository, } from '@nestjs/typeorm';
 import { Sticker } from './entities/sticker.entity';
+import { BasicService } from 'src/common/basicService';
 
 @Injectable()
-export class StickerService {
+export class StickerService extends BasicService {
 
   constructor(
     @InjectRepository(Sticker)
     private stickerRepository,
-  ) {}
-
-  create(createStickerDto: CreateStickerDto) {
-    return 'This action adds a new sticker';
+  ) {
+    super()
   }
 
+  /* 创建 */
+  async create(post) {
+    return await this.stickerRepository.save(post)
+  }
 
   findAll() {
     return `This action returns all sticker`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} sticker`;
+  async findOne(id: number) {
+    return await this.stickerRepository.findOne({id});
   }
 
-  update(id: number, updateStickerDto: UpdateStickerDto) {
-    return `This action updates a #${id} sticker`;
+  async update(id: number, post: UpdateStickerDto) {
+    return  await this.stickerRepository.update(id, post);
   }
 
   remove(id: number) {
     return `This action removes a #${id} sticker`;
   }
 
-  async getPage(query) {
-    const page = (query.currentPage - 1) * query.pageSize;
-    const limit = page + query.pageSize;
-    const pagination = new Pagination(
-      { current: query.currentPage, size: query.pageSize },
-      File,
-    );
-    const db = this.stickerRepository.createQueryBuilder('role')
-      .skip(page)
-      .take(limit)
-      .where(createQueryCondition(query, ['name']))
-      .orderBy('create_time', 'DESC');
-
-    const result = await pagination.findByPage(db);
-    
-    return result;
+  async getPage({
+    post,
+    where
+  }:any) {
+    return await this.getPageFn({
+      post,
+      where,
+      repo:this.stickerRepository
+    })
   }
 }

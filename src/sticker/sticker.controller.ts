@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete,Query } from '@nestjs/common';
 import { StickerService } from './sticker.service';
 import { CreateStickerDto } from './dto/create-sticker.dto';
 import { UpdateStickerDto } from './dto/update-sticker.dto';
@@ -7,14 +7,20 @@ import { UpdateStickerDto } from './dto/update-sticker.dto';
 export class StickerController {
   constructor(private readonly stickerService: StickerService) {}
 
-  @Post()
+  // 获取单个
+  @Get()
+  find(@Query() query) {
+    return this.stickerService.findOne(query.id);
+  }
+
+  @Post('create')
   create(@Body() createStickerDto: CreateStickerDto) {
     return this.stickerService.create(createStickerDto);
   }
 
   @Post('page')
-  getPage(@Body() params ) {
-    return this.stickerService.getPage(params);
+  getPage(@Body() post ) {
+    return this.stickerService.getPage({post});
   }
 
   @Get()

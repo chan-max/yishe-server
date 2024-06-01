@@ -14,7 +14,7 @@ const bcrypt = require('bcryptjs');
 
 @Entity('user')
 export class User {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn()
   id: string;
 
   @Column({ length: 100 })
@@ -74,6 +74,8 @@ export class User {
     this.updateTime = new Date();
   }
 
+
+  // 秘文存储密码 
   @BeforeInsert()
   async encryptPwd() {
     this.password = await bcrypt.hashSync(this.password, 10);

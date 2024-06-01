@@ -30,6 +30,15 @@ export class ProductModel {
     @Column({ length: 100 ,nullable:true })
     url: string; // 模型地址
 
+    @Column({ nullable:true })
+    ref_count: number; // 模型引用次数，有多少模型引用了该模型
+
+    @Column({ nullable:true })
+    like_count: number; // 点赞次数
+
+    @Column({ nullable:true })
+    save_count: number; // 收藏次数
+
     @Column({ length: 100,nullable:true })
     thumbnail: string; // 缩略图地址 , 用作该模型的封面图 ， 不同于实物图
 

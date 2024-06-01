@@ -35,13 +35,11 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post('register')
-  @ApiOperation({ summary: '用户注册' })
   // formdata接收方式
   @UseInterceptors(AnyFilesInterceptor())
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiResponse({ status: 201, type: [User] })
   async register(@Body() createUserDto: CreateUserDto) {
-    debugger
     return await this.userService.register(createUserDto);
   }
 

@@ -38,23 +38,6 @@ export class FileService extends BasicService {
     return `This action removes a #${id} productModel`;
   }
 
-  // async getPage({
-  //   post
-  // }) {
-  //   const page = (post.currentPage - 1) * post.pageSize;
-  //   const limit = page + post.pageSize;
-  //   const pagination = new Pagination(
-  //     { current: post.currentPage, size: post.pageSize },
-  //   );
-  //   const db = this.fileRepository.createQueryBuilder()
-  //     .skip(page)
-  //     .take(limit)
-  //     .where(createQueryCondition(post, []))
-  //     .orderBy('create_time', 'DESC');
-
-  //   const result = pagination.findByPage(db);
-  //   return result;
-  // }
 
   async getPage({
     post,

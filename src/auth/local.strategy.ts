@@ -6,7 +6,7 @@ import { IStrategyOptions, Strategy } from 'passport-local';
 import { User } from 'src/user/entities/user.entity';
 import { Repository } from 'typeorm';
 
-export class LocalStrategy extends PassportStrategy(Strategy) {
+export class LocalStrategy extends PassportStrategy(Strategy,'local') {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
@@ -18,6 +18,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(account: string, password: string) {
+
     const user = await this.userRepository.findOne({
       where: { account },
     });
