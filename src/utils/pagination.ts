@@ -1,17 +1,5 @@
 import { getConnection, SelectQueryBuilder } from 'typeorm';
 
-interface IFindPageFun {
-  tableName: string;
-  builder: {
-    skip: number;
-    take: number;
-    where: any;
-    orderBy: any;
-    [key: string]: any;
-  };
-  [key: string]: any;
-}
-
 // 分页结果接口
 export type IPageResult<T> = {
   pages?: number; // 总分页数

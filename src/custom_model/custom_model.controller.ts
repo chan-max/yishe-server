@@ -13,11 +13,10 @@ export class CustomModelController {
   @Post('page')
   getPage(@Body() params ) {
     return this.customModelService.getPage(params);
-  } 
+  }
 
   @Get('')
   find(@Query() query) {
-    debugger
     return this.customModelService.findAll();
   }
 
