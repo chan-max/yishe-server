@@ -42,11 +42,10 @@ export class CustomModelService extends BasicService {
   async getPage(post) {
 
     const queryBuilderName = 'CustomModel'
-
     function queryBuilderHook(qb){
       qb
-      .leftJoinAndSelect(User, 'user', `${queryBuilderName}.uploader_id = user.id`)
-      .orderBy('CustomModel.create_time', 'DESC')
+      .leftJoinAndMapOne('CustomModel.uploader',User, 'user', 'CustomModel.uploader_id=user.id')
+      .orderBy('CustomModel.createTime', 'DESC')
     }
 
     return await this.getPageFn({

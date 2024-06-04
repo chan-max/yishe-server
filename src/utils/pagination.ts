@@ -32,12 +32,14 @@ export class Pagination<T> {
 
   // 分页查询
   public async findByPage(db: SelectQueryBuilder<T>, queryFun = 'getMany') {
+
     const data = await db[queryFun]();
+    
     const total = await db.getCount();
+
     // 总页数
     const pages = Math.ceil(total / this.Page.size);
     // 返回分页数据
-
 
     const result = { ...this.Page, ...{ list: data, total, pages } };
 

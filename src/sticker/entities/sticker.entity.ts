@@ -18,10 +18,8 @@ export class Sticker {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-
     @Column({ length: 100 })
     type: string; // 文件路径
-
 
     @Column({ length: 100 })
     url: string; // 文件路径
@@ -29,11 +27,18 @@ export class Sticker {
     @Column({ length: 100 })
     thumbnail: string; // 文件路径
 
+    @Column({ length: 100 })
+    keywords: string; // 关键字
+
     @Column({ length: 100, default: '', nullable: true })
     name: string; //文件类型
 
     @Column({ length: 100, default: '', nullable: true })
     description: string; // 描述
+
+    @Column({ length: 100,default: '', nullable: true })
+    uploader_id: string; // 作者id
+
 
 
     @Column({  nullable: true ,type:'json'})

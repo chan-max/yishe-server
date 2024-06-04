@@ -14,11 +14,14 @@ export class CustomModel {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Column({ length: 100 })
+    @Column({ length: 100,default: '', nullable: true })
     uploader_id: string; // 作者id
 
     @Column({ length: 100 })
     thumbnail: string; // 缩略图
+
+    @Column({ length: 100 })
+    keywords: string; // 关键字
 
     @Column({ length: 100, default: '', nullable: true })
     name: string; //名称

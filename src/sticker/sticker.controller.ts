@@ -20,7 +20,7 @@ export class StickerController {
 
   @Post('page')
   getPage(@Body() post ) {
-    return this.stickerService.getPage({post});
+    return this.stickerService.getPage(post);
   }
 
   @Get()

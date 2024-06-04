@@ -15,15 +15,17 @@ export class BasicService {
         );
 
         var qb =  (repo).createQueryBuilder()
-        if(queryBuilderHook){
-          queryBuilderHook(qb)
-        }
+ 
 
-        const db = qb
+        var db = qb
           .skip(page)
           .take(limit)
-          .where(where || createQueryCondition(post, []))
+          .where(where || createQueryCondition(post, []))     
           
+          if(queryBuilderHook){
+            queryBuilderHook(db)
+          }
+
         console.log(db.getSql())
 
         const result =  await pagination.findByPage(db);

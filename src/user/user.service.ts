@@ -15,6 +15,7 @@ import { OrganizationEntity } from 'src/organization/entities/organization.entit
 import { RoleEntity } from 'src/role/entities/role.entity';
 import { getUserPageSql } from 'src/utils/sql';
 import { createQueryCondition } from 'src/utils/utils';
+import { CustomModel } from 'src/custom_model/entities/custom_model.entity';
 
 type IUser = User & {
   roleInfo?: RoleEntity;
@@ -26,8 +27,8 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
-    private readonly organizationService: OrganizationService,
-    private readonly roleService: RoleService,
+    @InjectRepository(CustomModel)
+    private customModelRepository: Repository<User>,
   ) {
   }
 
