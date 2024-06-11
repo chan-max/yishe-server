@@ -7,11 +7,14 @@ import { HttpExceptionFilter } from './src/core/filter/http-exception/http-excep
 import { TransformInterceptor } from './src/core/interceptor/transform/transform.interceptor';
 import { AllExceptionsFilter } from './src/core/filter/any-exception/any-exception.filter';
 import { LoggerMiddleware } from './src/middleware/logger/logger.middleware';
+import * as path from 'path';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   // 设置全局路由前缀
   app.setGlobalPrefix('api');
+
+  app.use(express.static(path.join(__dirname, '..','public')));
 
   // 使用全局拦截器
   app.useGlobalInterceptors(new TransformInterceptor());
