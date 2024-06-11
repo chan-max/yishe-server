@@ -29,6 +29,12 @@ async function bootstrap() {
 
   const app = await NestFactory.create(AppModule,options);
 
+  app.enableCors({
+    origin: "*",
+    allowedHeaders: ['Authorization', 'content-type'],
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  })
+
   // 设置全局路由前缀
   app.setGlobalPrefix('api');
 
