@@ -23,12 +23,13 @@ export class Sticker {
 
     @Column({ length: 100 })
     url: string; // 文件路径
+    
 
     @Column({ length: 100 })
     thumbnail: string; // 文件路径
 
-    @Column({ length: 100 })
-    keywords: string; // 关键字
+    @Column({ length: 100, default: '', nullable: true })
+    keywords: string; // 描述
 
     @Column({ length: 100, default: '', nullable: true })
     name: string; //文件类型

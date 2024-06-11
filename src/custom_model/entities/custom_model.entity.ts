@@ -20,8 +20,8 @@ export class CustomModel {
     @Column({ length: 100 })
     thumbnail: string; // 缩略图
 
-    @Column({ length: 100 })
-    keywords: string; // 关键字
+    @Column({ length: 100, default: '', nullable: true })
+    keywords: string; // 描述
 
     @Column({ length: 100, default: '', nullable: true })
     name: string; //名称

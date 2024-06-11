@@ -34,7 +34,7 @@ export class File {
     description: string; // 描述
 
     @Column({ length: 100, default: '', nullable: true })
-    tags: string; // 描述
+    keywords: string; // 描述
 
     @Column({  nullable: true ,type:'json'})
     meta: any; // 元数据
