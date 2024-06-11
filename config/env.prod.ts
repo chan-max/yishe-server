@@ -4,7 +4,7 @@ export default {
   // 数据库配置
   DATABASE_CONFIG: {
     type: 'mysql',
-    host: '49.232.186.238', // 主机，默认为localhost
+    host: 'localhost', // 主机，默认为localhost
     port: 3306, // 端口号
     username: 'root', // 用户名
     password: 'root.', // 密码
@@ -16,7 +16,7 @@ export default {
   // redis配置
   REDIS: {
     port: 6379, //Redis 端口
-    host: '49.232.186.238', //Redis 域名
+    host: 'localhost', //Redis 域名
     db: 0,
     family: 4,
     password: '', //'Redis 访问密码'
