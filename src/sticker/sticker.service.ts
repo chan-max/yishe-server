@@ -8,7 +8,6 @@ import { Sticker } from './entities/sticker.entity';
 import { BasicService } from 'src/common/basicService';
 import { User } from 'src/user/entities/user.entity';
 
-
 @Injectable()
 export class StickerService extends BasicService {
 

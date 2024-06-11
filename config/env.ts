@@ -1,4 +1,5 @@
 export default {
+  https:false,
   // token密钥
   SECRET: 'test123456',
   // 数据库配置

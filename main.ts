@@ -8,9 +8,27 @@ import { TransformInterceptor } from './src/core/interceptor/transform/transform
 import { AllExceptionsFilter } from './src/core/filter/any-exception/any-exception.filter';
 import { LoggerMiddleware } from './src/middleware/logger/logger.middleware';
 import * as path from 'path';
+import  * as fs from 'fs'
+
+
+// 环境配置信息
+import envConfig from './config';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const options:any = {
+  }
+
+  if(envConfig.https){
+    const keyFile  = fs.readFileSync(path.join(__dirname  +'/cert/private.key'));
+    const certFile = fs.readFileSync(path.join(__dirname + '/cert/certificate.crt'));
+    options.httpsOptions = {
+      key: keyFile,
+      cert: certFile,
+    }
+  }
+
+  const app = await NestFactory.create(AppModule,options);
+
   // 设置全局路由前缀
   app.setGlobalPrefix('api');
 

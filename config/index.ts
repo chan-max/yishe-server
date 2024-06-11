@@ -6,6 +6,7 @@ const parseEnv = {
   production: prodEnv,
 };
 
-const isProd = false
+// 生产模式
+ const isProd = false
 
-export default parseEnv[process.env.NODE_ENV || 'development'];
+export default parseEnv[isProd ? 'production' : 'development'];
