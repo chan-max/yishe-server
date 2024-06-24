@@ -1,14 +1,18 @@
+// import { JwtService } from '@nestjs/jwt';
 import { IPageResult, Pagination, } from 'src/utils/pagination';
 import { createQueryCondition } from 'src/utils/utils';
 
+export class BasicService{
 
-export class BasicService {
+
+    // 获取分页内容
     async getPageFn({
       post,repo,where,entity,queryBuilderName,
       queryBuilderHook
     }:any) {
         const page = (post.currentPage - 1) * post.pageSize;
-        const limit = page + post.pageSize;
+        const limit =  post.pageSize;
+
         const pagination = new Pagination(
           { current: post.currentPage, size: post.pageSize },
           entity,
@@ -16,7 +20,6 @@ export class BasicService {
 
         var qb =  (repo).createQueryBuilder()
  
-
         var db = qb
           .skip(page)
           .take(limit)
@@ -25,9 +28,6 @@ export class BasicService {
           if(queryBuilderHook){
             queryBuilderHook(db)
           }
-
-        console.log(db.getSql())
-
         const result =  await pagination.findByPage(db);
         return result;
       }

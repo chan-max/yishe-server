@@ -4,26 +4,28 @@ import { AuthController } from './auth.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from 'src/user/entities/user.entity';
 import { PassportModule } from '@nestjs/passport';
-
 // 环境配置信息
 import envConfig from '../../config';
 import { JwtModule } from '@nestjs/jwt';
-import { JwtStrategy } from './jwt.strategy';
-import { LocalStrategy } from './local.strategy';
+// import { JwtStrategy } from './jwt.strategy';
+// import { LocalStrategy } from './local.strategy';
+import { JwtStrategy } from './jwt.strategy'
+import { UserService } from 'src/user/user.service';
+import { UserModule } from 'src/user/user.module';
+import { JwtService } from '@nestjs/jwt';
 
-const jwtModule = JwtModule.registerAsync({
-  useFactory: () => {
-    return {
-      secret: envConfig.SECRET,
-      signOptions: { expiresIn: '4h' },
-    };
-  },
-});
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User]), PassportModule, jwtModule],
+  imports: [TypeOrmModule.forFeature([User]), UserModule,
+  // JwtModule.register({
+  //   secret: 'P@ssp0rt20HJ21@@$$', // 私钥
+  //   signOptions: { expiresIn: '6h' }  //过期时间
+  // })
+  ],
   controllers: [AuthController],
-  providers: [AuthService, LocalStrategy, JwtStrategy],
-  exports: [jwtModule],
+  providers: [AuthService,JwtService],
+  exports: [],
 })
-export class AuthModule {}
+export class AuthModule { }
+
+

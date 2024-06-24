@@ -7,13 +7,16 @@ import { InjectRepository, } from '@nestjs/typeorm';
 import { Sticker } from './entities/sticker.entity';
 import { BasicService } from 'src/common/basicService';
 import { User } from 'src/user/entities/user.entity';
+import { JwtService } from '@nestjs/jwt';
+
 
 @Injectable()
-export class StickerService extends BasicService {
+export class StickerService extends BasicService{
 
   constructor(
     @InjectRepository(Sticker)
     private stickerRepository,
+    // private jwtService: JwtService,
   ) {
     super()
   }
@@ -42,11 +45,13 @@ export class StickerService extends BasicService {
   async getPage(post) {
     const where = null
     const queryBuilderName = 'Sticker'
+
     function queryBuilderHook(qb){
       qb
       .leftJoinAndMapOne('Sticker.uploader',User, 'user', 'Sticker.uploader_id=user.id')
       .orderBy('Sticker.createTime', 'DESC')
     }
+
     return await this.getPageFn({
       queryBuilderHook,
       queryBuilderName,

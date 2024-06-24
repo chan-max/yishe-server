@@ -37,7 +37,7 @@ export class ProductModelService {
     post
   }) {
     const page = (post.currentPage - 1) * post.pageSize;
-    const limit = page + post.pageSize;
+    const limit = post.pageSize;
     const pagination = new Pagination(
       { current: post.currentPage, size: post.pageSize },
     );
