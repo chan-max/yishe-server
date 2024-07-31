@@ -38,7 +38,6 @@ export class FileService extends BasicService {
     return `This action removes a #${id} productModel`;
   }
 
-
   async getPage({
     post,
     where

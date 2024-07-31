@@ -30,6 +30,12 @@ export class File {
     @Column({ length: 100, default: '', nullable: true })
     thumbnail: string; // 缩略图
 
+    @Column({type:'boolean',  default:false})
+    isPublic: boolean; // 是否为公开的资源
+
+    @Column({ length: 100, default: '', nullable: true })
+    uploaderId: string; // 上传者
+
     @Column({ length: 100, default: '', nullable: true })
     description: string; // 描述
 
@@ -38,6 +44,7 @@ export class File {
 
     @Column({  nullable: true ,type:'json'})
     meta: any; // 元数据
+
 
     @Column({
         name: 'create_time',

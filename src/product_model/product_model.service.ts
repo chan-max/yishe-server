@@ -7,11 +7,11 @@ import { IPageResult, Pagination, } from 'src/utils/pagination';
 import { createQueryCondition } from 'src/utils/utils';
 @Injectable()
 export class ProductModelService {
-  
+
   constructor(
     @InjectRepository(ProductModel)
     private productModelRepository,
-  ) {}
+  ) { }
 
   async create(createProductModelDto: CreateProductModelDto) {
     return await this.productModelRepository.save(createProductModelDto)
@@ -22,15 +22,15 @@ export class ProductModelService {
   }
 
   async findOne(id: number) {
-    return await this.productModelRepository.findOne({id});
+    return await this.productModelRepository.findOne({ id });
   }
 
-  update(id: number, updateProductModelDto: UpdateProductModelDto) {
-    return `This action updates a #${id} productModel`;
+  update(id: number, data) {
+    return this.productModelRepository.update(id, data)
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} productModel`;
+  async remove(ids: number) {
+    return await this.productModelRepository.delete(ids);
   }
 
   async getPage({

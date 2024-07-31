@@ -15,7 +15,7 @@ export class CustomModel {
     id: string;
 
     @Column({ length: 100,default: '', nullable: true })
-    uploader_id: string; // 作者id
+    uploaderId: string; // 作者id
 
     @Column({ length: 100 })
     thumbnail: string; // 缩略图

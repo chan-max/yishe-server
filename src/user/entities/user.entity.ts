@@ -33,14 +33,17 @@ export class User {
   birthday: Date; // 出生日期
 
   @Column({ nullable: true })
-  status: string; // 出生日期
+  status: string;
 
+  @Column({ nullable: true, type: 'boolean' })
+  isAdmin: boolean;
 
   @Column({ nullable: true }) // 表示查询时隐藏此列
   @Exclude() // 返回数据时忽略password，配合ClassSerializerInterceptor使用
   password: string; // 密码
 
-  @Column({ nullable: true ,type:'json'}) // 表示查询时隐藏此列
+  // @Exclude()
+  @Column({ nullable: true, type: 'json' }) // 表示查询时隐藏此列
   meta: JSON; // 密码
 
   @Column({ default: '', nullable: true })

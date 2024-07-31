@@ -38,10 +38,11 @@ export class Sticker {
     description: string; // 描述
 
     @Column({ length: 100,default: '', nullable: true })
-    uploader_id: string; // 作者id
+    uploaderId: string; // 作者id
 
-
-
+    @Column({type:'boolean',  default:false})
+    isPublic: boolean; // 是否为公开的资源
+    
     @Column({  nullable: true ,type:'json'})
     meta: any; // 元数据
 

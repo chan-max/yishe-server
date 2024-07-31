@@ -4,7 +4,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { RedisInstance } from 'src/cache/redis';
 import { RoleEntity } from 'src/role/entities/role.entity';
 import { User } from 'src/user/entities/user.entity';
-import { listToTree } from 'src/utils/utils';
 import { getConnection, Repository } from 'typeorm';
 
 @Injectable()
@@ -13,14 +12,13 @@ export class AuthService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private jwtService: JwtService,
-  ) {}
+  ) { }
 
   // 获取用户信息
   getUser(user: Partial<User>) {
     const existUser = this.userRepository.findOne({
       where: { id: user.id, account: user.account },
     });
-
     return existUser;
   }
 
@@ -30,6 +28,10 @@ export class AuthService {
       id: user.id,
       account: user.account,
     });
+  }
+
+  verifyToken() {
+
   }
 
   // 用户登录
@@ -45,7 +47,6 @@ export class AuthService {
       .getOne();
 
     return {
-      permissionList: listToTree(Role?.menus || []), // 菜单权限,
       userInfo: user,
       token,
     };

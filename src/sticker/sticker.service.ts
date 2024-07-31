@@ -9,9 +9,8 @@ import { BasicService } from 'src/common/basicService';
 import { User } from 'src/user/entities/user.entity';
 import { JwtService } from '@nestjs/jwt';
 
-
 @Injectable()
-export class StickerService extends BasicService{
+export class StickerService extends BasicService {
 
   constructor(
     @InjectRepository(Sticker)
@@ -31,25 +30,27 @@ export class StickerService extends BasicService{
   }
 
   async findOne(id: number) {
-    return await this.stickerRepository.findOne({id});
+    return await this.stickerRepository.findOne({ id });
   }
 
   async update(id: number, post: UpdateStickerDto) {
-    return  await this.stickerRepository.update(id, post);
+    return await this.stickerRepository.update(id, post);
   }
 
   remove(id: number) {
     return `This action removes a #${id} sticker`;
   }
 
-  async getPage(post) {
+  async getPage(post, userInfo) {
     const where = null
     const queryBuilderName = 'Sticker'
-
-    function queryBuilderHook(qb){
+    function queryBuilderHook(qb) {
       qb
-      .leftJoinAndMapOne('Sticker.uploader',User, 'user', 'Sticker.uploader_id=user.id')
-      .orderBy('Sticker.createTime', 'DESC')
+        .leftJoinAndMapOne('Sticker.uploader', User, 'user', 'Sticker.uploaderId=user.id')
+        .orderBy('Sticker.createTime', 'DESC')
+      if (post.myUploads) {
+        qb.where('Sticker.uploaderId = :uploaderId', { uploaderId: userInfo.id })
+      }
     }
 
     return await this.getPageFn({
@@ -57,7 +58,7 @@ export class StickerService extends BasicService{
       queryBuilderName,
       post,
       where,
-      repo:this.stickerRepository
+      repo: this.stickerRepository
     })
   }
 }

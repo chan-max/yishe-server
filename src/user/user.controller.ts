@@ -32,7 +32,7 @@ import { QueryUserDto } from './dto/query-user.dto';
 @Controller('user')
 @ApiTags('用户管理')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService) { }
 
   @Post('register')
   // formdata接收方式
@@ -42,7 +42,6 @@ export class UserController {
   async register(@Body() createUserDto: CreateUserDto) {
     return await this.userService.register(createUserDto);
   }
-
 
 
   @Post('update')
@@ -63,7 +62,8 @@ export class UserController {
     return this.userService.updatePass(req.user, data);
   }
 
-  @Post('getUserInfo')
+
+  @Get('getUserInfo')
   @ApiOperation({ summary: '根据用户id获取用户信息' })
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
@@ -93,5 +93,24 @@ export class UserController {
   @UseGuards(AuthGuard('jwt'))
   logout(@Req() req) {
     return this.userService.logout(req.user);
+  }
+
+
+  @Post('updateMeta')
+  @UseGuards(AuthGuard('jwt'))
+  async updateMeta(
+    @Req() request,
+    @Body() updateMetaDto,
+  ) {
+    return this.userService.updateMeta(request.user, updateMetaDto);
+  }
+
+  @Post('getMeta')
+  @UseGuards(AuthGuard('jwt'))
+  async getMeta(
+    @Req() request,
+    @Body() post,
+  ) {
+    return this.userService.getMeta(request.user, post);
   }
 }

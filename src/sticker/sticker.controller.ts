@@ -1,11 +1,26 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete,Query } from '@nestjs/common';
+import {
+  Controller, Get, Post, Body, Patch, Param, Delete, Query, Request, ClassSerializerInterceptor,
+  Req,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 import { StickerService } from './sticker.service';
 import { CreateStickerDto } from './dto/create-sticker.dto';
 import { UpdateStickerDto } from './dto/update-sticker.dto';
+import { AuthGuard } from '@nestjs/passport';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiParam,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+
 
 @Controller('sticker')
 export class StickerController {
-  constructor(private readonly stickerService: StickerService) {}
+  constructor(private readonly stickerService: StickerService) { }
 
   // 获取单个
   @Get()
@@ -19,8 +34,11 @@ export class StickerController {
   }
 
   @Post('page')
-  getPage(@Body() post ) {
-    return this.stickerService.getPage(post);
+  @ApiBearerAuth()
+  // @UseGuards(AuthGuard('jwt'))
+  getPage(@Body() post, @Request() req) {
+    return this.stickerService.getPage(post, req.user);
+
   }
 
   @Get()

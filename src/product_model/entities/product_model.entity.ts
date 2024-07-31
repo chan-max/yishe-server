@@ -19,10 +19,10 @@ export class ProductModel {
     id: string;
     
     @Column({ length: 100 ,nullable:true })
-    name: string; // 模型地址
+    name: string; // 模型名称
 
     @Column({ length: 100 ,nullable:true })
-    description: string; // 模型地址
+    description: string; // 模型描述
 
     @Column({ length: 100 ,nullable:true })
     price: string; // 价格
@@ -30,14 +30,17 @@ export class ProductModel {
     @Column({ length: 100 ,nullable:true })
     url: string; // 模型地址
 
-    @Column({ nullable:true })
+    @Column({ nullable:true ,default:0 })
     ref_count: number; // 模型引用次数，有多少模型引用了该模型
 
-    @Column({ nullable:true })
+    @Column({ nullable:true,default:0 })
     like_count: number; // 点赞次数
 
-    @Column({ nullable:true })
+    @Column({ nullable:true,default:0  })
     save_count: number; // 收藏次数
+
+    @Column({ nullable:true,default:0  })
+    link_count: number; //  引用次数
 
     @Column({ length: 100,nullable:true })
     thumbnail: string; // 缩略图地址 , 用作该模型的封面图 ， 不同于实物图

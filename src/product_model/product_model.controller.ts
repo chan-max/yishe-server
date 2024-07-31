@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete,Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { ProductModelService } from './product_model.service';
 import { CreateProductModelDto } from './dto/create-product_model.dto';
 import { UpdateProductModelDto } from './dto/update-product_model.dto';
@@ -6,11 +6,15 @@ import { UpdateProductModelDto } from './dto/update-product_model.dto';
 
 @Controller('product-model')
 export class ProductModelController {
-  constructor(private readonly productModelService: ProductModelService) {}
+  constructor(private readonly productModelService: ProductModelService) { }
 
   @Post('create')
-  create(@Body() createProductModelDto: CreateProductModelDto) {
-    return this.productModelService.create(createProductModelDto);
+  create(@Body() data) {
+    if (data.id) {
+      return this.productModelService.update(data.id, data)
+    } else {
+      return this.productModelService.create(data);
+    }
   }
 
 
@@ -20,12 +24,17 @@ export class ProductModelController {
   }
 
   @Post('all')
-  findAllByPost(){
+  findAllByPost() {
   }
 
 
+  @Post('delete')
+  remove(@Body() post) {
+    return this.productModelService.remove(post.ids);
+  }
+
   @Post('page')
-  getPage(@Body() post){
+  getPage(@Body() post) {
     return this.productModelService.getPage({
       post
     })
@@ -41,8 +50,5 @@ export class ProductModelController {
     return this.productModelService.update(+id, updateProductModelDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.productModelService.remove(+id);
-  }
+
 }

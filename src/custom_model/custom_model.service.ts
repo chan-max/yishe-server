@@ -44,7 +44,7 @@ export class CustomModelService extends BasicService {
     const queryBuilderName = 'CustomModel'
     function queryBuilderHook(qb){
       qb
-      .leftJoinAndMapOne('CustomModel.uploader',User, 'user', 'CustomModel.uploader_id=user.id')
+      .leftJoinAndMapOne('CustomModel.uploader',User, 'user', 'CustomModel.uploaderId=user.id')
       .orderBy('CustomModel.createTime', 'DESC')
     }
 

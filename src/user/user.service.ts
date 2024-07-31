@@ -148,4 +148,45 @@ export class UserService {
     const result = pagination.findByPage(db, 'getRawMany');
     return result;
   }
+
+
+  async updateMeta(user, post) {
+
+    const userData = await this.userRepository.findOne(user.id);
+
+    const { metaKey, data } = post
+
+    if (!userData.meta) {
+      userData.meta = {} as any
+    }
+
+    if (!userData.meta[metaKey]) {
+      userData.meta[metaKey] = {}
+    }
+
+    for (let key in data) {
+      userData.meta[metaKey][key] = data[key]
+    }
+
+    this.userRepository.save(userData)
+    return {}
+  }
+
+
+
+  async getMeta(user, post) {
+    const userData = await this.userRepository.findOne(user.id);
+
+    const metaKey = post.metaKey
+
+    if (!userData.meta) {
+      userData.meta = {} as any
+    }
+
+    if (!userData.meta[metaKey]) {
+      userData.meta[metaKey] = {}
+    }
+
+    return Promise.resolve(userData.meta[metaKey])
+  }
 }
