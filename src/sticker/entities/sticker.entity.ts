@@ -7,8 +7,10 @@ import {
     OneToOne,
     JoinColumn,
     BeforeUpdate,
+    ManyToOne
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
+import { User } from 'src/user/entities/user.entity';
 import { OrganizationEntity } from 'src/organization/entities/organization.entity';
 import { RoleEntity } from 'src/role/entities/role.entity';
 const bcrypt = require('bcryptjs');
@@ -21,9 +23,8 @@ export class Sticker {
     @Column({ length: 100 })
     type: string; // 文件路径
 
-    @Column({ length: 100 })
+    @Column({ length: 100, default: '', nullable: true })
     url: string; // 文件路径
-    
 
     @Column({ length: 100 })
     thumbnail: string; // 文件路径
@@ -37,14 +38,19 @@ export class Sticker {
     @Column({ length: 100, default: '', nullable: true })
     description: string; // 描述
 
-    @Column({ length: 100,default: '', nullable: true })
-    uploaderId: string; // 作者id
+    @Column({default: null, nullable: true })
+    uploaderId: any; // 作者id
 
-    @Column({type:'boolean',  default:false})
+    @Column({ type: 'boolean', default: false })
     isPublic: boolean; // 是否为公开的资源
-    
-    @Column({  nullable: true ,type:'json'})
+
+    @Column({ nullable: true, type: 'json' })
     meta: any; // 元数据
+
+
+    @ManyToOne(() => User)
+    @JoinColumn({ name: 'uploaderId' })
+    uploader;
 
     @Column({
         name: 'create_time',

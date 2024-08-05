@@ -7,8 +7,14 @@ import {
     OneToOne,
     JoinColumn,
     BeforeUpdate,
+    ManyToOne
 } from 'typeorm';
+import { User } from 'src/user/entities/user.entity';
+
+
 const bcrypt = require('bcryptjs');
+
+
 
 @Entity('file')
 export class File {
@@ -33,8 +39,13 @@ export class File {
     @Column({type:'boolean',  default:false})
     isPublic: boolean; // 是否为公开的资源
 
-    @Column({ length: 100, default: '', nullable: true })
-    uploaderId: string; // 上传者
+    @Column({ default: null, nullable: true })
+    uploaderId: any; // 上传者
+
+
+    @ManyToOne(() => User)
+    @JoinColumn({ name: 'uploaderId' })
+    uploader;
 
     @Column({ length: 100, default: '', nullable: true })
     description: string; // 描述

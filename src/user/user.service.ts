@@ -164,9 +164,7 @@ export class UserService {
       userData.meta[metaKey] = {}
     }
 
-    for (let key in data) {
-      userData.meta[metaKey][key] = data[key]
-    }
+    userData.meta[metaKey] = post.data
 
     this.userRepository.save(userData)
     return {}

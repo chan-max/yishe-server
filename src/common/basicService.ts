@@ -10,6 +10,7 @@ export class BasicService{
       post,repo,where,entity,queryBuilderName,
       queryBuilderHook
     }:any) {
+
         const page = (post.currentPage - 1) * post.pageSize;
         const limit =  post.pageSize;
 

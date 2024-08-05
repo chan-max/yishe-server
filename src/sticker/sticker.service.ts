@@ -44,14 +44,33 @@ export class StickerService extends BasicService {
   async getPage(post, userInfo) {
     const where = null
     const queryBuilderName = 'Sticker'
+
+
     function queryBuilderHook(qb) {
       qb
-        .leftJoinAndMapOne('Sticker.uploader', User, 'user', 'Sticker.uploaderId=user.id')
+        .leftJoinAndSelect('Sticker.uploader', 'user')
+        // .leftJoinAndMapOne('Sticker.uploader', User, 'user', 'Sticker.uploaderId=user.id').addSelect('user.account')
         .orderBy('Sticker.createTime', 'DESC')
+
+
+      if (post.type) {
+        qb.where('Sticker.type IN (:...types)', { types: post.type.split(',') })
+      }
+
       if (post.myUploads) {
         qb.where('Sticker.uploaderId = :uploaderId', { uploaderId: userInfo.id })
       }
+
+      if (post.type) {
+        qb.andWhere('Sticker.type IN (:...types)', { types: post.type.split(',') })
+      }
+
+      console.log(qb.getSql())
     }
+
+
+
+
 
     return await this.getPageFn({
       queryBuilderHook,

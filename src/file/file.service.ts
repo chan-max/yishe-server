@@ -2,7 +2,7 @@ import { Injectable, } from '@nestjs/common';
 import { CreateFileDto } from './dto/create-file.dto';
 import { UpdateFileDto } from './dto/update-file.dto';
 import { InjectRepository, } from '@nestjs/typeorm';
-import {File} from './entities/file.entity'
+import { File } from './entities/file.entity'
 import { IPageResult, Pagination, } from 'src/utils/pagination';
 import { createQueryCondition } from 'src/utils/utils';
 import { BasicService } from 'src/common/basicService';
@@ -30,7 +30,7 @@ export class FileService extends BasicService {
     return await this.fileRepository.findOne(post)
   }
 
-  update(id: number,post) {
+  update(id: number, post) {
     return `This action updates a #${id} productModel`;
   }
 
@@ -40,21 +40,33 @@ export class FileService extends BasicService {
 
   async getPage({
     post,
-    where
-  }:any) {
+    userInfo
+  }: any) {
 
-    if(post.type){
-      where = post.type.split(',').map((t) => {
-        return {
-          type:t
-        }
-      })
+    const where = null
+    const queryBuilderName = 'File'
+
+    function queryBuilderHook(qb) {
+      qb
+        .leftJoinAndSelect('File.uploader', 'user')
+        // .leftJoinAndMapOne('Sticker.uploader', User, 'user', 'Sticker.uploaderId=user.id').addSelect('user.account')
+        .orderBy('File.createTime', 'DESC')
+
+      if (post.myUploads) {
+        qb.where('File.uploaderId = :uploaderId', { uploaderId: userInfo.id })
+      }
+
+      if (post.type) {
+        qb.andWhere('File.type IN (:...types)', { types: post.type.split(',') })
+      }
     }
 
     return await this.getPageFn({
+      queryBuilderHook,
+      queryBuilderName,
       post,
       where,
-      repo:this.fileRepository
+      repo: this.fileRepository
     })
   }
 }

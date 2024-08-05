@@ -16,7 +16,7 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-
+import { OptionalAuthGuard } from 'src/common/authGuard'
 
 @Controller('sticker')
 export class StickerController {
@@ -35,10 +35,9 @@ export class StickerController {
 
   @Post('page')
   @ApiBearerAuth()
-  // @UseGuards(AuthGuard('jwt'))
+  @UseGuards(OptionalAuthGuard)
   getPage(@Body() post, @Request() req) {
     return this.stickerService.getPage(post, req.user);
-
   }
 
   @Get()
