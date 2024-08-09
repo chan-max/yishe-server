@@ -11,8 +11,6 @@ import {
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { User } from 'src/user/entities/user.entity';
-import { OrganizationEntity } from 'src/organization/entities/organization.entity';
-import { RoleEntity } from 'src/role/entities/role.entity';
 const bcrypt = require('bcryptjs');
 
 @Entity('sticker')

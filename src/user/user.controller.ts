@@ -95,6 +95,7 @@ export class UserController {
     return this.userService.logout(req.user);
   }
 
+  
 
   @Post('updateMeta')
   @UseGuards(AuthGuard('jwt'))
@@ -112,5 +113,24 @@ export class UserController {
     @Body() post,
   ) {
     return this.userService.getMeta(request.user, post);
+  }
+
+
+  @Post('follow')
+  @UseGuards(AuthGuard('jwt'))
+  async follow(
+    @Req() request,
+    @Body() post,
+  ) {
+    return this.userService.relationCreate(request.user.id, post.userId);
+  }
+
+  @Post('unfollow')
+  @UseGuards(AuthGuard('jwt'))
+  async unfollow(
+    @Req() request,
+    @Body() post,
+  ) {
+    return this.userService.removeRelation(request.user.id, post.userId);
   }
 }

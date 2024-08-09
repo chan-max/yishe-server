@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable,UnauthorizedException } from '@nestjs/common';
 import { CreateStickerDto } from './dto/create-sticker.dto';
 import { UpdateStickerDto } from './dto/update-sticker.dto';
 import { IPageResult, Pagination, } from 'src/utils/pagination';
@@ -42,6 +42,12 @@ export class StickerService extends BasicService {
   }
 
   async getPage(post, userInfo) {
+
+
+    if(post.myUploads && !userInfo){
+      throw new UnauthorizedException('请登录');
+    }
+
     const where = null
     const queryBuilderName = 'Sticker'
 
@@ -51,7 +57,6 @@ export class StickerService extends BasicService {
         .leftJoinAndSelect('Sticker.uploader', 'user')
         // .leftJoinAndMapOne('Sticker.uploader', User, 'user', 'Sticker.uploaderId=user.id').addSelect('user.account')
         .orderBy('Sticker.createTime', 'DESC')
-
 
       if (post.type) {
         qb.where('Sticker.type IN (:...types)', { types: post.type.split(',') })

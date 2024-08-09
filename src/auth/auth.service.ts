@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RedisInstance } from 'src/cache/redis';
-import { RoleEntity } from 'src/role/entities/role.entity';
 import { User } from 'src/user/entities/user.entity';
 import { getConnection, Repository } from 'typeorm';
 
@@ -40,11 +39,6 @@ export class AuthService {
     const redis = new RedisInstance(0);
     redis.setItem(`user-token-${user.id}-${user.account}`, token, 60 * 60 * 8);
 
-    const Role = await getConnection()
-      .createQueryBuilder<RoleEntity>(RoleEntity, 'role')
-      .where('role.id = :id', { id: user.roleId })
-      .leftJoinAndSelect('role.menus', 'menus')
-      .getOne();
 
     return {
       userInfo: user,

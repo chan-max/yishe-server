@@ -8,8 +8,6 @@ import {
   BeforeUpdate,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
-import { OrganizationEntity } from 'src/organization/entities/organization.entity';
-import { RoleEntity } from 'src/role/entities/role.entity';
 const bcrypt = require('bcryptjs');
 
 @Entity('user')
