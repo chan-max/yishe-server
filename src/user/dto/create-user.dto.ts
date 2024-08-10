@@ -8,7 +8,7 @@ export class CreateUserDto {
   readonly account: string;
 
   @ApiPropertyOptional({ description: '用户昵称' })
-  readonly nickname: string;
+  readonly name: string;
 
   @ApiProperty({ description: '用户密码' })
   @IsNotEmpty({ message: '密码不能为空' })

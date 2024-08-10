@@ -1,4 +1,4 @@
-import { Injectable,UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { CreateStickerDto } from './dto/create-sticker.dto';
 import { UpdateStickerDto } from './dto/update-sticker.dto';
 import { IPageResult, Pagination, } from 'src/utils/pagination';
@@ -44,7 +44,7 @@ export class StickerService extends BasicService {
   async getPage(post, userInfo) {
 
 
-    if(post.myUploads && !userInfo){
+    if (post.myUploads && !userInfo) {
       throw new UnauthorizedException('请登录');
     }
 
@@ -55,12 +55,24 @@ export class StickerService extends BasicService {
     function queryBuilderHook(qb) {
       qb
         .leftJoinAndSelect('Sticker.uploader', 'user')
-        // .leftJoinAndMapOne('Sticker.uploader', User, 'user', 'Sticker.uploaderId=user.id').addSelect('user.account')
-        .orderBy('Sticker.createTime', 'DESC')
+        .select([
+          "Sticker.id",
+          "Sticker.name",
+          "Sticker.createTime",
+          "Sticker.thumbnail",
+          "Sticker.description",
+          "Sticker.isPublic",
+          "Sticker.keywords",
+          "Sticker.meta",
+          "Sticker.type",
+          "user.name",
+          "user.account",
+          "user.email",
+        ])
 
-      if (post.type) {
-        qb.where('Sticker.type IN (:...types)', { types: post.type.split(',') })
-      }
+      // if (post.type) {
+      //   qb.where('Sticker.type IN (:...types)', { types: post.type.split(',') })
+      // }
 
       if (post.myUploads) {
         qb.where('Sticker.uploaderId = :uploaderId', { uploaderId: userInfo.id })
@@ -70,7 +82,7 @@ export class StickerService extends BasicService {
         qb.andWhere('Sticker.type IN (:...types)', { types: post.type.split(',') })
       }
 
-      console.log(qb.getSql())
+
     }
 
 

@@ -49,7 +49,20 @@ export class FileService extends BasicService {
     function queryBuilderHook(qb) {
       qb
         .leftJoinAndSelect('File.uploader', 'user')
-        // .leftJoinAndMapOne('Sticker.uploader', User, 'user', 'Sticker.uploaderId=user.id').addSelect('user.account')
+        .select([
+          "File.id",
+          "File.name",
+          "File.createTime",
+          "File.thumbnail",
+          "File.description",
+          "File.isPublic",
+          "File.keywords",
+          "File.meta",
+          "File.type",
+          "user.name",
+          "user.account",
+          "user.email",
+        ])
         .orderBy('File.createTime', 'DESC')
 
       if (post.myUploads) {

@@ -6,9 +6,12 @@ import {
   OneToOne,
   JoinColumn,
   BeforeUpdate,
+  OneToMany
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
 const bcrypt = require('bcryptjs');
+import { Sticker } from 'src/sticker/entities/sticker.entity';
+import { File } from 'src/file/entities/file.entity';
 
 @Entity('user')
 export class User {
@@ -19,7 +22,7 @@ export class User {
   account: string; // 用户名
 
   @Column({ length: 100, default: '', nullable: true })
-  nickname: string; //昵称
+  name: string; //昵称
 
   @Column({ type: 'bigint', nullable: true })
   phone: number; // 手机号
@@ -55,6 +58,12 @@ export class User {
 
   @Column({ default: '', nullable: true })
   roleId: string;
+
+  @OneToMany(() => Sticker, sticker => sticker.uploader)
+  stickers: Sticker[];
+
+  @OneToMany(() => File, file => file.uploader)
+  files: Sticker[];
 
   @Column({
     name: 'create_time',
