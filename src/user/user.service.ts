@@ -101,7 +101,7 @@ export class UserService {
     );
     const where = createQueryCondition(query, [
       'account',
-      'nickname',
+      'name',
       'phone',
       'roleId',
       'organizationId',

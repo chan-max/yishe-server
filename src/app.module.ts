@@ -9,6 +9,7 @@ import { ProductModelModule } from './product_model/product_model.module';
 import { StickerModule } from './sticker/sticker.module';
 import { CustomModelModule } from './custom_model/custom_model.module';
 import { CommentModule } from './comment/comment.module';
+import { KeyService } from 'src/utils/key.service';
 
 
 // 环境配置信息
@@ -23,9 +24,9 @@ import envConfig from '../config';
     ProductModelModule,
     StickerModule,
     CustomModelModule,
-    CommentModule
+    CommentModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService,KeyService],
 })
 export class AppModule {}

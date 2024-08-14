@@ -42,7 +42,7 @@ export class ProductModelController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.productModelService.findOne(+id);
+    return this.productModelService.findOne(id);
   }
 
   @Patch(':id')

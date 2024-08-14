@@ -58,9 +58,11 @@ export class FileService extends BasicService {
           "File.isPublic",
           "File.keywords",
           "File.meta",
+          "File.url",
           "File.type",
           "user.name",
           "user.account",
+          "user.email",
           "user.email",
         ])
         .orderBy('File.createTime', 'DESC')

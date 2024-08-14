@@ -25,14 +25,7 @@ export class AppController {
 
   @Post('getBasicConfig')
   getBasicConfig() {
-    return {
-      cos: {
-        SecretId: 'AKIDMdmaMD0uiNwkVH0gTJFKXaXJyV4hHmAL',
-        SecretKey: 'HPdigqyzpgTNICCQnK0ZF6zrrpkbL4un',
-        Bucket: '1s-1257307499',
-        Region: 'ap-beijing'
-      }
-    }
+    return this.appService.getBasicConfig()
   }
 
 }

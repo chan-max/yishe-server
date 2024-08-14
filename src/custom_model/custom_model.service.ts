@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { IPageResult, Pagination, } from 'src/utils/pagination';
 import { createQueryCondition } from 'src/utils/utils';
 import { InjectRepository, } from '@nestjs/typeorm';
@@ -39,21 +39,56 @@ export class CustomModelService extends BasicService {
     return `This action removes a #${id} `;
   }
 
-  async getPage(post) {
+  async getPage(post, userInfo) {
 
-    const queryBuilderName = 'CustomModel'
-    function queryBuilderHook(qb){
-      qb
-      .leftJoinAndMapOne('CustomModel.uploader',User, 'user', 'CustomModel.uploaderId=user.id')
-      .orderBy('CustomModel.createTime', 'DESC')
+
+
+    if (post.myUploads && !userInfo) {
+      throw new UnauthorizedException('请登录');
     }
 
+    const where = null
+    const queryBuilderName = 'customModel'
+
+
+    function queryBuilderHook(qb) {
+      qb
+        .leftJoinAndSelect('CustomModel.uploader', 'user')
+        .select([
+          "CustomModel.id",
+          "CustomModel.name",
+          "CustomModel.createTime",
+          "CustomModel.thumbnail",
+          "CustomModel.description",
+          "CustomModel.isPublic",
+          "CustomModel.keywords",
+          "CustomModel.meta",
+          "user.name",
+          "user.account",
+          "user.email",
+          "user.avatar",
+        ]).orderBy('CustomModel.createTime', 'DESC')
+
+      // if (post.type) {
+      //   qb.where('customModel.type IN (:...types)', { types: post.type.split(',') })
+      // }
+
+      if (post.myUploads) {
+        qb.where('CustomModel.uploaderId = :uploaderId', { uploaderId: userInfo.id })
+      }
+
+    }
+
+
+
+
+
     return await this.getPageFn({
-      queryBuilderName,
       queryBuilderHook,
+      queryBuilderName,
       post,
-      where:null,
-      repo:this.customModelRepository
+      where,
+      repo: this.customModelRepository
     })
   }
 }

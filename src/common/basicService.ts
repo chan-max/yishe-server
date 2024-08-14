@@ -7,7 +7,7 @@ export class BasicService{
 
     // 获取分页内容
     async getPageFn({
-      post,repo,where,entity,queryBuilderName,
+      post,repo,where,entity,
       queryBuilderHook
     }:any) {
 

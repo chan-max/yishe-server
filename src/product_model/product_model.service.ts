@@ -11,7 +11,7 @@ export class ProductModelService {
   constructor(
     @InjectRepository(ProductModel)
     private productModelRepository,
-  ) { }
+  ) {}
 
   async create(createProductModelDto: CreateProductModelDto) {
     return await this.productModelRepository.save(createProductModelDto)
@@ -21,8 +21,10 @@ export class ProductModelService {
     return `This action returns all productModel`;
   }
 
-  async findOne(id: number) {
-    return await this.productModelRepository.findOne({ id });
+  async findOne(id) {
+
+    let res = await this.productModelRepository.findOne({ id });
+    return res
   }
 
   update(id: number, data) {

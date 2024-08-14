@@ -8,7 +8,7 @@ export class QueryUserDto extends PartialType(PaginationDto) {
   readonly account: string;
 
   @ApiPropertyOptional({ description: '用户昵称', default: '' })
-  readonly nickname: string;
+  readonly name: string;
 
   @ApiPropertyOptional({ description: '用户手机号', default: '' })
   readonly phone: number;

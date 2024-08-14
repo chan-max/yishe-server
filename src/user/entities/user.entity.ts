@@ -12,6 +12,7 @@ import { Exclude } from 'class-transformer';
 const bcrypt = require('bcryptjs');
 import { Sticker } from 'src/sticker/entities/sticker.entity';
 import { File } from 'src/file/entities/file.entity';
+import { CustomModel } from 'src/custom_model/entities/custom_model.entity';
 
 @Entity('user')
 export class User {
@@ -63,7 +64,13 @@ export class User {
   stickers: Sticker[];
 
   @OneToMany(() => File, file => file.uploader)
-  files: Sticker[];
+  files: File[];
+
+  @OneToMany(() => CustomModel, customModel => customModel.uploader)
+  customModels: CustomModel[];
+
+
+
 
   @Column({
     name: 'create_time',
