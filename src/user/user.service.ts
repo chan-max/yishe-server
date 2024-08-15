@@ -43,7 +43,7 @@ export class UserService {
   }
 
   // 更新用户信息
-  async update(user: Partial<User>, info: UpdateUserDto) {
+  async update(user, info: UpdateUserDto) {
     await this.userRepository
       .createQueryBuilder('user')
       .update(User)

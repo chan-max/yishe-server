@@ -45,8 +45,6 @@ export class UserController {
 
 
   @Post('update')
-  @ApiOperation({ summary: '修改用户信息' })
-  @ApiBearerAuth() // swagger文档设置token
   @UseGuards(AuthGuard('jwt'))
   async update(@Req() req, @Body() data: UpdateUserDto) {
     const user = await this.userService.update(req.user, data);
@@ -63,19 +61,13 @@ export class UserController {
   }
 
 
-  @Get('getUserInfo')
-  @ApiOperation({ summary: '根据用户id获取用户信息' })
-  @ApiBearerAuth()
+  @Post('getUserInfo')
   @UseGuards(AuthGuard('jwt'))
-  @ApiQuery({
-    name: 'id',
-    required: false,
-    description: '用户id',
-  })
-  async getUserInfo(@Req() req, @Query('id') id: string) {
+  async getUserInfo(@Req() req, @Body('id') id: string) {
     if (!id) id = req.user.id;
     const res = await this.userService.getUserInfo(id);
     delete res.password;
+    delete res.meta;
     return res;
   }
 
@@ -95,7 +87,7 @@ export class UserController {
     return this.userService.logout(req.user);
   }
 
-  
+
 
   @Post('updateMeta')
   @UseGuards(AuthGuard('jwt'))

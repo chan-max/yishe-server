@@ -65,13 +65,14 @@ export class StickerService extends BasicService {
           "Sticker.keywords",
           "Sticker.meta",
           "Sticker.type",
+
           "Sticker.url",
           "user.name",
           "user.account",
           "user.email",
           "user.email",
         ]).orderBy('Sticker.createTime', 'DESC')
-
+ 
       // if (post.type) {
       //   qb.where('Sticker.type IN (:...types)', { types: post.type.split(',') })
       // }

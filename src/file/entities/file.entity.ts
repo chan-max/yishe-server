@@ -42,10 +42,10 @@ export class File {
     @Column({ default: null, nullable: true })
     uploaderId: any; // 上传者
 
-
     @ManyToOne(() => User)
     @JoinColumn({ name: 'uploaderId' })
     uploader;
+
 
     @Column({ length: 100, default: '', nullable: true })
     description: string; // 描述
