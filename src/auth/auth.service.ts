@@ -37,7 +37,7 @@ export class AuthService {
   async login(user: Partial<User>) {
     const token = this.createToken(user);
     const redis = new RedisInstance(0);
-    redis.setItem(`user-token-${user.id}-${user.account}`, token, 60 * 60 * 8);
+    redis.setItem(`user-token-${user.id}-${user.account}`, token, 60 * 60 * 8 * 365);
 
 
     return {

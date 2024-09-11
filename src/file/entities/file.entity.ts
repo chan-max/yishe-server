@@ -27,6 +27,10 @@ export class File {
     @Column({ length: 100, default: '', nullable: true })
     name: string; //文件类型
 
+
+    @Column({ length: 100, default: '', nullable: true })
+    size: string; //文件大小
+
     @Column({ length: 100, default: '', nullable: true })
     rawName: string; // 文件原始名称
 
@@ -36,7 +40,7 @@ export class File {
     @Column({ length: 100, default: '', nullable: true })
     thumbnail: string; // 缩略图
 
-    @Column({type:'boolean',  default:false})
+    @Column({ type: 'boolean', default: false })
     isPublic: boolean; // 是否为公开的资源
 
     @Column({ default: null, nullable: true })
@@ -53,7 +57,7 @@ export class File {
     @Column({ length: 100, default: '', nullable: true })
     keywords: string; // 描述
 
-    @Column({  nullable: true ,type:'json'})
+    @Column({ nullable: true, type: 'json' })
     meta: any; // 元数据
 
 

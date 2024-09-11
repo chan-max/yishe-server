@@ -56,8 +56,5 @@ export class FileController {
     return this.fileService.update(+id, post);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.fileService.remove(+id);
-  }
+  
 }

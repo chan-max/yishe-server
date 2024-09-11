@@ -26,12 +26,12 @@ export class CommentController {
 
   @Post('addComment')
   getComment(@Body() body) {
-    let { relationId, parentId, content } = body
-    this.commentService.getComment({
-      relationId,
-      parentId,
-      content,
-    })
+    // let { relationId, parentId, content } = body
+    // // this.commentService.getComment({
+    // //   relationId,
+    // //   parentId,
+    // //   content,
+    // // })
   }
 
 

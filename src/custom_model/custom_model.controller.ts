@@ -41,8 +41,8 @@ export class CustomModelController {
     return this.customModelService.update(+id, post);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.customModelService.remove(+id);
+  @Post('delete')
+  remove(@Body() body) {
+    return this.customModelService.remove(body.id);
   }
 }

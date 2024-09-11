@@ -34,8 +34,8 @@ export class FileService extends BasicService {
     return `This action updates a #${id} productModel`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} productModel`;
+  async remove(id) {
+    return this.fileRepository.delete(id)
   }
 
   async getPage({
@@ -53,6 +53,7 @@ export class FileService extends BasicService {
           "File.id",
           "File.name",
           "File.createTime",
+          "File.updateTime",
           "File.thumbnail",
           "File.description",
           "File.isPublic",
@@ -60,6 +61,7 @@ export class FileService extends BasicService {
           "File.meta",
           "File.url",
           "File.type",
+          "File.size",
           "user.name",
           "user.account",
           "user.email",
@@ -74,6 +76,14 @@ export class FileService extends BasicService {
       if (post.type) {
         qb.andWhere('File.type IN (:...types)', { types: post.type.split(',') })
       }
+
+      // 通过 match 模糊匹配
+      if (post.match) {
+        qb.where('File.name LIKE :types', { types: `%${post.match}%` })
+        // qb.orWhere('File.description LIKE :types', { types: post.match })
+      }
+
+      // 模糊查询
     }
 
     return await this.getPageFn({

@@ -37,12 +37,11 @@ export class StickerService extends BasicService {
     return await this.stickerRepository.update(id, post);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} sticker`;
+  async remove(id) {
+    return this.stickerRepository.delete(id)
   }
 
   async getPage(post, userInfo) {
-
 
     if (post.myUploads && !userInfo) {
       throw new UnauthorizedException('请登录');
@@ -59,6 +58,7 @@ export class StickerService extends BasicService {
           "Sticker.id",
           "Sticker.name",
           "Sticker.createTime",
+          "Sticker.updateTime",
           "Sticker.thumbnail",
           "Sticker.description",
           "Sticker.isPublic",
@@ -72,7 +72,7 @@ export class StickerService extends BasicService {
           "user.email",
           "user.email",
         ]).orderBy('Sticker.createTime', 'DESC')
- 
+
       // if (post.type) {
       //   qb.where('Sticker.type IN (:...types)', { types: post.type.split(',') })
       // }
@@ -85,10 +85,7 @@ export class StickerService extends BasicService {
         qb.andWhere('Sticker.type IN (:...types)', { types: post.type.split(',') })
       }
 
-
     }
-
-
 
 
 

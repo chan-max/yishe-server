@@ -55,8 +55,8 @@ export class StickerController {
     return this.stickerService.update(+id, updateStickerDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.stickerService.remove(+id);
+  @Post('delete')
+  remove(@Body() body) {
+    return this.stickerService.remove(body.id);
   }
 }

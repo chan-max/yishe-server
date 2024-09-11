@@ -35,8 +35,8 @@ export class CustomModelService extends BasicService {
     return `This action updates a #${id} `;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} `;
+  async remove(id) {
+    return this.customModelRepository.delete(id)
   }
 
   async getPage(post, userInfo) {
@@ -58,6 +58,7 @@ export class CustomModelService extends BasicService {
           "CustomModel.id",
           "CustomModel.name",
           "CustomModel.createTime",
+          "CustomModel.updateTime",
           "CustomModel.thumbnail",
           "CustomModel.description",
           "CustomModel.isPublic",

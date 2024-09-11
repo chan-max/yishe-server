@@ -47,7 +47,7 @@ export class CommentService {
     return await this.commentRepo.save(origin)
   }
 
-  async getCommnet({
+  async getComment({
     relationId
   }) {
 
