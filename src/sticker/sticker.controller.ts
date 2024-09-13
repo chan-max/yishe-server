@@ -50,9 +50,9 @@ export class StickerController {
     return this.stickerService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateStickerDto: UpdateStickerDto) {
-    return this.stickerService.update(+id, updateStickerDto);
+  @Post('update')
+  update(@Body() updateStickerDto: UpdateStickerDto) {
+    return this.stickerService.update(updateStickerDto);
   }
 
   @Post('delete')

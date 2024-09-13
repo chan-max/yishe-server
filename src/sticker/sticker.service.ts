@@ -33,8 +33,17 @@ export class StickerService extends BasicService {
     return await this.stickerRepository.findOne({ id });
   }
 
-  async update(id: number, post: UpdateStickerDto) {
-    return await this.stickerRepository.update(id, post);
+  async update(post) {
+
+    const item = await this.stickerRepository.findOne(post.id);
+
+    // 更新用户属性
+    Object.assign(item, post);
+
+    // 保存并返回更新后的用户
+    return this.stickerRepository.save(item);
+
+    // return await this.stickerRepository.update(post.id, post);
   }
 
   async remove(id) {
