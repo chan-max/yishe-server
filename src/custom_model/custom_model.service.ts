@@ -31,8 +31,10 @@ export class CustomModelService extends BasicService {
     return `This action returns a #${id} `;
   }
 
-  update(id: number, post) {
-    return `This action updates a #${id} `;
+  async update(post) {
+    const item = await this.customModelRepository.findOne(post.id);
+    Object.assign(item, post);
+    return this.customModelRepository.save(item);
   }
 
   async remove(id) {
@@ -40,8 +42,6 @@ export class CustomModelService extends BasicService {
   }
 
   async getPage(post, userInfo) {
-
-
 
     if (post.myUploads && !userInfo) {
       throw new UnauthorizedException('请登录');
@@ -68,6 +68,7 @@ export class CustomModelService extends BasicService {
           "user.account",
           "user.email",
           "user.avatar",
+          "user.isAdmin",
         ]).orderBy('CustomModel.createTime', 'DESC')
 
       // if (post.type) {

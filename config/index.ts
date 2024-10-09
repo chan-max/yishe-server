@@ -7,6 +7,6 @@ const parseEnv = {
 };
 
 // 生产模式
- const isProd = false
+const isProd = false
 
 export default parseEnv[isProd ? 'production' : 'development'];

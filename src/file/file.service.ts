@@ -30,9 +30,17 @@ export class FileService extends BasicService {
     return await this.fileRepository.findOne(post)
   }
 
-  update(id: number, post) {
-    return `This action updates a #${id} productModel`;
+  async update(post) {
+
+    const item = await this.fileRepository.findOne(post.id);
+
+    Object.assign(item, post);
+
+    return this.fileRepository.save(item);
+
+    // return await this.stickerRepository.update(post.id, post);
   }
+
 
   async remove(id) {
     return this.fileRepository.delete(id)
@@ -66,6 +74,7 @@ export class FileService extends BasicService {
           "user.account",
           "user.email",
           "user.email",
+          "user.isAdmin",
         ])
         .orderBy('File.createTime', 'DESC')
 

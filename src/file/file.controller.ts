@@ -24,7 +24,6 @@ export class FileController {
     return this.fileService.create(post);
   }
 
-
   @Get()
   findAll() {
     return this.fileService.findAll();
@@ -33,7 +32,6 @@ export class FileController {
   @Post('all')
   findAllByPost() {
   }
-
 
   @Post('page')
   @ApiBearerAuth()
@@ -45,16 +43,13 @@ export class FileController {
     })
   }
 
-
   @Post('findOne')
   findOne(@Body() post) {
     return this.fileService.findOne(post);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() post) {
-    return this.fileService.update(+id, post);
+  @Post('update')
+  update(@Body() post) {
+    return this.fileService.update(post);
   }
-
-  
 }

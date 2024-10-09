@@ -36,9 +36,10 @@ export class CustomModelController {
     return this.customModelService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() post) {
-    return this.customModelService.update(+id, post);
+
+  @Post('update')
+  update(@Body() post) {
+    return this.customModelService.update(post);
   }
 
   @Post('delete')

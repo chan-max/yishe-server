@@ -27,12 +27,14 @@ export class ProductModelService {
     return res
   }
 
-  update(id: number, data) {
-    return this.productModelRepository.update(id, data)
+  async update(post) {
+    const item = await this.productModelRepository.findOne(post.id);
+    Object.assign(item, post);
+    return this.productModelRepository.save(item);
   }
 
-  async remove(ids: number) {
-    return await this.productModelRepository.delete(ids);
+  async remove(id: number) {
+    return this.productModelRepository.delete(id);
   }
 
   async getPage({

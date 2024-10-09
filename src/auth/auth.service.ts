@@ -17,6 +17,7 @@ export class AuthService {
   getUser(user: Partial<User>) {
     const existUser = this.userRepository.findOne({
       where: { id: user.id, account: user.account },
+      relations: ['company']
     });
     return existUser;
   }
@@ -37,11 +38,13 @@ export class AuthService {
   async login(user: Partial<User>) {
     const token = this.createToken(user);
     const redis = new RedisInstance(0);
+
     redis.setItem(`user-token-${user.id}-${user.account}`, token, 60 * 60 * 8 * 365);
 
 
+
     return {
-      userInfo: user,
+      // userInfo: user, login 不在返回用户信息，而是用过getuserinfo
       token,
     };
   }

@@ -18,22 +18,25 @@ export class Sticker {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Column({ length: 100 })
+    @Column({ length: 1000 })
     type: string; // 文件路径
 
-    @Column({ length: 100, default: '', nullable: true })
+    @Column({ length: 1000, default: '', nullable: true })
     url: string; // 文件路径
 
-    @Column({ length: 100 })
+    @Column({ length: 1000 })
     thumbnail: string; // 文件路径
 
-    @Column({ length: 100, default: '', nullable: true })
+    @Column({ length: 1000, default: '', nullable: true })
     keywords: string; // 描述
 
-    @Column({ length: 100, default: '', nullable: true })
+    @Column({ length: 1000, default: '', nullable: true })
     name: string; //文件类型
 
-    @Column({ length: 100, default: '', nullable: true })
+    @Column({ length: 1000, default: '', nullable: true })
+    group: string; // 贴纸分组
+
+    @Column({ length: 1000, default: '', nullable: true })
     description: string; // 描述
 
     @Column({default: null, nullable: true })

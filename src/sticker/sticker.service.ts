@@ -37,10 +37,8 @@ export class StickerService extends BasicService {
 
     const item = await this.stickerRepository.findOne(post.id);
 
-    // 更新用户属性
     Object.assign(item, post);
 
-    // 保存并返回更新后的用户
     return this.stickerRepository.save(item);
 
     // return await this.stickerRepository.update(post.id, post);
@@ -74,17 +72,14 @@ export class StickerService extends BasicService {
           "Sticker.keywords",
           "Sticker.meta",
           "Sticker.type",
-
           "Sticker.url",
           "user.name",
           "user.account",
           "user.email",
-          "user.email",
+          "user.isAdmin",
         ]).orderBy('Sticker.createTime', 'DESC')
 
-      // if (post.type) {
-      //   qb.where('Sticker.type IN (:...types)', { types: post.type.split(',') })
-      // }
+
 
       if (post.myUploads) {
         qb.where('Sticker.uploaderId = :uploaderId', { uploaderId: userInfo.id })
@@ -94,9 +89,11 @@ export class StickerService extends BasicService {
         qb.andWhere('Sticker.type IN (:...types)', { types: post.type.split(',') })
       }
 
+      if (post.group) {
+        qb.where('Sticker.group = :group', { group: post.group })
+      }
+
     }
-
-
 
     return await this.getPageFn({
       queryBuilderHook,

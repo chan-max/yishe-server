@@ -6,13 +6,15 @@ import {
   OneToOne,
   JoinColumn,
   BeforeUpdate,
-  OneToMany
+  OneToMany,
+  ManyToOne
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
 const bcrypt = require('bcryptjs');
 import { Sticker } from 'src/sticker/entities/sticker.entity';
 import { File } from 'src/file/entities/file.entity';
 import { CustomModel } from 'src/custom_model/entities/custom_model.entity';
+import { Company } from 'src/company/entities/company.entity';
 
 @Entity('user')
 export class User {
@@ -54,11 +56,8 @@ export class User {
   @Column({ default: '', nullable: true })
   email: string;
 
-  @Column({ default: '', nullable: true })
-  organizationId: string;
 
-  @Column({ default: '', nullable: true })
-  roleId: string;
+  
 
   @OneToMany(() => Sticker, sticker => sticker.uploader)
   stickers: Sticker[];
@@ -66,11 +65,16 @@ export class User {
   @OneToMany(() => File, file => file.uploader)
   files: File[];
 
+
   @OneToMany(() => CustomModel, customModel => customModel.uploader)
   customModels: CustomModel[];
 
+  @Column({ default: null, nullable: true })
+  companyId: string; //关联的公司
 
-
+  @ManyToOne(() => Company)
+  @JoinColumn({ name: 'companyId' })
+  company;
 
   @Column({
     name: 'create_time',

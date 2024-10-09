@@ -1,11 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-// 分页验证DTO接口
-export class PaginationDto {
-  @ApiProperty({ description: '当前分页' })
-  currentPage: number;
 
-  @ApiProperty({ description: '每页数据量' })
-  pageSize: number;
+export function generateInviteCode(length: number = 8): string {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let inviteCode = '';
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    inviteCode += characters[randomIndex];
+  }
+  return inviteCode;
 }
-

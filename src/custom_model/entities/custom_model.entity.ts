@@ -17,9 +17,6 @@ export class CustomModel {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Column({ default: null, nullable: true })
-    uploaderId: any; // 作者id
-
     @Column({ length: 100 })
     thumbnail: string; // 缩略图
 
@@ -47,6 +44,10 @@ export class CustomModel {
         default: () => 'CURRENT_TIMESTAMP',
     })
     createTime: Date;
+
+
+    @Column({ default: null, nullable: true })
+    uploaderId: any; // 作者id
 
     @ManyToOne(() => User)
     @JoinColumn({ name: 'uploaderId' })

@@ -10,13 +10,8 @@ export class ProductModelController {
 
   @Post('create')
   create(@Body() data) {
-    if (data.id) {
-      return this.productModelService.update(data.id, data)
-    } else {
-      return this.productModelService.create(data);
-    }
+    return this.productModelService.create( data)
   }
-
 
   @Get()
   find(@Query() query) {
@@ -30,7 +25,7 @@ export class ProductModelController {
 
   @Post('delete')
   remove(@Body() post) {
-    return this.productModelService.remove(post.ids);
+    return this.productModelService.remove(post.id);
   }
 
   @Post('page')
@@ -45,10 +40,10 @@ export class ProductModelController {
     return this.productModelService.findOne(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateProductModelDto: UpdateProductModelDto) {
-    return this.productModelService.update(+id, updateProductModelDto);
-  }
 
+  @Post('update')
+  update(@Body() post) {
+    return this.productModelService.update(post);
+  }
 
 }

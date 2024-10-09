@@ -27,10 +27,12 @@ import { User } from './entities/user.entity';
 import { AuthGuard } from '@nestjs/passport';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdatePassDto } from './dto/updatePass-user.dto';
-import { QueryUserDto } from './dto/query-user.dto';
+
+import { OptionalAuthGuard } from 'src/common/authGuard'
+
+
 
 @Controller('user')
-@ApiTags('用户管理')
 export class UserController {
   constructor(private readonly userService: UserService) { }
 
@@ -71,12 +73,11 @@ export class UserController {
     return res;
   }
 
-  @Post('getPage')
-  @ApiOperation({ summary: '用户列表' })
+  @Post('page')
   @ApiBearerAuth()
-  // @UseGuards(AuthGuard('jwt'))
-  async getPage(@Body() data) {
-    return await this.userService.getPage(data);
+  @UseGuards(OptionalAuthGuard)
+  getPage(@Body() post, @Req() req) {
+    return this.userService.getPage(post, req.user);
   }
 
   @Post('logout')
