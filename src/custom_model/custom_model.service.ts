@@ -60,6 +60,7 @@ export class CustomModelService extends BasicService {
           "CustomModel.createTime",
           "CustomModel.updateTime",
           "CustomModel.thumbnail",
+          "CustomModel.thumbnails",
           "CustomModel.description",
           "CustomModel.isPublic",
           "CustomModel.keywords",

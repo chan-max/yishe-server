@@ -17,8 +17,12 @@ export class CustomModel {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Column({ length: 100 })
-    thumbnail: string; // 缩略图
+    @Column({ nullable: true, type: 'json' })
+    thumbnail: any;
+
+    // 缩略图，通过截屏上传
+    @Column({ nullable: true, type: 'json' })
+    thumbnails: any;
 
     @Column({ length: 100, default: '', nullable: true })
     keywords: string; // 描述

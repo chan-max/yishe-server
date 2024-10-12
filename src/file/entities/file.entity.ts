@@ -37,8 +37,8 @@ export class File {
     @Column({ length: 100, default: '', nullable: true })
     type: string; //文件类型
 
-    @Column({ length: 100, default: '', nullable: true })
-    thumbnail: string; // 缩略图
+    @Column({ nullable: true, type: 'json' })
+    thumbnail: any;
 
     @Column({ type: 'boolean', default: false })
     isPublic: boolean; // 是否为公开的资源

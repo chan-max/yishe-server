@@ -45,8 +45,8 @@ export class ProductModel {
     @Column({ nullable:true,default:0  })
     link_count: number; //  引用次数
 
-    @Column({ length: 1000,nullable:true })
-    thumbnail: string; // 缩略图地址 , 用作该模型的封面图 ， 不同于实物图
+    @Column({ nullable:true,type:'json' })
+    thumbnail: any; // 缩略图地址 , 用作该模型的封面图 ， 不同于实物图
 
     @Column({ type:'json',nullable:true })
     meta: JSON; // 模型图片

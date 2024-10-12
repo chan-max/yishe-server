@@ -24,8 +24,8 @@ export class Sticker {
     @Column({ length: 1000, default: '', nullable: true })
     url: string; // 文件路径
 
-    @Column({ length: 1000 })
-    thumbnail: string; // 文件路径
+    @Column({ nullable: true, type: 'json' })
+    thumbnail: any;
 
     @Column({ length: 1000, default: '', nullable: true })
     keywords: string; // 描述
