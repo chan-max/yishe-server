@@ -50,7 +50,6 @@ export class CustomModelService extends BasicService {
     const where = null
     const queryBuilderName = 'customModel'
 
-
     function queryBuilderHook(qb) {
       qb
         .leftJoinAndSelect('CustomModel.uploader', 'user')
