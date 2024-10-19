@@ -29,8 +29,8 @@ async function bootstrap() {
 
   // 证书
   if (envConfig.https) {
-    const keyFile = fs.readFileSync(path.join(__dirname + '/cert/private.key'));
-    const certFile = fs.readFileSync(path.join(__dirname + '/cert/certificate.crt'));
+    const keyFile = fs.readFileSync(path.join(__dirname + '/cert/1s.design.key'));
+    const certFile = fs.readFileSync(path.join(__dirname + '/cert/1s.design.crt'));
     options.httpsOptions = {
       key: keyFile,
       cert: certFile,
