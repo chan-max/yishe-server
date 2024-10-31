@@ -27,8 +27,8 @@ export class CustomModelService extends BasicService {
     return `This action returns all `;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} `;
+  async findOne(id) {
+    return await this.customModelRepository.findOne({ id });
   }
 
   async update(post) {
@@ -43,6 +43,7 @@ export class CustomModelService extends BasicService {
 
   async getPage(post, userInfo) {
 
+    // 查询个人上传
     if (post.myUploads && !userInfo) {
       throw new UnauthorizedException('请登录');
     }
@@ -63,20 +64,48 @@ export class CustomModelService extends BasicService {
           "CustomModel.description",
           "CustomModel.isPublic",
           "CustomModel.keywords",
+          "CustomModel.price",
           "CustomModel.meta",
           "user.name",
           "user.account",
           "user.email",
           "user.avatar",
           "user.isAdmin",
-        ]).orderBy('CustomModel.createTime', 'DESC')
-
-      // if (post.type) {
-      //   qb.where('customModel.type IN (:...types)', { types: post.type.split(',') })
-      // }
+        ])
 
       if (post.myUploads) {
         qb.where('CustomModel.uploaderId = :uploaderId', { uploaderId: userInfo.id })
+      }
+
+      // 搜索匹配
+      if (post.match) {
+
+        let match = Array.isArray(post.match) ? post.match : [post.match]
+        match.forEach(matcher => {
+
+          if (!match) {
+            return
+          }
+
+          qb.where('CustomModel.name LIKE :searchTerm', { searchTerm: `%${matcher}%` })
+            .orWhere('CustomModel.description LIKE :searchTerm', { searchTerm: `%${matcher}%` })
+            .orWhere('CustomModel.keywords LIKE :searchTerm', { searchTerm: `%${matcher}%` });
+        });
+      }
+
+      // 时间排序
+
+
+      qb.orderBy('CustomModel.createTime', post.createTimeOrderBy || 'DESC')
+
+      if (post.priceOrderBy) {
+        qb.orderBy('CustomModel.price', post.priceOrderBy)
+      }
+
+
+      // 指定基础模型
+      if (post.baseModelId) {
+        qb.where(`json_valid(CustomModel.meta)`).andWhere(`json_search(CustomModel.meta, "one",:value)`, { value: `%${post.baseModelId}%` })
       }
 
     }

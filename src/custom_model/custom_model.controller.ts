@@ -26,14 +26,11 @@ export class CustomModelController {
     return this.customModelService.getPage(params, req.user);
   }
 
-  @Get('')
-  find(@Query() query) {
-    return this.customModelService.findAll();
-  }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.customModelService.findOne(+id);
+
+  @Get()
+  find(@Query() query) {
+    return this.customModelService.findOne(query.id);
   }
 
 

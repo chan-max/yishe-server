@@ -39,6 +39,9 @@ export class CustomModel {
     @Column({ nullable: true, type: 'double' })
     customPrice: any; // 用户自定义的价格
 
+    @Column({ nullable: true, type: 'double' })
+    price: any; // 售价
+
     @Column({ nullable: true, type: 'boolean' })
     isPublic: any; //  是否为公开的模型
 
