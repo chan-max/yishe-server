@@ -65,6 +65,7 @@ export class CustomModelService extends BasicService {
           "CustomModel.isPublic",
           "CustomModel.keywords",
           "CustomModel.price",
+          "CustomModel.customizable",
           "CustomModel.meta",
           "user.name",
           "user.account",
@@ -93,8 +94,11 @@ export class CustomModelService extends BasicService {
         });
       }
 
-      // 时间排序
+      // 是否可定制
 
+      if(post.customizable){
+        qb.where('CustomModel.customizable = :customizable', { customizable:  post.customizable == '1' })
+      }
 
       qb.orderBy('CustomModel.createTime', post.createTimeOrderBy || 'DESC')
 

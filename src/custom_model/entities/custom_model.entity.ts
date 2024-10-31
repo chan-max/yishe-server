@@ -45,6 +45,9 @@ export class CustomModel {
     @Column({ nullable: true, type: 'boolean' })
     isPublic: any; //  是否为公开的模型
 
+    @Column({ nullable: true, type: 'boolean', default: true })
+    customizable: any // 是否可定制
+
     @Column({
         name: 'create_time',
         type: 'timestamp',
