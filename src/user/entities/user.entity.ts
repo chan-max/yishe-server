@@ -11,10 +11,6 @@ import {
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
 const bcrypt = require('bcryptjs');
-import { Sticker } from 'src/sticker/entities/sticker.entity';
-import { File } from 'src/file/entities/file.entity';
-import { CustomModel } from 'src/custom_model/entities/custom_model.entity';
-import { Company } from 'src/company/entities/company.entity';
 
 @Entity('user')
 export class User {
@@ -22,7 +18,7 @@ export class User {
   id: string;
 
   @Column({ length: 100 })
-  account: string; // 用户名
+  username: string; // 用户名
 
   @Column({ length: 100, default: '', nullable: true })
   name: string; //昵称
@@ -30,8 +26,8 @@ export class User {
   @Column({ type: 'bigint', nullable: true })
   phone: number; // 手机号
 
-  @Column({ type: 'boolean', nullable: true })
-  sex: number; // 性别 1:男 0:女
+  @Column({ nullable: true })
+  gender: number; // 性别 1:男 0:女
 
   @Column({ nullable: true })
   birthday: Date; // 出生日期
@@ -55,26 +51,6 @@ export class User {
 
   @Column({ default: '', nullable: true })
   email: string;
-
-
-  
-
-  @OneToMany(() => Sticker, sticker => sticker.uploader)
-  stickers: Sticker[];
-
-  @OneToMany(() => File, file => file.uploader)
-  files: File[];
-
-
-  @OneToMany(() => CustomModel, customModel => customModel.uploader)
-  customModels: CustomModel[];
-
-  @Column({ default: null, nullable: true })
-  companyId: string; //关联的公司
-
-  @ManyToOne(() => Company)
-  @JoinColumn({ name: 'companyId' })
-  company;
 
   @Column({
     name: 'create_time',

@@ -16,8 +16,7 @@ export class AuthService {
   // 获取用户信息
   getUser(user: Partial<User>) {
     const existUser = this.userRepository.findOne({
-      where: { id: user.id, account: user.account },
-      relations: ['company']
+      where: { id: user.id, username: user.username },
     });
     return existUser;
   }
@@ -26,7 +25,7 @@ export class AuthService {
   createToken(user: Partial<User>) {
     return this.jwtService.sign({
       id: user.id,
-      account: user.account,
+      username: user.username,
     });
   }
 
@@ -39,7 +38,7 @@ export class AuthService {
     const token = this.createToken(user);
     const redis = new RedisInstance(0);
 
-    redis.setItem(`user-token-${user.id}-${user.account}`, token, 60 * 60 * 8 * 365);
+    redis.setItem(`user-token-${user.id}-${user.username}`, token, 60 * 60 * 8 * 365);
 
 
 

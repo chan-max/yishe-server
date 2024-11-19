@@ -2,7 +2,7 @@
 export const getUserPageSql = () => {
   return `select 
     u.id, 
-    u.account, 
+    u.username, 
     u.name, 
     u.avatar, 
     u.email, 

@@ -36,13 +36,13 @@ import { OptionalAuthGuard } from 'src/common/authGuard'
 export class UserController {
   constructor(private readonly userService: UserService) { }
 
-  @Post('register')
+  @Post('signup')
   // formdata接收方式
   @UseInterceptors(AnyFilesInterceptor())
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiResponse({ status: 201, type: [User] })
-  async register(@Body() createUserDto: CreateUserDto) {
-    return await this.userService.register(createUserDto);
+  async signup(@Body() createUserDto: CreateUserDto) {
+    return await this.userService.signup(createUserDto);
   }
 
 
@@ -109,21 +109,4 @@ export class UserController {
   }
 
 
-  @Post('follow')
-  @UseGuards(AuthGuard('jwt'))
-  async follow(
-    @Req() request,
-    @Body() post,
-  ) {
-    return this.userService.relationCreate(request.user.id, post.userId);
-  }
-
-  @Post('unfollow')
-  @UseGuards(AuthGuard('jwt'))
-  async unfollow(
-    @Req() request,
-    @Body() post,
-  ) {
-    return this.userService.removeRelation(request.user.id, post.userId);
-  }
 }

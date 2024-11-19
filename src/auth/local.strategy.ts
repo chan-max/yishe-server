@@ -12,15 +12,14 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
         private readonly userRepository: Repository<User>,
     ) {
         super({
-            usernameField: 'account',
+            usernameField: 'username',
             passwordField: 'password',
         } as IStrategyOptions);
     }
 
-    async validate(account: string, password: string) {
+    async validate(username: string, password: string) {
         const user = await this.userRepository.findOne({
-            where: { account },
-            relations: ['company']
+            where: { username },
         });
 
         if (!user) {

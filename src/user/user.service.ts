@@ -12,45 +12,27 @@ import { IPageResult, Pagination } from 'src/utils/pagination';
 
 import { getUserPageSql } from 'src/utils/sql';
 import { createQueryCondition } from 'src/utils/utils';
-import { CustomModel } from 'src/custom_model/entities/custom_model.entity';
 
-import { UserMetaRelationKey, createDefaultRelation } from './relation';
-import { Relation } from './entities/relation.entity';
+
 import { BasicService } from 'src/common/basicService';
-import { Company } from 'src/company/entities/company.entity';
+
 
 @Injectable()
 export class UserService extends BasicService {
   constructor(
     @InjectRepository(User)
     private userRepository,
-    @InjectRepository(CustomModel)
-    private customModelRepository,
-    @InjectRepository(Relation)
-    private relationRepository,
-    @InjectRepository(Company)
-    private companyRepository,
   ) {
     super()
   }
 
   // 用户注册
-  async register(createUserDto) {
-    const { account, inviteCode } = createUserDto;
+  async signup(createUserDto) {
+    const { username, inviteCode } = createUserDto;
 
-    const data = await this.userRepository.findOne({ where: { account } });
+    const data = await this.userRepository.findOne({ where: { username } });
     if (data) {
-      throw new HttpException({ message: '用户已存在', code: 400 }, 200);
-    }
-
-    // 存在邀请码
-    if (inviteCode) {
-      let company = await this.companyRepository.findOne({ where: { inviteCode: inviteCode } })
-      if (!company) {
-        throw new HttpException({ message: '错误的邀请码', code: 400 }, 200);
-      } else {
-        createUserDto.companyId = company.id;
-      }
+      throw new HttpException({ message: 'user is already exist!', code: 400 }, 200);
     }
 
     // 必须先create才能进@BeforeInsert
@@ -73,25 +55,25 @@ export class UserService extends BasicService {
 
   // 根据用户名获取用户信息
   async getUserInfo(id: string) {
-    const user = await this.userRepository.findOne({ where: { id: (id) }, relations: ['company'] });
+    const user = await this.userRepository.findOne({ where: { id: (id) }, });
     return user;
   }
 
   // 注销登录
   async logout(user: Partial<User>) {
     const redis = new RedisInstance(0);
-    redis.removeItem(`user-token-${user.id}-${user.account}`);
-    return '注销成功！';
+    redis.removeItem(`user-token-${user.id}-${user.username}`);
+    return 'logout successful';
   }
 
   // 修改用户密码
   async updatePass(user: Partial<User>, info: UpdatePassDto) {
     if (!compareSync(info.password, user.password)) {
-      throw new HttpException({ message: '用户密码不正确', code: 400 }, 200);
+      throw new HttpException({ message: 'error password', code: 400 }, 200);
     }
     if (compareSync(info.newPassword, user.password)) {
       throw new HttpException(
-        { message: '新密码与旧密码一致', code: 400 },
+        { message: 'same password', code: 400 },
         200,
       );
     }
@@ -103,7 +85,7 @@ export class UserService extends BasicService {
       .execute();
     // 清空用户redis
     const redis = new RedisInstance(0);
-    redis.removeItem(`user-token-${user.id}-${user.account}`);
+    redis.removeItem(`user-token-${user.id}-${user.username}`);
 
     return {};
   }
@@ -170,88 +152,6 @@ export class UserService extends BasicService {
 
 
 
-  /***
-   * 处理用户关联关系
-  */
-  // async updateRelation(post, user) {
-  //   const userData = await this.userRepository.findOne(user.id);
 
-  //   let {
-  //     userId, // 目标用户
-  //     follow // 是否关注
-  //   } = post
-
-  //   if (!userData.meta) {
-  //     userData.meta = {} as any
-  //   }
-
-  //   if (!userData.meta[UserMetaRelationKey]) {
-  //     userData.meta[UserMetaRelationKey] = {}
-  //   }
-
-  //   if (!userData.meta[UserMetaRelationKey][userId]) {
-  //     userData.meta[UserMetaRelationKey][userId] = createDefaultRelation()
-  //   }
-
-  //   // 需要同时更新两个人的信息
-
-  //   let relation = userData.meta[UserMetaRelationKey][userId]
-
-  // }
-
-  /*
-    用户关注信息
-  */
-
-
-  // 创建关注关系
-  async relationCreate(followerId: number, followedId: number) {
-    const existingRelation = await this.relationFindOne(followerId, followedId);
-    if (existingRelation && existingRelation.isActive) {
-      throw new HttpException('Already following', HttpStatus.BAD_REQUEST);
-    }
-
-    if (existingRelation && !existingRelation.isActive) {
-      existingRelation.isActive = true;
-      return this.relationRepository.save(existingRelation);
-    }
-
-    const relation = this.relationRepository.create({
-      followerId,
-      followedId,
-    } as any);
-    return this.relationRepository.save(relation);
-  }
-
-  // 查找关注关系
-  async relationFindOne(followerId: number, followedId: number) {
-    return this.relationRepository.findOne({
-      where: { followerId, followedId },
-    }) as any;
-  }
-
-  // 获取用户的关注列表
-  async getFollowing(userId: number) {
-    return this.relationRepository.find({
-      where: { followerId: userId, isActive: true },
-    });
-  }
-
-  // 获取用户的粉丝列表
-  async getFollowers(userId: number) {
-    return this.relationRepository.find({
-      where: { followedId: userId, isActive: true },
-    });
-  }
-
-  // 取消关注（软删除）
-  async removeRelation(followerId: number, followedId: number) {
-    const existingRelation = await this.relationFindOne(followerId, followedId);
-    if (!existingRelation || !existingRelation.isActive) {
-      throw new HttpException('Not following', HttpStatus.BAD_REQUEST);
-    }
-    existingRelation.isActive = false;
-    await this.relationRepository.save(existingRelation);
-  }
 
 }

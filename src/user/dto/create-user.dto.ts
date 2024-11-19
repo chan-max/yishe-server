@@ -4,7 +4,7 @@ import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class CreateUserDto {
   @IsNotEmpty({ message: '账号不能为空' })
-  readonly account: string;
+  readonly username: string;
 
   @IsNotEmpty({ message: '密码不能为空' })
   readonly password: string;
