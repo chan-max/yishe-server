@@ -28,7 +28,10 @@ export class CustomModelService extends BasicService {
   }
 
   async findOne(id) {
-    return await this.customModelRepository.findOne({ id });
+    console.log(id)
+    let res = await this.customModelRepository.findOne({ where: { id: (id) }, relations: ['uploader'] });
+
+    return res
   }
 
   async update(post) {
@@ -78,7 +81,7 @@ export class CustomModelService extends BasicService {
         qb.where('CustomModel.uploaderId = :uploaderId', { uploaderId: userInfo.id })
       }
 
-      // 搜索匹配
+      // 搜索 关键字 匹配 
       if (post.match) {
 
         let match = Array.isArray(post.match) ? post.match : [post.match]
@@ -96,8 +99,8 @@ export class CustomModelService extends BasicService {
 
       // 是否可定制
 
-      if(post.customizable){
-        qb.where('CustomModel.customizable = :customizable', { customizable:  post.customizable == '1' })
+      if (post.customizable) {
+        qb.where('CustomModel.customizable = :customizable', { customizable: post.customizable == '1' })
       }
 
       qb.orderBy('CustomModel.createTime', post.createTimeOrderBy || 'DESC')
@@ -111,11 +114,7 @@ export class CustomModelService extends BasicService {
       if (post.baseModelId) {
         qb.where(`json_valid(CustomModel.meta)`).andWhere(`json_search(CustomModel.meta, "one",:value)`, { value: `%${post.baseModelId}%` })
       }
-
     }
-
-
-
 
 
     return await this.getPageFn({

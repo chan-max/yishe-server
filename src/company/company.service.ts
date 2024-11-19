@@ -25,6 +25,7 @@ export class CompanyService extends BasicService {
   async create(post) {
 
     post.inviteCode = generateInviteCode()
+
     return await this.companyRepository.save(post)
   }
 

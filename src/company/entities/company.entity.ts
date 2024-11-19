@@ -22,8 +22,10 @@ export class Company {
     name: string;
 
     @Column({ nullable: true, })
-    description: string;
+    inviteCode: string;
 
+    @Column({ nullable: true, })
+    description: string;
 
     @Column({
         name: 'create_time',

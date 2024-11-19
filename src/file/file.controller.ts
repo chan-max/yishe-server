@@ -52,4 +52,9 @@ export class FileController {
   update(@Body() post) {
     return this.fileService.update(post);
   }
+
+  @Post('delete')
+  remove(@Body() body) {
+    return this.fileService.remove(body.id);
+  }
 }

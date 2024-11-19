@@ -89,6 +89,22 @@ export class StickerService extends BasicService {
         qb.andWhere('Sticker.type IN (:...types)', { types: post.type.split(',') })
       }
 
+
+      if (post.match) {
+
+        let match = Array.isArray(post.match) ? post.match : [post.match]
+        match.forEach(matcher => {
+
+          if (!match) {
+            return
+          }
+
+          qb.where('Sticker.name LIKE :searchTerm', { searchTerm: `%${matcher}%` })
+            .orWhere('Sticker.description LIKE :searchTerm', { searchTerm: `%${matcher}%` })
+            .orWhere('Sticker.keywords LIKE :searchTerm', { searchTerm: `%${matcher}%` });
+        });
+      }
+
       if (post.group) {
         qb.where('Sticker.group = :group', { group: post.group })
       }

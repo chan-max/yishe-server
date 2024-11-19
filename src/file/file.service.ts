@@ -22,6 +22,8 @@ export class FileService extends BasicService {
     return await this.fileRepository.save(post)
   }
 
+
+
   findAll() {
     return `This action returns all productModel`;
   }
