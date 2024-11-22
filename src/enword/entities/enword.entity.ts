@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryColumn } from 'typeorm';
+import { Entity, Column, PrimaryColumn, BeforeUpdate } from 'typeorm';
 
 @Entity('EnWords') // 表名
 export class EnWords {
@@ -10,4 +10,24 @@ export class EnWords {
 
     @Column({ type: 'varchar', length: 512, nullable: true })
     type: string | null; // 可选字段
+
+
+    @Column({
+        name: 'create_time',
+        type: 'timestamp',
+        default: () => 'CURRENT_TIMESTAMP',
+    })
+    createTime: Date;
+
+    @Column({
+        name: 'update_time',
+        type: 'timestamp',
+        default: () => 'CURRENT_TIMESTAMP',
+    })
+    updateTime: Date;
+
+    @BeforeUpdate()
+    updateTimestamp() {
+        this.updateTime = new Date();
+    }
 }

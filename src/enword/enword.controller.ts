@@ -26,4 +26,10 @@ export class EnWordsController extends BasicService {
   async getWordById(@Param('word') word: any) {
     return this.enWordsService.findOne(word);
   }
+
+  @Post('page')
+  async getPage(@Body() post,) {
+    return this.enWordsService.getPage(post);
+  }
+
 }
