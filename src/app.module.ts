@@ -5,6 +5,7 @@ import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { KeyService } from 'src/utils/key.service';
+import { EnwordModule } from './enword/enword.module';
 
 
 // 环境配置信息
@@ -15,6 +16,7 @@ import envConfig from '../config';
     TypeOrmModule.forRoot(envConfig.DATABASE_CONFIG),
     UserModule,
     AuthModule,
+    EnwordModule,
   ],
   controllers: [AppController],
   providers: [AppService, KeyService],
