@@ -7,4 +7,7 @@ export class EnWords {
 
     @Column({ type: 'varchar', length: 512, nullable: true })
     translation: string | null; // 可选字段
+
+    @Column({ type: 'varchar', length: 512, nullable: true })
+    type: string | null; // 可选字段
 }
