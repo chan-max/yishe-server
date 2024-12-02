@@ -1,10 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { KeyService } from './utils/key.service';
 
-
-
-
-
 @Injectable()
 export class AppService {
   constructor(private readonly keyService: KeyService) { }
@@ -12,6 +8,7 @@ export class AppService {
     return 'Hello World!';
   }
 
+  
 
   getBasicConfig() {
     return {
@@ -21,7 +18,7 @@ export class AppService {
         Bucket: '1s-1257307499',
         Region: 'ap-beijing'
       },
-      publicKey:this.keyService.getPublicKey()
+      publicKey: this.keyService.getPublicKey()
     }
   }
 }

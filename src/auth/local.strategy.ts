@@ -23,10 +23,10 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
         });
 
         if (!user) {
-            throw new HttpException({ message: '用户名不存在', code: 400 }, 200);
+            throw new HttpException({ message: 'user not exist', code: 400 }, 200);
         }
         if (!compareSync(password, user.password)) {
-            throw new HttpException({ message: '密码错误！', code: 400 }, 200);
+            throw new HttpException({ message: 'password error', code: 400 }, 200);
         }
         return user;
     }
