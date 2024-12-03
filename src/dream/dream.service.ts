@@ -36,8 +36,6 @@ export class DreamService extends BasicService {
     const queryBuilderName = 'Dream'
 
     function queryBuilderHook(qb) {
-      qb.orderBy('Dream.word', 'ASC')
-      // 模糊查询
     }
 
 

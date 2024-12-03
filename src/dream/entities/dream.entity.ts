@@ -5,9 +5,20 @@ export class Dream {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ length: 50 })
+
+  // 标题
+  @Column({ length: 100 })
   title: string;
 
+  // 标题英文
+  @Column({ length: 100 })
+  title_en: string;
+
+  // 消息英文
+  @Column('text')
+  message_en: string;
+
+  // 消息
   @Column('text')
   message: string;
 
