@@ -10,15 +10,16 @@ export class DreamService extends BasicService {
     @InjectRepository(Dream)
     private dreamRepository: Repository<Dream>,
   ) {
-    super()
+    super();
   }
 
   findAll() {
     return `This action returns all enword`;
   }
 
-  findOne(id: number) {
-    return this.dreamRepository.findOne(id);
+  async findOne(id: number) {
+    const dream = await this.dreamRepository.findOne({ where: { id } });
+    return dream || {}; // 返回找到的记录，或者返回 null
   }
 
   update(id: number, updateEnwordDto) {
@@ -29,22 +30,18 @@ export class DreamService extends BasicService {
     return `This action removes a #${id} enword`;
   }
 
-
   async getPage(post) {
+    const where = null;
+    const queryBuilderName = 'Dream';
 
-    const where = null
-    const queryBuilderName = 'Dream'
-
-    function queryBuilderHook(qb) {
-    }
-
+    function queryBuilderHook(qb) { }
 
     return await this.getPageFn({
       queryBuilderHook,
       queryBuilderName,
       post,
       where,
-      repo: this.dreamRepository
-    })
+      repo: this.dreamRepository,
+    });
   }
 }

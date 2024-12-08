@@ -8,9 +8,9 @@ export class DreamController {
 
 
 
-  @Get(':word') // 添加路径参数占位符
-  async getWordById(@Param('word') word: any) {
-    return this.dreamService.findOne(word);
+  @Get(':id') // 添加路径参数占位符
+  async getDreamById(@Param('id') id: any) {
+    return this.dreamService.findOne(id);
   }
 
   @Post('page')
