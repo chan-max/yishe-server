@@ -3,13 +3,11 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   BeforeInsert,
-  OneToOne,
-  JoinColumn,
-  BeforeUpdate,
   OneToMany,
-  ManyToOne
+  BeforeUpdate,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
+import { Dayrecord } from 'src/dayrecord/entities/dayrecord.entity'; // 根据实际路径调整
 const bcrypt = require('bcryptjs');
 
 @Entity('user')
@@ -21,7 +19,7 @@ export class User {
   username: string; // 用户名
 
   @Column({ length: 100, default: '', nullable: true })
-  name: string; //昵称
+  name: string; // 昵称
 
   @Column({ type: 'bigint', nullable: true })
   phone: number; // 手机号
@@ -35,6 +33,12 @@ export class User {
   @Column({ nullable: true })
   status: string;
 
+  @Column({ nullable: true })
+  height: string;
+
+  @Column({ nullable: true })
+  weight: string;
+
   @Column({ nullable: true, type: 'boolean' })
   isAdmin: boolean;
 
@@ -42,12 +46,11 @@ export class User {
   @Exclude() // 返回数据时忽略password，配合ClassSerializerInterceptor使用
   password: string; // 密码
 
-  // @Exclude()
   @Column({ nullable: true, type: 'json' }) // 表示查询时隐藏此列
-  meta: JSON; // 密码
+  meta: JSON; // 额外信息
 
   @Column({ default: '', nullable: true })
-  avatar: string; //头像
+  avatar: string; // 头像
 
   @Column({ default: '', nullable: true })
   email: string;
@@ -71,10 +74,13 @@ export class User {
     this.updateTime = new Date();
   }
 
-
-  // 秘文存储密码 
+  // 密码加密
   @BeforeInsert()
   async encryptPwd() {
     this.password = await bcrypt.hashSync(this.password, 10);
   }
+
+  // 与 Dayrecord 的一对多关联
+  @OneToMany(() => Dayrecord, (dayRecord: any) => dayRecord.user)
+  dayRecords: Dayrecord[];
 }
