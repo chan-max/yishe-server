@@ -23,7 +23,7 @@ export class AppController {
     return 'hello 1s!'
   }
 
-  @Post('getBasicConfig')
+  @Post('config')
   getBasicConfig() {
     return this.appService.getBasicConfig()
   }
