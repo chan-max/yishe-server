@@ -1,6 +1,6 @@
 import { DataSource } from 'typeorm';
 import { User } from 'src/user/entities/user.entity'; // 调整为实际路径
-
+import { Dayrecord } from 'src/dayrecord/entities/dayrecord.entity';
 export const AppDataSource = new DataSource({
     type: 'mysql',
     host: 'localhost',
@@ -8,7 +8,7 @@ export const AppDataSource = new DataSource({
     username: 'root',
     password: '666666z.',
     database: 'lif',
-    entities: [User],
+    entities: [User, Dayrecord],
     synchronize: true, // 根据需求是否启用
     logging: true,
 });

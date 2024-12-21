@@ -26,7 +26,7 @@ async function seedUsers() {
         const meanAge = 30;    // 平均年龄30岁
         const ageStdDev = 15;  // 标准差15岁
 
-        for (let i = 0; i < 5000; i++) {
+        for (let i = 0; i < 500; i++) {
             const user = new User();
 
             user.username = faker.internet.userName();

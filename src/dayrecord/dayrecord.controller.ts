@@ -1,6 +1,7 @@
 import { Controller, Post, Param, UseGuards, Req, Body, Get } from '@nestjs/common';
 import { DayrecordService } from './dayrecord.service';
 import { AuthGuard } from '@nestjs/passport';
+import { count } from 'console';
 
 @Controller('dayrecord')
 export class DayrecordController {
@@ -12,16 +13,10 @@ export class DayrecordController {
     return await this.dayrecordService.createTodayRecord(req.user.id);
   }
 
-  @Post('add')
+  @Post('add/:date?')
   @UseGuards(AuthGuard('jwt'))
-  async addRecordDetail(@Req() req, @Body() post) {
-    return await this.dayrecordService.addRecordDetail(req.user.id, post);
-  }
-
-  @Get(':date?')
-  @UseGuards(AuthGuard('jwt'))
-  async getRecord(@Req() req, @Param('date') date?: string) {
-    return await this.dayrecordService.getRecord(req.user.id, date);
+  async addRecordDetail(@Req() req, @Body() post, @Param('date') date?: string) {
+    return await this.dayrecordService.addRecordDetail(req.user.id, date, post);
   }
 
 
@@ -36,4 +31,37 @@ export class DayrecordController {
   async deleteRecordDetail(@Req() req, @Body() post) {
     return await this.dayrecordService.deleteRecordDetail(req.user.id, post);
   }
+
+
+  @Get('latest/:count?')
+  @UseGuards(AuthGuard('jwt'))
+  async getLatest(@Req() req, @Param('count') count?: any) {
+    if (!count) {
+      count = 7
+    }
+    return await this.dayrecordService.getLatest(req.user.id, Number(count));
+  }
+
+  @Get('analysis')
+  @UseGuards(AuthGuard('jwt'))
+  async getAnalysis(@Req() req) {
+    return await this.dayrecordService.getAnalysis(req.user.id);
+  }
+
+  @Get('total')
+  @UseGuards(AuthGuard('jwt'))
+  async getTotalRecords(@Req() req) {
+    return {
+      success: true,
+      totalRecords: await this.dayrecordService.getTotalRecords(req.user.id),
+    };
+  }
+
+  @Get(':date?')
+  @UseGuards(AuthGuard('jwt'))
+  async getRecord(@Req() req, @Param('date') date?: string) {
+    return await this.dayrecordService.getRecord(req.user.id, date);
+  }
+
+
 }

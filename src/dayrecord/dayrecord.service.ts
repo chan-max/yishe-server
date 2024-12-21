@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Between, Repository } from 'typeorm';
 import { Dayrecord } from './entities/dayrecord.entity';
 import { User } from 'src/user/entities/user.entity';
 import { BasicService } from 'src/common/basicService';
@@ -9,7 +9,7 @@ import { BasicService } from 'src/common/basicService';
 export class DayrecordService extends BasicService {
   constructor(
     @InjectRepository(Dayrecord)
-    private readonly dayRecordRepository: Repository<Dayrecord>,
+    private readonly dayRecordRepository: any,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
   ) {
@@ -28,7 +28,7 @@ export class DayrecordService extends BasicService {
     }
 
     // 获取今天的日期
-    const today = new Date().toISOString().split('T')[0];
+    const today = new Date().toLocaleDateString('en-CA');
 
     // 检查是否已存在记录
     let dayRecord = await this.dayRecordRepository.findOne({
@@ -66,25 +66,54 @@ export class DayrecordService extends BasicService {
     }
   }
 
+  async getTotalRecords(userId: number): Promise<number> {
+    return await this.dayRecordRepository.count({ where: { user: { id: userId } } });
+  }
+
+
   /**
    * 添加记录
    * 向 dayrecord 的 record 字段中增加一个
    */
-  async addRecordDetail(userId: number, newRecord: { id: number; data: string }): Promise<Dayrecord> {
-    // 确保今日记录存在
-    const dayRecord = await this.createTodayRecord(userId);
-
-    // 更新 record 字段
-    if (!Array.isArray(dayRecord.record)) {
-      dayRecord.record = [];
+  async addRecordDetail(userId: number, date: string | null, newRecord: { id: number; data: string }): Promise<Dayrecord> {
+    // 确保用户存在
+    const user = await this.userRepository.findOne({ where: { id: userId } } as any);
+    if (!user) {
+      throw new Error('User not found');
     }
-    dayRecord.record.push(newRecord);
 
-    // 保存更新后的记录
-    await this.dayRecordRepository.save(dayRecord);
+    // 如果没有传递 date 参数，则默认使用今天的日期
+    const currentDate = (!date || date == 'today') ? new Date().toLocaleDateString('en-CA') : date;
+
+    // 查找指定日期的记录
+    let dayRecord = await this.dayRecordRepository.findOne({
+      where: { user: { id: userId }, date: currentDate },
+    } as any);
+
+    // 如果记录不存在，创建新的记录
+    if (!dayRecord) {
+      dayRecord = this.dayRecordRepository.create({
+        user,
+        date: currentDate,
+        record: [newRecord], // 初始化 record 字段，包含新的记录
+      });
+      await this.dayRecordRepository.save(dayRecord);
+    } else {
+      // 如果记录已存在，更新 record 字段
+      if (!Array.isArray(dayRecord.record)) {
+        dayRecord.record = [];
+      }
+      dayRecord.record.push(newRecord);
+
+      // 保存更新后的记录
+      await this.dayRecordRepository.save(dayRecord);
+    }
 
     return dayRecord;
   }
+
+
+
 
   /**
    * 删除记录
@@ -143,4 +172,98 @@ export class DayrecordService extends BasicService {
       repo: this.dayRecordRepository
     })
   }
+
+
+
+
+  async getLatest(userId: number, count): Promise<Dayrecord[]> {
+    // 获取当前日期
+    const today = new Date();
+
+    // 获取7天前的日期
+    const countDaysAgo = new Date(today);
+    countDaysAgo.setDate(today.getDate() - count);
+
+
+    // 格式化为 ISO 字符串（只保留日期部分）
+    const todayStr = today.toISOString().split('T')[0];
+    const countDaysAgoStr = countDaysAgo.toISOString().split('T')[0];
+
+    // 查询数据库获取最近7天的记录
+    const records = await this.dayRecordRepository.find({
+      where: {
+        user: { id: userId },
+        date: Between(countDaysAgoStr, todayStr), // 查询7天内的记录
+      },
+      order: { date: 'ASC' }, // 按照日期升序排列（从7天前到今天）
+    } as any);
+
+    // 结果数组
+    const result: Dayrecord[] = [];
+
+    // 遍历过去7天的日期
+    let currentDate = new Date(countDaysAgo);
+    for (let i = 0; i < count; i++) {
+      const currentDateStr = currentDate.toISOString().split('T')[0];
+
+      // 查找该日期的记录
+      let recordForDate = records.find(record => record.date === currentDateStr);
+
+      // 如果没有记录，自动生成新的记录
+      if (!recordForDate) {
+        const user = await this.userRepository.findOne({ where: { id: userId } } as any);
+
+        // 确保用户存在
+        if (!user) {
+          throw new Error('User not found');
+        }
+
+        // 创建新的记录
+        recordForDate = this.dayRecordRepository.create({
+          user,
+          date: currentDateStr,
+          record: [],
+        });
+
+        await this.dayRecordRepository.save(recordForDate);
+      }
+
+      // 添加记录到结果数组
+      result.push(recordForDate);
+
+      // 增加一天
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+
+    return result;
+  }
+
+
+
+  async getAnalysis(userId: number): Promise<any> {
+    // 获取总记录数
+    const totalRecords = await this.dayRecordRepository.count({ where: { user: { id: userId } } });
+
+    // 获取所有个人记录
+    const allRecords = await this.dayRecordRepository.find({
+      where: { user: { id: userId } },
+      select: ['date', 'record'], // 仅获取需要的字段
+      order: { date: 'ASC' }, // 按日期排序
+    });
+
+    // 处理记录，计算 recordCount
+    const totalRecordCount = allRecords.map((record) => ({
+      date: record.date,
+      recordCount: Array.isArray(record.record) ? record.record.length : 0,
+    }));
+
+    // 返回分析结果
+    return {
+      totalRecords,
+      totalRecordCount,
+    };
+  }
+
+
+
 }
