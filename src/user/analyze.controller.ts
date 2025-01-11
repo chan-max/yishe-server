@@ -1,18 +1,17 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { AnalyzeService } from './analyze.service';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('analyze')
 export class AnalyzeController {
     constructor(private readonly analyzeService: AnalyzeService) { }
 
-    @Get('age-gender-distribution')
-    async getAgeDistribution() {
-        return this.analyzeService.getAgeGenderDistribution();
+
+    @Get('me')
+    @UseGuards(AuthGuard('jwt'))
+    async getUserAnalyze (@Req() req) {
+      const res = await this.analyzeService.getUserAnalyze(req.user.id)
+      return res
     }
 
-
-    @Get('height-distribution')
-    async getHeightDistribution() {
-        return this.analyzeService.getHeightDistribution();
-    }
 }
