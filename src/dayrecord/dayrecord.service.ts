@@ -5,6 +5,23 @@ import { Dayrecord } from './entities/dayrecord.entity'
 import { User } from 'src/user/entities/user.entity'
 import { BasicService } from 'src/common/basicService'
 
+export function getDayRecordDateKey (inputDate?) {
+  const date = inputDate ? new Date(inputDate) : new Date() // 如果未传入日期，使用当前日期
+
+  // 确保日期有效
+  if (isNaN(date.getTime())) {
+    throw new Error(
+      'Invalid date input. Please provide a valid date string or Date object.',
+    )
+  }
+
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0') // 补零，确保两位数
+  const day = String(date.getDate()).padStart(2, '0') // 补零，确保两位数
+
+  return `${year}-${month}-${day}`
+}
+
 @Injectable()
 export class DayrecordService extends BasicService {
   constructor (
@@ -30,7 +47,7 @@ export class DayrecordService extends BasicService {
     }
 
     // 获取今天的日期
-    const today = new Date().toLocaleDateString('en-CA')
+    const today = getDayRecordDateKey()
 
     // 检查是否已存在记录
     let dayRecord = await this.dayRecordRepository.findOne({
@@ -65,7 +82,7 @@ export class DayrecordService extends BasicService {
     }
 
     // 如果没有传递 date 参数，则默认使用今天的日期
-    const currentDate = date || new Date().toLocaleDateString('en-CA')
+    const currentDate = date || getDayRecordDateKey()
 
     // 查找指定日期的记录
     let dayRecord = await this.dayRecordRepository.findOne({
@@ -109,8 +126,7 @@ export class DayrecordService extends BasicService {
     }
 
     // 如果没有传递 date 参数，则默认使用今天的日期
-    const currentDate =
-      !date || date == 'today' ? new Date().toLocaleDateString('en-CA') : date
+    const currentDate = !date || date == 'today' ? getDayRecordDateKey() : date
 
     // 查找指定日期的记录
     let dayRecord = await this.dayRecordRepository.findOne({
@@ -503,5 +519,22 @@ export class DayrecordService extends BasicService {
 
     // 返回身高记录
     return _records
+  }
+
+  async getMonthlyRecords (
+    userId: number,
+    year: number,
+    month: number,
+  ): Promise<Dayrecord[]> {
+    const startDate = new Date(year, month - 1, 1) // 月份从 0 开始
+    const endDate = new Date(year, month, 0) // 当前月的最后一天
+
+    return await this.dayRecordRepository.find({
+      where: {
+        user: { id: userId },
+        date: Between(startDate, endDate),
+      },
+      order: { date: 'ASC' },
+    } as any)
   }
 }

@@ -101,6 +101,17 @@ export class DayrecordController {
     )
   }
 
+  @UseGuards(AuthGuard('jwt'))
+  @Get('monthly-records')
+  async getMonthlyRecords (
+    @Req() req,
+    @Query('year') year: number,
+    @Query('month') month: number,
+  ) {
+    const userId = req.user.id // 从认证信息中获取用户ID
+    return await this.dayrecordService.getMonthlyRecords(userId, year, month)
+  }
+
   // 这个方法始终放在最底下
 
   @Get(':date?')
