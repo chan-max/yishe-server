@@ -68,11 +68,7 @@ export class DayrecordController {
     }
   }
 
-  @Get('height-records')
-  @UseGuards(AuthGuard('jwt'))
-  async getHeightRecords (@Req() req) {
-    return await this.dayrecordService.getMyAllHeightRecords(req.user.id)
-  }
+
 
   @Get('weight-records')
   @UseGuards(AuthGuard('jwt'))
@@ -80,11 +76,6 @@ export class DayrecordController {
     return await this.dayrecordService.getMyAllWeightRecords(req.user.id)
   }
 
-  @Get('latest-height-records')
-  @UseGuards(AuthGuard('jwt'))
-  async getMyLatestHeightRecord (@Req() req) {
-    return await this.dayrecordService.getMyLatestHeightRecord(req.user.id)
-  }
 
   @Get('latest-weight-records')
   @UseGuards(AuthGuard('jwt'))

@@ -32,7 +32,7 @@ export class UserService extends BasicService {
 
     const data = await this.userRepository.findOne({ where: { username } });
     if (data) {
-      throw new HttpException({ message: 'user is already exist!', code: 400 }, 200);
+      throw new HttpException({ message: '用户已经存在', code: 400 }, 200);
     }
 
     // 必须先create才能进@BeforeInsert
