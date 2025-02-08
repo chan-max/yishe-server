@@ -70,23 +70,8 @@ async function seedUsers() {
             }
 
             // 生成身高和体重
-            user.height = `${Math.max(
-                Math.round(randomNormal(heightMean, heightStdDev)),
-                100
-            )}`;
-            user.weight = `${Math.max(
-                Math.round(randomNormal(weightMean, weightStdDev)),
-                20
-            )}`;
 
-            // 额外增加一些特殊数据点
-            if (Math.random() < 0.05) {
-                user.height = `${Math.round(user.gender === 1 ? 210 : 190)}`; // 极高
-                user.weight = `${Math.round(user.gender === 1 ? 120 : 100)}`; // 极重
-            } else if (Math.random() < 0.05) {
-                user.height = `${Math.round(user.gender === 1 ? 140 : 130)}`; // 极矮
-                user.weight = `${Math.round(user.gender === 1 ? 40 : 35)}`;  // 极轻
-            }
+            // 额外增加一些特殊数据
 
             user.isAdmin = false;
             user.password = 'password123';

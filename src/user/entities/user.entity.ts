@@ -33,12 +33,6 @@ export class User {
   @Column({ nullable: true })
   status: string;
 
-  @Column({ nullable: true })
-  height: string;
-
-  @Column({ nullable: true })
-  weight: string;
-
   @Column({ nullable: true, type: 'boolean' })
   isAdmin: boolean;
 
