@@ -32,6 +32,16 @@ export class DayrecordController {
     return await this.dayrecordService.addRecordDetail(req.user.id, date, post)
   }
 
+  @Post('update/:date?')
+  @UseGuards(AuthGuard('jwt'))
+  async updateDayrecord (
+    @Req() req,
+    @Body() post,
+    @Param('date') date?: string,
+  ) {
+    return await this.dayrecordService.addRecordDetail(req.user.id, date, post)
+  }
+
   @Post('page')
   @UseGuards(AuthGuard('jwt'))
   async page (@Req() req, @Body() post) {
@@ -68,14 +78,11 @@ export class DayrecordController {
     }
   }
 
-
-
   @Get('weight-records')
   @UseGuards(AuthGuard('jwt'))
   async getWeightRecords (@Req() req) {
     return await this.dayrecordService.getMyAllWeightRecords(req.user.id)
   }
-
 
   @Get('latest-weight-records')
   @UseGuards(AuthGuard('jwt'))

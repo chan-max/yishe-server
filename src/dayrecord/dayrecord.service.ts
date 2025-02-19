@@ -103,6 +103,35 @@ export class DayrecordService extends BasicService {
     return dayRecord
   }
 
+  async updateDayrecord (
+    userId: number,
+    date,
+    updateData: {
+      title?: string
+      description?: string
+      color?: string
+    },
+  ): Promise<Dayrecord> {
+    // 获取或创建记录
+    let dayRecord = await this.getRecord(userId, date)
+
+    // 仅更新传入的字段
+    if (updateData.title !== undefined) {
+      dayRecord.title = updateData.title
+    }
+    if (updateData.description !== undefined) {
+      dayRecord.description = updateData.description
+    }
+    if (updateData.color !== undefined) {
+      dayRecord.color = updateData.color
+    }
+
+    // 保存更新后的记录
+    await this.dayRecordRepository.save(dayRecord)
+
+    return dayRecord
+  }
+
   async getTotalRecords (userId: number): Promise<number> {
     return await this.dayRecordRepository.count({
       where: { user: { id: userId } },
