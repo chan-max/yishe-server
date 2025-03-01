@@ -12,6 +12,7 @@ import { EncryptionMiddleware } from './src/middleware/encryption.middleware'
 
 import crypto from 'crypto';
 
+
 import * as path from 'path';
 import * as fs from 'fs'
 import * as bodyParser from 'body-parser';
@@ -25,6 +26,8 @@ async function bootstrap() {
     json: { limit: '50mb' },
     urlencoded: { limit: '50mb', extended: true },
   }
+
+
 
 
   // 证书
