@@ -42,10 +42,21 @@ export interface RecordCommon {
     raw: string // 用于生成该条记录的原始内容 ，用户提供的内容
 }
 
+
+export interface UnknownRecord extends RecordCommon {
+    type:RecordTypes.Unknown,
+}
+
 export interface SleepRecord extends RecordCommon {
     type: RecordTypes.Sleep
     sleepStartTime: string // 睡眠开始时间
     sleepEndTime: string // 睡眠结束时间
     sleepQuality: number // 睡眠质量 0 - 10  0为极差 10为极佳
 }
+
+
+
+
+
+export type DayRecord = SleepRecord | UnknownRecord
 
