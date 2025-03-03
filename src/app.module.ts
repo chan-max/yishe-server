@@ -7,6 +7,7 @@ import { AuthModule } from './auth/auth.module';
 import { KeyService } from 'src/utils/key.service';
 import { DayrecordModule } from './dayrecord/dayrecord.module';
 import { FoodModule } from './food/food.module';
+import { AiModule } from './ai/ai.module';
 
 // 环境配置信息
 import envConfig from '../config';
@@ -18,6 +19,7 @@ import envConfig from '../config';
     AuthModule,
     DayrecordModule,
     FoodModule,
+    AiModule,
   ],
   controllers: [AppController],
   providers: [AppService, KeyService],

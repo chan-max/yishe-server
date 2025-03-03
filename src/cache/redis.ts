@@ -2,8 +2,22 @@ import Redis from 'ioredis';
 import envConfig from '../../config';
 
 export class RedisInstance extends Redis {
-  constructor(db: number = 0) {
-    super({ ...envConfig.REDIS, db })
+  private static instance: RedisInstance;
+
+  private constructor(db: number = 0) {
+    super({ ...envConfig.REDIS, db });
+  }
+
+  /**
+   * @Description: 获取Redis实例（单例模式）
+   * @param db {Number} 数据库编号，默认为0
+   * @return: RedisInstance
+   */
+  public static getInstance(db: number = 0): RedisInstance {
+    if (!RedisInstance.instance) {
+      RedisInstance.instance = new RedisInstance(db);
+    }
+    return RedisInstance.instance;
   }
 
   /**
