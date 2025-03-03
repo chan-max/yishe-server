@@ -17,9 +17,11 @@ export default {
   // redis配置
   REDIS: {
     port: 6379, //Redis 端口
-    host: '127.0.0.1', //Redis 域名
+    // host: '49.232.186.238', //Redis 域名
+    host: 'localhost', //Redis 域名
     db: 0,
     family: 4,
-    password: '123456', //'Redis 访问密码'
+    password: '', //'Redis 访问密码'
+    lazyConnect:false,
   },
 };

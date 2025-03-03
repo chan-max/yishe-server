@@ -54,9 +54,5 @@ export interface SleepRecord extends RecordCommon {
     sleepQuality: number // 睡眠质量 0 - 10  0为极差 10为极佳
 }
 
-
-
-
-
 export type DayRecord = SleepRecord | UnknownRecord
 

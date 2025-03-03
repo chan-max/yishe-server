@@ -2,6 +2,8 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Req, Query } from '@
 import { AiService } from './ai.service';
 import { CreateAiDto } from './dto/create-ai.dto';
 import { UpdateAiDto } from './dto/update-ai.dto';
+import { chatWithAssistant } from './request/deepseek';
+import { RedisInstance } from 'src/cache/redis';
 
 @Controller('ai')
 export class AiController {
@@ -12,14 +14,29 @@ export class AiController {
    * @define 根据用户输入的记录生成对应的数据结构
    * */
   @Get('getRecordStruct')
-  getRecordStruct(@Req() req,
-    @Query('prompt') prompt: number) {
+  async getRecordStruct(@Req() req,@Query('prompt') prompt: string) {
 
       if(!prompt){
         return ''
       }
 
-      return `${prompt}111`
+    let redis =  RedisInstance.getInstance(15)
+
+    let cache =  await redis.getItem(prompt)
+
+    if(cache){
+      return {
+        cotent:cache,
+        cache:true
+      }
+    }else{
+      await redis.setItem(prompt,prompt)
+      return {
+        content:``,
+        cache : false
+      }
+    }
+
   }
 
 
