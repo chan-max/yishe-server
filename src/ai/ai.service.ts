@@ -18,6 +18,11 @@ function generateFormattedTimestampKey() {
   return `${year}-${month}-${day}-${hours}-${minutes}-${seconds}`;
 }
 
+const UnknownRecord = {
+  type:'unknown',
+  message:'未被ai理解的记录,可能有它特别的含义吧~'
+}
+
 
 // 根据用户提示词获取基本信息
 const GET_PROMPT_RECORD_BASIC_INFO_NAMESPACE = 'get-prompt-record-basic-info'
@@ -71,9 +76,7 @@ export class AiService {
     let {type} = info
 
     if(type == 'unknown'){
-      return {
-        type:'unknown'
-      }
+      return UnknownRecord
     }
 
     let redis = await RedisInstance.getInstance(15)
@@ -85,6 +88,10 @@ export class AiService {
     }
     
     let actionPrompt = createPrompt_getPromptRecordTypeDetail(type)
+
+    if(!actionPrompt){
+      return UnknownRecord
+    }
 
     let response =  await chatWithDeepSeek({
       system:actionPrompt,
