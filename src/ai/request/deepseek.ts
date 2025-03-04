@@ -55,10 +55,13 @@ async function sendChatRequest({
 }
 
 // 用于封装并调用
-export async function chatWithAssistant() {
+export async function chatWithDeepSeek({
+  system,
+  user
+}) {
   const messages = [
-    { role: 'system', content: 'You are a helpful assistant' },
-    { role: 'user', content: 'Hi' }
+    { role: 'system', content: system },
+    { role: 'user', content: user }
   ];
 
   const token = DEEPSEEK_TOKEN;  // 替换为你的 API Token
@@ -74,6 +77,7 @@ export async function chatWithAssistant() {
     return responseData
   } catch (error) {
     console.error('聊天请求失败:', error);
+   throw error
   }
 }
 

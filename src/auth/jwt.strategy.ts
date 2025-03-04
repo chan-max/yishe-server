@@ -30,7 +30,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     // redis token
     const redis =  RedisInstance.getInstance(0);
     const key = `user-token-${user.id}-${user.username}`;
-    const cacheToken = await redis.getItem(key);
+    const cacheToken = await redis.getItem('token',key);
 
     //单点登陆验证
     if (cacheToken !== originToken) {
