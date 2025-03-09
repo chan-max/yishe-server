@@ -22,7 +22,7 @@ export class DayrecordController {
     return await this.dayrecordService.createTodayRecord(req.user.id)
   }
 
-  @Post('add/:date?')
+  @Post('add/:date')
   @UseGuards(AuthGuard('jwt'))
   async addRecordDetail (
     @Req() req,
@@ -32,7 +32,7 @@ export class DayrecordController {
     return await this.dayrecordService.addRecordDetail(req.user.id, date, post)
   }
 
-  @Post('update/:date?')
+  @Post('update/:date')
   @UseGuards(AuthGuard('jwt'))
   async updateDayrecord (
     @Req() req,
@@ -54,9 +54,9 @@ export class DayrecordController {
     return await this.dayrecordService.deleteRecordDetail(req.user.id, post)
   }
 
-  @Get('latest/:count?')
+  @Get('latest/:count')
   @UseGuards(AuthGuard('jwt'))
-  async getLatest (@Req() req, @Param('count') count?: any) {
+  async getLatest (@Req() req, @Param('count') count: any) {
     if (!count) {
       count = 7
     }
@@ -112,7 +112,7 @@ export class DayrecordController {
 
   // 这个方法始终放在最底下
 
-  @Get(':date?')
+  @Get(':date')
   @UseGuards(AuthGuard('jwt'))
   async getRecord (@Req() req, @Param('date') date?: string) {
     return await this.dayrecordService.getRecord(req.user.id, date)
