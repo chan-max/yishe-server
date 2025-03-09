@@ -112,6 +112,12 @@ export class DayrecordController {
 
   // 这个方法始终放在最底下
 
+  @Get('')
+  @UseGuards(AuthGuard('jwt'))
+  async getRecordCurrent (@Req() req,) {
+    return await this.dayrecordService.getRecord(req.user.id, null)
+  }
+  
   @Get(':date')
   @UseGuards(AuthGuard('jwt'))
   async getRecord (@Req() req, @Param('date') date?: string) {
