@@ -4,6 +4,7 @@ import { UpdateAiDto } from './dto/update-ai.dto';
 import { RedisInstance } from 'src/cache/redis';
 import { createPrompt_getPromptRecordTypeDetail, createPrompt_userInputToRecordType } from './prompt';
 import { chatWithDeepSeek } from './request/deepseek';
+import { PROMPT_GET_MARKDOWN_ARTICLE } from './prompt/article';
 
 
 function generateFormattedTimestampKey() {
@@ -109,5 +110,19 @@ export class AiService {
 
     await redis.setItem(GET_PROMPT_RECORD_DETAIL_NAMESPACE,prompt,jsonString)
     return json
+  }
+
+
+  // 听过 ai 获取对应文章
+  async getArticleByPrompt(prompt){
+    let response = await chatWithDeepSeek({
+      system:PROMPT_GET_MARKDOWN_ARTICLE,
+      user:prompt
+    })
+
+    debugger
+
+    let content = response.choices[0].message.content
+    return content
   }
 }

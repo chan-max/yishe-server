@@ -10,6 +10,8 @@ import { Exclude } from 'class-transformer';
 import { Dayrecord } from 'src/dayrecord/entities/dayrecord.entity'; // 根据实际路径调整
 const bcrypt = require('bcryptjs');
 
+
+
 @Entity('user')
 export class User {
   @PrimaryGeneratedColumn()
@@ -48,6 +50,13 @@ export class User {
 
   @Column({ default: '', nullable: true })
   email: string;
+
+  @Column({ type: 'bigint', nullable: false, default: 365 })
+  coin: string; // 使用 string 存储 bigInt，防止 JavaScript Number 精度丢失
+  
+
+  @Column({ nullable: true,default:true })
+  shouldComplete: number; // 需要完善信息 ， 用户第一次需要完善个人
 
   @Column({
     name: 'create_time',

@@ -20,4 +20,13 @@ export class AiController {
     }
     return this.aiService.getRecordStruct(prompt)
   }
+
+  @Get('getArticleByPrompt')
+  async getArticleByPrompt(@Req() req,@Query('prompt') prompt: string) {
+    if(!prompt){
+      throw new BadRequestException({ code: 400, message: '缺少 prompt 参数'});
+    }
+    return this.aiService.getArticleByPrompt(prompt)
+  }
+
 }

@@ -21,7 +21,6 @@ export class AnalyzeService {
       moodScore: 88, // 心情评分
       luckScore: 88, // 运气评分
 
-      
     }
   }
 }

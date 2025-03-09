@@ -31,21 +31,18 @@ import { UpdatePassDto } from './dto/updatePass-user.dto';
 import { OptionalAuthGuard } from 'src/common/authGuard'
 
 
-
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) { }
 
   @Post('signup')
-  // formdata接收方式
   @UseInterceptors(AnyFilesInterceptor())
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiResponse({ status: 201, type: [User] })
   async signup(@Body() createUserDto: CreateUserDto) {
     return await this.userService.signup(createUserDto);
   }
-
-
+  
   @Post('update')
   @UseGuards(AuthGuard('jwt'))
   async update(@Req() req, @Body() data: UpdateUserDto) {
@@ -88,8 +85,6 @@ export class UserController {
     return this.userService.logout(req.user);
   }
 
-
-
   @Post('updateMeta')
   @UseGuards(AuthGuard('jwt'))
   async updateMeta(
@@ -108,8 +103,4 @@ export class UserController {
     return this.userService.getMeta(request.user, post);
   }
 
-
-
-
-  
 }

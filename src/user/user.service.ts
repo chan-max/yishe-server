@@ -151,7 +151,46 @@ export class UserService extends BasicService {
   }
 
 
+  // 增加用户金币
+async increaseCoin(userId: string, amount: number) {
+  if (amount <= 0) {
+    throw new HttpException({ message: '增加的金币数必须大于0', code: 400 }, HttpStatus.BAD_REQUEST);
+  }
 
+  await this.userRepository
+    .createQueryBuilder()
+    .update(User)
+    .set({ coin: () => `coin + ${amount}` }) // 直接在 SQL 语句中增加金币
+    .where('id = :id', { id: userId })
+    .execute();
+
+  return await this.userRepository.findOne({ where: { id: userId } });
+}
+
+// 减少用户金币
+async decreaseCoin(userId: string, amount: number) {
+  if (amount <= 0) {
+    throw new HttpException({ message: '减少的金币数必须大于0', code: 400 }, HttpStatus.BAD_REQUEST);
+  }
+
+  const user = await this.userRepository.findOne({ where: { id: userId } });
+  if (!user) {
+    throw new HttpException({ message: '用户不存在', code: 404 }, HttpStatus.NOT_FOUND);
+  }
+
+  if (user.coin < amount) {
+    throw new HttpException({ message: '金币不足', code: 400 }, HttpStatus.BAD_REQUEST);
+  }
+
+  await this.userRepository
+    .createQueryBuilder()
+    .update(User)
+    .set({ coin: () => `coin - ${amount}` }) // 直接在 SQL 语句中减少金币
+    .where('id = :id', { id: userId })
+    .execute();
+
+  return await this.userRepository.findOne({ where: { id: userId } });
+}
 
 
 }
