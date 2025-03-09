@@ -29,4 +29,12 @@ export class AiController {
     return this.aiService.getArticleByPrompt(prompt)
   }
 
+
+  @Get('record-to-struct')
+  async recordToStruct(@Req() req,@Query('prompt') prompt: string) {
+    if(!prompt){
+      throw new BadRequestException({ code: 400, message: '缺少 prompt 参数'});
+    }
+    return this.aiService.recordToStruct(prompt)
+  }
 }

@@ -104,3 +104,15 @@ export class RedisInstance extends Redis {
     return await this.flushall();
   }
 }
+
+export async function getRedisCache(namespace,target,db = 15){
+    let redis = RedisInstance.getInstance(db);
+
+    let cache = await redis.getItem(namespace,target)
+
+    if(!cache){
+      return cache
+    }
+
+    return null
+} 

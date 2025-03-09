@@ -55,7 +55,7 @@ export class UserService extends BasicService {
 
   // 根据用户名获取用户信息
   async getUserInfo(id: string) {
-    const user = await this.userRepository.findOne({ where: { id: (id) }, });
+    const user = await this.userRepository.findOne({ where: { id: (id) } });
     return user;
   }
 

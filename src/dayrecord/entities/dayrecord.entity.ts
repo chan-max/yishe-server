@@ -30,7 +30,7 @@ export class Dayrecord {
   @Column({nullable: true})
   description: string //
 
-  @Column({ type: 'json', nullable: true })
+  @Column({ type: 'json', nullable: true, })
   record: any[] // 记录生成日期
 
   @CreateDateColumn({ name: 'create_time' })

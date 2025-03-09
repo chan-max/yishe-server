@@ -5,6 +5,8 @@ import { RedisInstance } from 'src/cache/redis';
 import { createPrompt_getPromptRecordTypeDetail, createPrompt_userInputToRecordType } from './prompt';
 import { chatWithDeepSeek } from './request/deepseek';
 import { PROMPT_GET_MARKDOWN_ARTICLE } from './prompt/article';
+import { PROMPT_RECORD_TO_STRUCT } from './prompt/record';
+import { toSafeJSON } from 'src/utils/common';
 
 
 function generateFormattedTimestampKey() {
@@ -120,9 +122,33 @@ export class AiService {
       user:prompt
     })
 
-    debugger
-
     let content = response.choices[0].message.content
     return content
+  }
+
+
+  // 根据用户的记录，得到对应的结构
+  async recordToStruct(prompt){
+
+    const ns = 'record_to_struct';
+
+    let redis = RedisInstance.getInstance(15);
+
+    let cache = await redis.getItem(ns,prompt);
+
+    if(cache){
+      return toSafeJSON(cache)
+    }
+
+    let response = await chatWithDeepSeek({
+      system:PROMPT_RECORD_TO_STRUCT,
+      user:prompt
+    })
+
+    let content = response.choices[0].message.content
+
+    redis.setItem(ns,prompt,content);
+
+    return toSafeJSON(content);
   }
 }

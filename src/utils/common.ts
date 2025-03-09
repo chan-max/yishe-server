@@ -10,3 +10,13 @@ export function generateInviteCode(length: number = 8): string {
   }
   return inviteCode;
 }
+
+
+export function toSafeJSON(val:any){
+  let res = {}
+  try{
+    res = JSON.parse(val);
+  }catch(e){}
+
+  return res;
+}
