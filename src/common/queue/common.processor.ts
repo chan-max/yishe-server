@@ -3,20 +3,24 @@ import { Inject } from '@nestjs/common';
 import { Job } from 'bull';
 import { AiService } from 'src/ai/ai.service';
 import { DayrecordService } from 'src/dayrecord/dayrecord.service';
+import { UserService } from 'src/user/user.service';
 
 @Processor('commonQueue') // 只处理 commonQueue
 export class CommonProcessor {
   constructor(
     private dayrecordService: DayrecordService,
-    private aiService: AiService
+    private aiService: AiService,
+    private userService: UserService,
     ) {}
 
   @Process('add-dayrecord')
   async handleCommonRequest(job: Job) {
     console.log('使用 ai 分析用户记录提示词', job.data);
     
-    let {id,cid,record} = job.data
+    let {id,cid,record,userId} = job.data
 
+    // ai 分析减少一枚金币
+    await this.userService.decreaseCoin(userId,1)
     let struct = await this.aiService.recordToStruct(record.content);
     this.dayrecordService.updateRecordDetail(id,cid,{
       struct:struct

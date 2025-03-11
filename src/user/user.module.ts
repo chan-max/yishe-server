@@ -10,5 +10,6 @@ import { AnalyzeService } from './analyze.service';
   imports: [TypeOrmModule.forFeature([User])],
   controllers: [UserController, AnalyzeController],
   providers: [UserService, AnalyzeService],
+  exports:[UserService]
 })
 export class UserModule { }

@@ -110,25 +110,28 @@ export class DayrecordService extends BasicService {
     id,
     cid,
     updateData
-  ): Promise<Dayrecord> {
+  ) {
     // 获取 Dayrecord
     const dayRecord = await this.dayRecordRepository.findOne({
       where: { id: id },
     });
   
     if (!dayRecord) {
-      throw new Error('Dayrecord not found');
+      console.log('dayRecord not found')
+      return null;
     }
   
     // 确保 record 字段是数组
     if (!Array.isArray(dayRecord.record)) {
-      throw new Error('Invalid record format');
+      console.log('Invalid record format')
+      return null;
     }
   
     // 查找需要更新的记录项
     const recordIndex = dayRecord.record.findIndex(record => record.id === cid);
     if (recordIndex === -1) {
-      throw new Error('Record detail not found');
+      console.log('Invalid record format')
+      return null;
     }
   
     // 更新指定字段
@@ -222,11 +225,15 @@ export class DayrecordService extends BasicService {
       await this.dayRecordRepository.save(dayRecord)
     }
 
+    
+
     await this.commonQueueService.enqueueAddDayrecord({
       id:dayRecord.id,
       cid:newRecord.id,
-      record:newRecord
+      record:newRecord,
+      userId,
     })
+
 
     return dayRecord
   }

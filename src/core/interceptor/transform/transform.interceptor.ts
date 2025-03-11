@@ -25,7 +25,7 @@ export class TransformInterceptor implements NestInterceptor {
         Logger.access(logFormat);
 
         return {
-          data: data.result || data,
+          data: data?.result || data,
           code: 0,
           message: data.message,
           status: true,
