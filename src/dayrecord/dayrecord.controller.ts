@@ -12,6 +12,7 @@ import { DayrecordService } from './dayrecord.service'
 import { AuthGuard } from '@nestjs/passport'
 import { count } from 'console'
 
+
 @Controller('dayrecord')
 export class DayrecordController {
   constructor (private readonly dayrecordService: DayrecordService) {}
@@ -30,6 +31,15 @@ export class DayrecordController {
     @Param('date') date?: string,
   ) {
     return await this.dayrecordService.addRecordDetail(req.user.id, date, post)
+  }
+
+  @Post('add')
+  @UseGuards(AuthGuard('jwt'))
+  async addRecordDetailCurrent (
+    @Req() req,
+    @Body() post,
+  ) {
+    return await this.dayrecordService.addRecordDetail(req.user.id, null, post)
   }
 
   @Post('update/:date')
@@ -78,17 +88,7 @@ export class DayrecordController {
     }
   }
 
-  @Get('weight-records')
-  @UseGuards(AuthGuard('jwt'))
-  async getWeightRecords (@Req() req) {
-    return await this.dayrecordService.getMyAllWeightRecords(req.user.id)
-  }
 
-  @Get('latest-weight-records')
-  @UseGuards(AuthGuard('jwt'))
-  async getMyLatestWeightRecord (@Req() req) {
-    return await this.dayrecordService.getMyLatestWeightRecord(req.user.id)
-  }
 
   @Get('my-monthly-record-detail')
   @UseGuards(AuthGuard('jwt'))
@@ -112,12 +112,13 @@ export class DayrecordController {
 
   // 这个方法始终放在最底下
 
+
   @Get('')
   @UseGuards(AuthGuard('jwt'))
   async getRecordCurrent (@Req() req,) {
     return await this.dayrecordService.getRecord(req.user.id, null)
   }
-  
+
   @Get(':date')
   @UseGuards(AuthGuard('jwt'))
   async getRecord (@Req() req, @Param('date') date?: string) {

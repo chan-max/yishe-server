@@ -16,7 +16,7 @@ async function sendChatRequest({
   tools = null,
   token
 }) {
-  const data = JSON.stringify({
+  const data = {
     messages: messages,
     model: model,
     frequency_penalty: frequencyPenalty,
@@ -31,7 +31,7 @@ async function sendChatRequest({
     tool_choice: "none",
     logprobs: false,
     top_logprobs: null
-  });
+  }
 
   const config = {
     method: 'post',
@@ -55,13 +55,10 @@ async function sendChatRequest({
 }
 
 // 用于封装并调用
-export async function chatWithDeepSeek({
-  system,
-  user
-}) {
+export async function chatWithDeepSeek(params) {
   const messages = [
-    { role: 'system', content: system },
-    { role: 'user', content: user }
+    { role: 'system', content: params.system },
+    { role: 'user', content: params.user }
   ];
 
   const token = DEEPSEEK_TOKEN;  // 替换为你的 API Token
@@ -72,7 +69,8 @@ export async function chatWithDeepSeek({
       model: 'deepseek-chat',
       maxTokens: 2048,
       temperature: 1,
-      token: token
+      token: token,
+      responseFormat:params.responseFormat
     });
     return responseData
   } catch (error) {

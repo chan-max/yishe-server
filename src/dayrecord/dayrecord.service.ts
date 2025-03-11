@@ -5,6 +5,9 @@ import { Dayrecord } from './entities/dayrecord.entity'
 import { User } from 'src/user/entities/user.entity'
 import { BasicService } from 'src/common/basicService'
 import { getDateKey } from 'src/common/date'
+import { CommonQueueService } from 'src/common/queue/common.service'
+// import { CommonQueueService } from 'src/common/queue/common.service'
+
 
 export function getDayRecordDateKey (inputDate?) {
   const date = inputDate ? new Date(inputDate) : new Date() // 如果未传入日期，使用当前日期
@@ -30,6 +33,7 @@ export class DayrecordService extends BasicService {
     private readonly dayRecordRepository: any,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    private readonly commonQueueService: CommonQueueService
   ) {
     super()
   }
@@ -64,7 +68,6 @@ export class DayrecordService extends BasicService {
       })
       await this.dayRecordRepository.save(dayRecord)
     }
-
     return dayRecord
   }
 
@@ -102,6 +105,41 @@ export class DayrecordService extends BasicService {
 
     return dayRecord
   }
+
+  async updateRecordDetail(
+    id,
+    cid,
+    updateData
+  ): Promise<Dayrecord> {
+    // 获取 Dayrecord
+    const dayRecord = await this.dayRecordRepository.findOne({
+      where: { id: id },
+    });
+  
+    if (!dayRecord) {
+      throw new Error('Dayrecord not found');
+    }
+  
+    // 确保 record 字段是数组
+    if (!Array.isArray(dayRecord.record)) {
+      throw new Error('Invalid record format');
+    }
+  
+    // 查找需要更新的记录项
+    const recordIndex = dayRecord.record.findIndex(record => record.id === cid);
+    if (recordIndex === -1) {
+      throw new Error('Record detail not found');
+    }
+  
+    // 更新指定字段
+    Object.assign(dayRecord.record[recordIndex], updateData);
+  
+    // 保存更新后的 Dayrecord
+    await this.dayRecordRepository.save(dayRecord);
+  
+    return dayRecord;
+  }
+  
 
   async updateDayrecord (
     userId: number,
@@ -145,7 +183,7 @@ export class DayrecordService extends BasicService {
   async addRecordDetail (
     userId: number,
     date: string | null,
-    newRecord: { id: number; data: string },
+    newRecord,
   ): Promise<Dayrecord> {
     // 确保用户存在
     const user = await this.userRepository.findOne({
@@ -173,14 +211,22 @@ export class DayrecordService extends BasicService {
       await this.dayRecordRepository.save(dayRecord)
     } else {
       // 如果记录已存在，更新 record 字段
+
       if (!Array.isArray(dayRecord.record)) {
         dayRecord.record = []
       }
+
       dayRecord.record.push(newRecord)
 
       // 保存更新后的记录
       await this.dayRecordRepository.save(dayRecord)
     }
+
+    await this.commonQueueService.enqueueAddDayrecord({
+      id:dayRecord.id,
+      cid:newRecord.id,
+      record:newRecord
+    })
 
     return dayRecord
   }
@@ -342,92 +388,9 @@ export class DayrecordService extends BasicService {
     }
   }
 
-  /**
-   * 查询用户的所有身高记录
-   */
 
-  async getMyAllWeightRecords (
-    userId: number,
-  ): Promise<{ date: string; weight: number }[]> {
-    // 确保用户存在
-    const user = await this.userRepository.findOne({
-      where: { id: userId },
-    } as any)
-    if (!user) {
-      throw new Error('User not found')
-    }
-
-    // 获取用户的所有日常记录
-    const allRecords = await this.dayRecordRepository.find({
-      where: { user: { id: userId } },
-      select: ['date', 'record', 'id'], // 仅获取日期和记录字段
-    })
-
-    // 筛选出所有身高记录
-
-    const weightRecords: { date: string; weight: number }[] = []
-
-    allRecords.forEach(record => {
-      if (Array.isArray(record.record)) {
-        record.record.forEach(entry => {
-          if (entry.type === 'weight') {
-            entry.pid = record.id
-            weightRecords.push(entry)
-          }
-        })
-      }
-    })
-
-    return weightRecords
-  }
-
-  async getMyLatestWeightRecord (userId: number) {
-    // 确保用户存在
-    const user = await this.userRepository.findOne({
-      where: { id: userId },
-    } as any)
-    if (!user) {
-      throw new Error('User not found')
-    }
-
-    // 获取所有的日常记录，按日期降序排列
-    const allRecords = await this.dayRecordRepository.find({
-      where: { user: { id: userId } },
-      select: ['date', 'record'], // 仅获取日期和记录字段
-      order: { date: 'DESC' }, // 按日期降序排列
-    })
-
-    // 遍历所有记录，从最新的记录开始查找
-    for (const record of allRecords) {
-      if (Array.isArray(record.record)) {
-        const weightRecords = record.record.filter(
-          entry => entry.type === 'weight',
-        )
-
-        // 如果存在身高记录，选择创建时间最新的那一条
-        if (weightRecords.length > 0) {
-          // 根据 createTime 排序，确保选取最新的身高记录
-          const latestWeightRecord = weightRecords.sort((a, b) => {
-            const timeA = new Date(a.createTime).getTime()
-            const timeB = new Date(b.createTime).getTime()
-            return timeB - timeA // 按照时间降序排列
-          })[0] // 获取时间最新的一条记录
-
-          return {
-            ...latestWeightRecord,
-          }
-        }
-      }
-    }
-
-    // 如果没有找到身高记录，返回 null
-    return ''
-  }
 
   /**
-   * 获取近一个月的身高记录
-   * @param userId 用户 ID
-   * @returns 获取近一个月的某种记录详情
    */
   async getMyMonthlyRecordDetail (type: string, userId: number) {
     // 确保用户存在

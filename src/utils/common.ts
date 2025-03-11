@@ -13,10 +13,17 @@ export function generateInviteCode(length: number = 8): string {
 
 
 export function toSafeJSON(val:any){
-  let res = {}
-  try{
-    res = JSON.parse(val);
-  }catch(e){}
 
-  return res;
+  
+  if(val instanceof Object){
+    return val
+  }else if(typeof val == 'string'){
+    let res = {}
+    try{
+       res = JSON.parse(val);
+       return res
+    }catch(e){}
+  }
+
+  return {};
 }

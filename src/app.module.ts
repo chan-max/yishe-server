@@ -12,6 +12,7 @@ import { KeyValueModule } from './keyvalue/keyvalue.module';
 
 // 环境配置信息
 import envConfig from '../config';
+import { QueueModule } from './common/queue/queue.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import envConfig from '../config';
     FoodModule,
     AiModule,
     KeyValueModule,
+    QueueModule,
   ],
   controllers: [AppController],
   providers: [AppService, KeyService],

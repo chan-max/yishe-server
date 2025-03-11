@@ -6,10 +6,13 @@ import { Dayrecord } from './entities/dayrecord.entity'
 import { User } from 'src/user/entities/user.entity'
 import { HeightController } from './mixins/height/height.controller'
 import { HeightService } from './mixins/height/height.service'
+import { CommonQueueService } from 'src/common/queue/common.service'
+import { QueueModule } from 'src/common/queue/queue.module'
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Dayrecord, User])],
+  imports: [TypeOrmModule.forFeature([Dayrecord, User]),QueueModule],
   controllers: [DayrecordController, HeightController],
-  providers: [DayrecordService,HeightService],
+  providers: [DayrecordService,HeightService,],
+  exports: [DayrecordService],
 })
 export class DayrecordModule {}

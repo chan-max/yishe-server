@@ -48,9 +48,11 @@ export class AiService {
     const result = await chatWithDeepSeek({
       system:PROMPT_RECORD_TO_STRUCT,
       user:prompt,
+      responseFormat:'json_object'
     })
 
-    let res = toSafeJSON(result.choices[0].message.content)
+
+    let res = toSafeJSON(result.choices[0].message.content);
 
     // 缓存结果，设置过期时间为 1 小时（3600 秒）
     await this.keyValueService.setItem(namespace, prompt, res);

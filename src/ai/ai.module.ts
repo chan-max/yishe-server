@@ -10,5 +10,6 @@ import { KeyValue } from 'src/keyvalue/entities/keyvalue.entity';
   imports:[TypeOrmModule.forFeature([KeyValue])],
   controllers: [AiController,KeyValueController],
   providers: [AiService,KeyValueService],
+  exports: [AiService],
 })
 export class AiModule {}

@@ -13,6 +13,10 @@ export default {
     dateStrings: true, // 设置返回日期为字符串
     autoLoadEntities: true, // 使用这个配置自动导入entities
     synchronize: true, //根据实体自动创建数据库表， 生产环境建议关闭
+    extra: {
+      connectionLimit: 10,
+      maxAllowedPacket: 64 * 1024 * 1024, // 64MB
+    },
   },
   // redis配置
   REDIS: {
