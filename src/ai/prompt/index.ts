@@ -38,6 +38,7 @@ export function createPrompt_userInputToRecordType() {
     - 昨晚睡了8小时,感觉还不错
     - {"type":"sleep"}
     请分析以下用户输入，并返回识别出的活动类型关键字：
+
     `
 }
 

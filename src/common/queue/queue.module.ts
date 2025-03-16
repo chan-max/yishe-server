@@ -27,5 +27,10 @@ import { UserModule } from 'src/user/user.module';
     providers: [CommonQueueService, CommonProcessor, TaskProcessor,AiProcessor,], // 注册处理器
     exports: [CommonQueueService],
   })
+
+
+
+
+
   export class QueueModule {}
   

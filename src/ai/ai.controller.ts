@@ -37,4 +37,15 @@ export class AiController {
     }
     return this.aiService.recordToStruct(prompt);
   }
+
+  @Get('similar-record-words')
+  async getSimilarRecordWords(@Query('prompt') prompt: string,@Query('count') count: number,) {
+    if (!prompt) {
+      throw new BadRequestException({ code: 400, message: '缺少 prompt 参数' });
+    }
+
+    count ||= 10
+
+    return this.aiService.getSimilarRecordWords(prompt,count);
+  }
 }

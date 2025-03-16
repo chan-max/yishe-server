@@ -7,6 +7,7 @@ import {
   Body,
   Get,
   Query,
+  BadRequestException,
 } from '@nestjs/common'
 import { DayrecordService } from './dayrecord.service'
 import { AuthGuard } from '@nestjs/passport'
@@ -124,6 +125,4 @@ export class DayrecordController {
   async getRecord (@Req() req, @Param('date') date?: string) {
     return await this.dayrecordService.getRecord(req.user.id, date)
   }
-
-  // 新增：获取所有身高记录
 }

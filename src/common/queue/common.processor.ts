@@ -26,8 +26,11 @@ export class CommonProcessor {
       struct:struct
     })
     console.log('用户记录提示词分析完成');
+    
   }
 }
+
+
 
 @Processor('taskQueue') // 只处理 taskQueue
 export class TaskProcessor {

@@ -8,7 +8,6 @@ import { getDateKey } from 'src/common/date'
 import { CommonQueueService } from 'src/common/queue/common.service'
 // import { CommonQueueService } from 'src/common/queue/common.service'
 
-
 export function getDayRecordDateKey (inputDate?) {
   const date = inputDate ? new Date(inputDate) : new Date() // 如果未传入日期，使用当前日期
 
@@ -33,7 +32,7 @@ export class DayrecordService extends BasicService {
     private readonly dayRecordRepository: any,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    private readonly commonQueueService: CommonQueueService
+    private readonly commonQueueService: CommonQueueService,
   ) {
     super()
   }
@@ -106,43 +105,38 @@ export class DayrecordService extends BasicService {
     return dayRecord
   }
 
-  async updateRecordDetail(
-    id,
-    cid,
-    updateData
-  ) {
+  async updateRecordDetail (id, cid, updateData) {
     // 获取 Dayrecord
     const dayRecord = await this.dayRecordRepository.findOne({
       where: { id: id },
-    });
-  
+    })
+
     if (!dayRecord) {
       console.log('dayRecord not found')
-      return null;
+      return null
     }
-  
+
     // 确保 record 字段是数组
     if (!Array.isArray(dayRecord.record)) {
       console.log('Invalid record format')
-      return null;
+      return null
     }
-  
+
     // 查找需要更新的记录项
-    const recordIndex = dayRecord.record.findIndex(record => record.id === cid);
+    const recordIndex = dayRecord.record.findIndex(record => record.id === cid)
     if (recordIndex === -1) {
       console.log('Invalid record format')
-      return null;
+      return null
     }
-  
+
     // 更新指定字段
-    Object.assign(dayRecord.record[recordIndex], updateData);
-  
+    Object.assign(dayRecord.record[recordIndex], updateData)
+
     // 保存更新后的 Dayrecord
-    await this.dayRecordRepository.save(dayRecord);
-  
-    return dayRecord;
+    await this.dayRecordRepository.save(dayRecord)
+
+    return dayRecord
   }
-  
 
   async updateDayrecord (
     userId: number,
@@ -225,15 +219,12 @@ export class DayrecordService extends BasicService {
       await this.dayRecordRepository.save(dayRecord)
     }
 
-    
-
     await this.commonQueueService.enqueueAddDayrecord({
-      id:dayRecord.id,
-      cid:newRecord.id,
-      record:newRecord,
+      id: dayRecord.id,
+      cid: newRecord.id,
+      record: newRecord,
       userId,
     })
-
 
     return dayRecord
   }
@@ -394,8 +385,6 @@ export class DayrecordService extends BasicService {
       totalRecordCount,
     }
   }
-
-
 
   /**
    */
