@@ -11,8 +11,6 @@ import {
 } from '@nestjs/common'
 import { DayrecordService } from './dayrecord.service'
 import { AuthGuard } from '@nestjs/passport'
-import { count } from 'console'
-
 
 @Controller('dayrecord')
 export class DayrecordController {
@@ -99,6 +97,7 @@ export class DayrecordController {
       req.user.id,
     )
   }
+
 
   @UseGuards(AuthGuard('jwt'))
   @Get('monthly-records')

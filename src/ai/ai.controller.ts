@@ -6,6 +6,7 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { AiService } from './ai.service';
+import { chatWithDoubao } from './request/doubao';
 
 @Controller('ai')
 export class AiController {
@@ -47,5 +48,11 @@ export class AiController {
     count ||= 10
 
     return this.aiService.getSimilarRecordWords(prompt,count);
+  }
+
+
+
+  @Get('test')
+  async test(){
   }
 }
