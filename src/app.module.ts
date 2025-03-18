@@ -9,10 +9,16 @@ import { DayrecordModule } from './dayrecord/dayrecord.module';
 import { FoodModule } from './food/food.module';
 import { AiModule } from './ai/ai.module';
 import { KeyValueModule } from './keyvalue/keyvalue.module';
+import { ScheduleModule } from '@nestjs/schedule';
+
 
 // 环境配置信息
 import envConfig from '../config';
 import { QueueModule } from './common/queue/queue.module';
+import { TaskService } from './schedule/schedule.service';
+import { SseController } from './sse/sse.controller';
+import { SseService } from './sse/sse.service';
+import { EventsGateway } from './websocket/app.gateway';
 
 @Module({
   imports: [
@@ -24,8 +30,11 @@ import { QueueModule } from './common/queue/queue.module';
     AiModule,
     KeyValueModule,
     QueueModule,
+    ScheduleModule.forRoot()
   ],
   controllers: [AppController],
-  providers: [AppService, KeyService],
+  providers: [AppService, KeyService,TaskService,EventsGateway],
 })
+
+
 export class AppModule { }

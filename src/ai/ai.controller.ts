@@ -51,7 +51,6 @@ export class AiController {
   }
 
 
-
   @Get('test')
   async test(){
   }
