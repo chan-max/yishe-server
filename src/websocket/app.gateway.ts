@@ -13,7 +13,8 @@ export class EventsGateway {
   private heartbeatInterval = 30000; // 30 seconds
   private heartbeatTimeout = 10000; // 10 seconds
 
-  
+
+
   afterInit(server: Server) {
     this.logger.log('WebSocket Gateway initialized');
   }
@@ -52,6 +53,7 @@ export class EventsGateway {
     });
   }
 
+  
   @SubscribeMessage('message')
   handleMessage(@MessageBody() data: string, @ConnectedSocket() client: Socket): void {
     this.logger.log(`Received message from ${client.id}: ${data}`);
