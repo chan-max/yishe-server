@@ -5,7 +5,7 @@ export const AppDataSource = new DataSource({
     type: 'mysql',
     host: 'localhost',
     port: 3306,
-    username: 'root',
+    username: 'lif',
     password: '666666z.',
     database: 'lif',
     entities: [User, Dayrecord],

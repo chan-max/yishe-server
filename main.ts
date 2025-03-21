@@ -10,13 +10,10 @@ import { LoggerMiddleware } from './src/middleware/logger/logger.middleware';
 import { HeaderMiddleware } from './src/middleware/header.middleware'
 import { EncryptionMiddleware } from './src/middleware/encryption.middleware'
 
-
 import crypto from 'crypto';
 import * as path from 'path';
 import * as fs from 'fs'
 import * as bodyParser from 'body-parser';
-
-
 
 // 环境配置信息
 import envConfig from './config';
