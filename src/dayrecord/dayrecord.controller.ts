@@ -110,7 +110,20 @@ export class DayrecordController {
     return await this.dayrecordService.getMonthlyRecords(userId, year, month)
   }
 
-  // 这个方法始终放在最底下
+  @UseGuards(AuthGuard('jwt'))
+  @Get('monthly-record-count')
+  async getMonthlyRecordCount(
+    @Req() req,
+    @Query('year') year?: number,
+    @Query('month') month?: number,
+  ) {
+    const userId = req.user.id // 从认证信息中获取用户ID
+    if (!userId) {
+      throw new Error('User ID is required');
+    }
+
+    return await this.dayrecordService.getMonthlyRecordCount(userId, year, month);
+  }
 
 
   @Get('')

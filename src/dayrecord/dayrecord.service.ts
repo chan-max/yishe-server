@@ -6,6 +6,7 @@ import { User } from 'src/user/entities/user.entity'
 import { BasicService } from 'src/common/basicService'
 import { getDateKey } from 'src/common/date'
 import { CommonQueueService } from 'src/common/queue/common.service'
+import { RecordSentenceService } from 'src/record_sentence/record_sentence.service'
 // import { CommonQueueService } from 'src/common/queue/common.service'
 
 export function getDayRecordDateKey (inputDate?) {
@@ -33,6 +34,7 @@ export class DayrecordService extends BasicService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private readonly commonQueueService: CommonQueueService,
+    private readonly recordSentenceService: RecordSentenceService,
   ) {
     super()
   }
@@ -219,13 +221,16 @@ export class DayrecordService extends BasicService {
       await this.dayRecordRepository.save(dayRecord)
     }
 
-    await this.commonQueueService.enqueueAddDayrecord({
-      id: dayRecord.id,
-      cid: newRecord.id,
-      record: newRecord,
-      userId,
+    // 句子入库
+    this.recordSentenceService.create({
+      content: newRecord.content,
     })
-
+    // await this.commonQueueService.enqueueAddDayrecord({
+    //   id: dayRecord.id,
+    //   cid: newRecord.id,
+    //   record: newRecord,
+    //   userId,
+    // })
     return dayRecord
   }
 
@@ -414,7 +419,6 @@ export class DayrecordService extends BasicService {
       order: { date: 'ASC' }, // 按日期升序排列
     } as any)
 
-    // 提取所有身高记录
     const _records: { date: string }[] = []
     records.forEach(record => {
       if (Array.isArray(record.record)) {
@@ -427,7 +431,6 @@ export class DayrecordService extends BasicService {
       }
     })
 
-    // 返回身高记录
     return _records
   }
 
@@ -451,5 +454,47 @@ export class DayrecordService extends BasicService {
       },
       order: { date: 'ASC' },
     } as any)
+  }
+
+  async getMonthlyRecordCount (
+    userId: number,
+    year?: number,
+    month?: number,
+  ): Promise<Record<string, number>> {
+    // 如果 year 和 month 没有传入，则使用当前的年份和月份
+    const currentDate = new Date()
+    const finalYear = year ?? currentDate.getFullYear()
+    const finalMonth = month ?? currentDate.getMonth() + 1
+
+    const startDate = new Date(finalYear, finalMonth - 1, 1)
+    const endDate = new Date(finalYear, finalMonth, 0)
+
+    // 获取当月的所有 Dayrecord 记录
+    const dayRecords = await this.dayRecordRepository.find({
+      where: {
+        user: { id: userId },
+        date: Between(startDate, endDate),
+      },
+      select: ['date', 'record'], // 只获取 date 和 record 字段
+    })
+
+    // 初始化结果 Map
+    const recordCountMap: Record<string, number> = {}
+
+    // 填充 Map，每一天的默认记录数为 0
+    for (let day = 1; day <= endDate.getDate(); day++) {
+      const dateKey = `${finalYear}-${String(finalMonth).padStart(
+        2,
+        '0',
+      )}-${String(day).padStart(2, '0')}`
+      recordCountMap[dateKey] = 0
+    }
+
+    // 遍历数据库结果，更新每天的记录条数
+    dayRecords.forEach(record => {
+      recordCountMap[record.date] = record.record?.length || 0
+    })
+
+    return recordCountMap
   }
 }

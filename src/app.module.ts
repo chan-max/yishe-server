@@ -11,7 +11,6 @@ import { AiModule } from './ai/ai.module';
 import { KeyValueModule } from './keyvalue/keyvalue.module';
 import { ScheduleModule } from '@nestjs/schedule';
 
-
 // 环境配置信息
 import envConfig from '../config';
 import { QueueModule } from './common/queue/queue.module';
@@ -19,6 +18,8 @@ import { TaskService } from './schedule/schedule.service';
 import { SseController } from './sse/sse.controller';
 import { SseService } from './sse/sse.service';
 import { EventsGateway } from './websocket/app.gateway';
+import { ElasticsearchModule } from '@nestjs/elasticsearch';
+import { RecordSentenceModule } from './record_sentence/record_sentence.module';
 
 @Module({
   imports: [
@@ -30,11 +31,14 @@ import { EventsGateway } from './websocket/app.gateway';
     AiModule,
     KeyValueModule,
     QueueModule,
-    ScheduleModule.forRoot()
+    ScheduleModule.forRoot(),
+    RecordSentenceModule
   ],
   controllers: [AppController],
   providers: [AppService, KeyService,TaskService,EventsGateway],
 })
+
+
 
 
 export class AppModule { }

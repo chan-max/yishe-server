@@ -9,6 +9,7 @@ import { AllExceptionsFilter } from './src/core/filter/any-exception/any-excepti
 import { LoggerMiddleware } from './src/middleware/logger/logger.middleware';
 import { HeaderMiddleware } from './src/middleware/header.middleware'
 import { EncryptionMiddleware } from './src/middleware/encryption.middleware'
+import * as nodejieba from 'nodejieba';
 
 import crypto from 'crypto';
 import * as path from 'path';
@@ -20,14 +21,12 @@ import envConfig from './config';
 import { KeyService } from 'src/utils/key.service';
 
 async function bootstrap() {
+
+  nodejieba.load();
   const options: any = {
     json: { limit: '50mb' },
     urlencoded: { limit: '50mb', extended: true },
   }
-
-
-
-
   // 证书
   if (envConfig.https) {
     const keyFile = fs.readFileSync(path.join(__dirname + '/cert/1s.design.key'));

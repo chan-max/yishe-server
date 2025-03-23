@@ -8,11 +8,13 @@ import { HeightController } from './mixins/height/height.controller'
 import { HeightService } from './mixins/height/height.service'
 import { CommonQueueService } from 'src/common/queue/common.service'
 import { QueueModule } from 'src/common/queue/queue.module'
+import { RecordSentenceService } from 'src/record_sentence/record_sentence.service'
+import { RecordSentenceModule } from 'src/record_sentence/record_sentence.module'
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Dayrecord, User]),QueueModule],
-  controllers: [DayrecordController, HeightController],
-  providers: [DayrecordService,HeightService,],
+  imports: [TypeOrmModule.forFeature([Dayrecord, User]),QueueModule,RecordSentenceModule],
+  controllers: [DayrecordController,],
+  providers: [DayrecordService],
   exports: [DayrecordService],
 })
 export class DayrecordModule {}
