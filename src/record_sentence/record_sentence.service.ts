@@ -93,9 +93,16 @@ export class RecordSentenceService {
 
     limit ||= 10
 
-    if (!query || query.trim().length === 0) {
-      throw new Error('搜索内容不能为空')
-    }
+     // 1️⃣ 如果查询为空，返回默认的数据（这里我们可以按访问量返回前几条记录，或返回全部记录）
+  if (!query || query.trim().length === 0) {
+    return this.recordSentenceRepository.query(
+      `SELECT id, content FROM record_sentence
+       ORDER BY views DESC LIMIT ?`,
+      [Number(limit)]
+    );
+  }
+
+
 
     // 1️⃣ 使用 nodejieba 进行分词
     const keywords = nodejieba
@@ -103,6 +110,7 @@ export class RecordSentenceService {
       .filter(word => word.trim().length > 0)
     const fulltextQuery = keywords.join(' ')
 
+    
 
     /**
      * @按照views排名排序
@@ -125,26 +133,27 @@ export class RecordSentenceService {
     // )
 
     /**
-     * @按相似度排序
+     * @按相似度排序,相似度相同按照访问量
     */
     const fulltextBooleanResults = await this.recordSentenceRepository.query(
       `SELECT id, content, MATCH(record_text) AGAINST(? IN BOOLEAN MODE) AS relevance
        FROM record_sentence
        WHERE MATCH(record_text) AGAINST(? IN BOOLEAN MODE)
-       ORDER BY relevance DESC, views DESC
+       ORDER BY views DESC
        LIMIT ?`,
-      [fulltextQuery, fulltextQuery, limit],
+      [fulltextQuery, fulltextQuery, Number(limit)],
     );
-  
+
     const fulltextNaturalResults = await this.recordSentenceRepository.query(
       `SELECT id, content, MATCH(record_text) AGAINST(? IN NATURAL LANGUAGE MODE) AS relevance
        FROM record_sentence
        WHERE MATCH(record_text) AGAINST(? IN NATURAL LANGUAGE MODE)
        ORDER BY relevance DESC, views DESC
        LIMIT ?`,
-      [fulltextQuery, fulltextQuery, limit],
+      [fulltextQuery, fulltextQuery, Number(limit)],
     );
 
+    
     // 3️⃣ 额外使用 LIKE 进行模糊匹配
     // const likeResults = await this.recordSentenceRepository
     //   .createQueryBuilder('record')

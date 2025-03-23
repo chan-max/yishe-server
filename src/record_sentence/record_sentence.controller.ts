@@ -54,10 +54,7 @@ export class RecordSentenceController {
   //   return this.recordSentenceService.remove(id)
   // }
 
-  @Get('test')
-  async test () {
-    return '1231313'
-  }
+
   // ✅ 模糊搜索
   @Get('search')
   async search (@Query('query') query: string,@Query('limit') limit: string) {

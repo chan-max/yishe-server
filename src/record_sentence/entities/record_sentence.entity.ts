@@ -30,7 +30,7 @@ export class RecordSentence {
   updateTime: Date
 
   @Column({ type: 'text', nullable: false })
-  @Index('record_index',{ fulltext: true ,parser:'ngram'}) // ✅ FULLTEXT 索引
+  @Index('record_index', { fulltext: true, parser: 'ngram' }) // ✅ FULLTEXT 索引
   record_text: string // ✅ 用于全文搜索的字段
 
   // 经过nodejieba解析过的文字
@@ -46,17 +46,17 @@ export class RecordSentence {
     this.updateTime = new Date()
   }
 
-  @BeforeInsert()
-  beforeInsertActions () {
-    this.record_text = this.content // ✅ 在插入时自动填充 FULLTEXT 字段
-  }
-
+  
   @BeforeInsert()
   @BeforeUpdate()
   generateTokens () {
     if (this.content) {
-      this.token = nodejieba.cut(this.content, true) // ✅ 自动生成分词
+      // 这里可以考虑增加相似词查询，然后拼接
+      // this.token = nodejieba.cut(this.content, true) // ✅ 自动生成分词
+      this.token = nodejieba.cutAll(this.content) // ✅ 自动生成分词
+      this.record_text = this.content // ✅ 在插入时自动填充 FULLTEXT 字段
     }
+
     this.updateTime = new Date()
   }
 }
