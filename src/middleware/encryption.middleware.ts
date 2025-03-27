@@ -10,6 +10,7 @@ export class EncryptionMiddleware implements NestMiddleware {
         this.use = this.use.bind(this);
     }
 
+    
     use(req: Request, res: Response, next: NextFunction) {
 
         const publicKey = this.keyService.getPublicKey();

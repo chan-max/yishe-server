@@ -46,7 +46,7 @@ export class RecordSentence {
     this.updateTime = new Date()
   }
 
-  
+
   @BeforeInsert()
   @BeforeUpdate()
   generateTokens () {

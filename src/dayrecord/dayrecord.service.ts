@@ -222,9 +222,12 @@ export class DayrecordService extends BasicService {
     }
 
     // 句子入库
-    this.recordSentenceService.create({
-      content: newRecord.content,
-    })
+
+    if(newRecord.content){
+      this.recordSentenceService.create({
+        content: newRecord.content,
+      })
+    }
     // await this.commonQueueService.enqueueAddDayrecord({
     //   id: dayRecord.id,
     //   cid: newRecord.id,

@@ -58,7 +58,7 @@ export class UserService extends BasicService {
 
   // 注销登录
   async logout (user: Partial<User>) {
-    const redis = RedisInstance.getInstance(0)
+    const redis = RedisInstance.getInstance(1)
     redis.removeItem('token', `user-token-${user.id}-${user.username}`)
     return 'logout successful'
   }
@@ -78,7 +78,7 @@ export class UserService extends BasicService {
       .where('user.id=:id', { id: user.id })
       .execute()
     // 清空用户redis
-    const redis = RedisInstance.getInstance(0)
+    const redis = RedisInstance.getInstance(1)
     redis.removeItem('token', `user-token-${user.id}-${user.username}`)
 
     return {}

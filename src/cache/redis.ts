@@ -20,6 +20,7 @@ export class RedisInstance extends Redis {
    * @return: RedisInstance
    */
   public static getInstance(db: number = 0): RedisInstance {
+    return new RedisInstance(db);
     if (!RedisInstance.instance) {
       RedisInstance.instance = new RedisInstance(db);
     }

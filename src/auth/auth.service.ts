@@ -36,10 +36,9 @@ export class AuthService {
   // 用户登录
   async login(user: Partial<User>) {
     const token = this.createToken(user);
-    const redis =  RedisInstance.getInstance(0);
+    const redis =  RedisInstance.getInstance(1);
     redis.setItem('token',`user-token-${user.id}-${user.username}`, token, 60 * 60 * 8 * 365);
 
-    
     return {
       // userInfo: user, login 不在返回用户信息，而是通过getuserinfo
       token,
