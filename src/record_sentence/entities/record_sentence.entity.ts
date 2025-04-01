@@ -46,12 +46,12 @@ export class RecordSentence {
     this.updateTime = new Date()
   }
 
-
   @BeforeInsert()
   @BeforeUpdate()
   generateTokens () {
     if (this.content) {
       // 这里可以考虑增加相似词查询，然后拼接
+
       // this.token = nodejieba.cut(this.content, true) // ✅ 自动生成分词
       this.token = nodejieba.cutAll(this.content) // ✅ 自动生成分词
       this.record_text = this.content // ✅ 在插入时自动填充 FULLTEXT 字段
