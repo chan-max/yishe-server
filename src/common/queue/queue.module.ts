@@ -30,7 +30,5 @@ import { UserModule } from 'src/user/user.module';
 
 
 
-
-
   export class QueueModule {}
   
