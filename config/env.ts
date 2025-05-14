@@ -14,6 +14,7 @@ export default {
     autoLoadEntities: true, // 使用这个配置自动导入entities
     synchronize: true, //根据实体自动创建数据库表， 生产环境建议关闭
   },
+  
   // redis配置
   REDIS: {
     port: 6379, //Redis 端口
