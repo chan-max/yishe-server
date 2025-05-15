@@ -7,7 +7,6 @@ import {
   BeforeUpdate,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
-import { Dayrecord } from 'src/dayrecord/entities/dayrecord.entity'; // 根据实际路径调整
 const bcrypt = require('bcryptjs');
 
 
@@ -82,8 +81,4 @@ export class User {
   async encryptPwd() {
     this.password = await bcrypt.hashSync(this.password, 10);
   }
-
-  // 与 Dayrecord 的一对多关联
-  @OneToMany(() => Dayrecord, (dayRecord: any) => dayRecord.user)
-  dayRecords: Dayrecord[];
 }
