@@ -1,3 +1,11 @@
+/*
+ * @Author: chan-max jackieontheway666@gmail.com
+ * @Date: 2025-03-03 18:56:34
+ * @LastEditors: chan-max jackieontheway666@gmail.com
+ * @LastEditTime: 2025-05-19 06:54:40
+ * @FilePath: /design-server/src/auth/auth.service.ts
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -38,7 +46,7 @@ export class AuthService {
     const token = this.createToken(user);
     const redis =  RedisInstance.getInstance(1);
     redis.setItem('token',`user-token-${user.id}-${user.username}`, token, 60 * 60 * 8 * 365);
-
+    
     return {
       // userInfo: user, login 不在返回用户信息，而是通过getuserinfo
       token,
