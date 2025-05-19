@@ -32,4 +32,4 @@ import envConfig from '../config';
   controllers: [AppController],
   providers: [AppService, KeyService],
 })
-export class AppModule { }
+export class AppModule {}

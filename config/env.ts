@@ -20,6 +20,6 @@ export default {
     host: '49.232.186.238', //Redis 域名
     db: 0,
     family: 4,
-    password: '123456', //'Redis 访问密码'
+    password: '666666', //'Redis 访问密码'
   },
 };
