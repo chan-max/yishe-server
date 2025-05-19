@@ -3,7 +3,7 @@
 import * as Path from 'path';
 import * as Log4js from 'log4js';
 import * as Util from 'util';
-import * as Moment from 'moment'; // 处理时间的工具
+// import * as Moment from 'moment'; // 处理时间的工具
 import * as StackTrace from 'stacktrace-js';
 import Chalk from 'chalk';
 import log4jsConfig from 'config/log4jsConfig';
@@ -62,7 +62,8 @@ Log4js.addLayout('json', (logConfig: any) => {
     const messageOutput: string = messageList.join(' ');
     const positionOutput: string = position ? ` [${position}]` : '';
     const typeOutput: string = `[${logConfig.type}] ${logEvent.pid.toString()}   - `;
-    const dateOutput: string = `${Moment(logEvent.startTime).format('YYYY-MM-DD HH:mm:ss')}`;
+    // const dateOutput: string = `${Moment(logEvent.startTime).format('YYYY-MM-DD HH:mm:ss')}`;
+    const dateOutput = 'unknown-date'
     const moduleOutput: string = moduleName ? `[${moduleName}] ` : '[LoggerService] ';
     let levelOutput: string = `[${logEvent.level}] ${messageOutput}`;
 
