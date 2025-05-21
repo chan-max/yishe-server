@@ -52,3 +52,4 @@ export class Resource {
         this.updateTime = new Date();
     }
 }
+
