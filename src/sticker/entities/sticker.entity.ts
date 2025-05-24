@@ -18,11 +18,11 @@ export class Sticker {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Column({ length: 1000 })
-    type: string; // 文件路径
+    @Column({ length: 1000, default: '', nullable: true })
+    url: string; 
 
     @Column({ length: 1000, default: '', nullable: true })
-    url: string; // 文件路径
+    key: string;
 
     @Column({ nullable: true, type: 'json' })
     thumbnail: any;
@@ -47,7 +47,6 @@ export class Sticker {
 
     @Column({ nullable: true, type: 'json' })
     meta: any; // 元数据
-
 
     @ManyToOne(() => User)
     @JoinColumn({ name: 'uploaderId' })

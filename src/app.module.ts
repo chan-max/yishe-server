@@ -6,6 +6,7 @@ import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { FileModule } from './file/file.module';
 import { StickerModule } from './sticker/sticker.module';
+import { PsdTemplateModule } from './psd-template/psd-template.module';
 import { KeyService } from 'src/utils/key.service';
 
 
@@ -19,6 +20,7 @@ import envConfig from '../config';
     AuthModule,
     FileModule,
     StickerModule,
+    PsdTemplateModule,
   ],
   controllers: [AppController],
   providers: [AppService, KeyService],

@@ -57,7 +57,6 @@ export class StickerService extends BasicService {
     const where = null
     const queryBuilderName = 'Sticker'
 
-
     function queryBuilderHook(qb) {
       qb
         .leftJoinAndSelect('Sticker.uploader', 'user')
@@ -71,7 +70,6 @@ export class StickerService extends BasicService {
           "Sticker.isPublic",
           "Sticker.keywords",
           "Sticker.meta",
-          "Sticker.type",
           "Sticker.url",
           "user.name",
           "user.account",
@@ -79,16 +77,9 @@ export class StickerService extends BasicService {
           "user.isAdmin",
         ]).orderBy('Sticker.createTime', 'DESC')
 
-
-
       if (post.myUploads) {
         qb.where('Sticker.uploaderId = :uploaderId', { uploaderId: userInfo.id })
       }
-
-      if (post.type) {
-        qb.andWhere('Sticker.type IN (:...types)', { types: post.type.split(',') })
-      }
-
 
       if (post.match) {
 

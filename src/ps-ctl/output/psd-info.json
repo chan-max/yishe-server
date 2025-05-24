@@ -1,0 +1,69 @@
+{
+  "width": 893,
+  "height": 8330,
+  "layers": [
+    {
+      "name": "组 1",
+      "opacity": 1,
+      "blendMode": "pass through",
+      "left": 0,
+      "top": 0
+    },
+    {
+      "name": "组 2",
+      "opacity": 1,
+      "blendMode": "pass through",
+      "left": 0,
+      "top": 0
+    },
+    {
+      "name": "组 3",
+      "opacity": 1,
+      "blendMode": "pass through",
+      "left": 0,
+      "top": 0
+    },
+    {
+      "name": "组 4",
+      "opacity": 1,
+      "blendMode": "pass through",
+      "left": 0,
+      "top": 0
+    },
+    {
+      "name": "组 5",
+      "opacity": 1,
+      "blendMode": "pass through",
+      "left": 0,
+      "top": 0
+    },
+    {
+      "name": "组 6",
+      "opacity": 1,
+      "blendMode": "pass through",
+      "left": 0,
+      "top": 0
+    },
+    {
+      "name": "组 7",
+      "opacity": 1,
+      "blendMode": "pass through",
+      "left": 0,
+      "top": 0
+    },
+    {
+      "name": "组 8",
+      "opacity": 1,
+      "blendMode": "pass through",
+      "left": 0,
+      "top": 0
+    },
+    {
+      "name": "智能对象",
+      "opacity": 1,
+      "blendMode": "linear dodge",
+      "left": 1269,
+      "top": 404
+    }
+  ]
+}
