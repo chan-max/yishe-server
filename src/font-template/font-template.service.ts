@@ -1,56 +1,108 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { FontTemplate } from './entities/font-template.entity';
 import { CreateFontTemplateDto } from './dto/create-font-template.dto';
+import { UpdateFontTemplateDto } from './dto/update-font-template.dto';
+import { IPageResult, Pagination } from 'src/utils/pagination';
+import { createQueryCondition } from 'src/utils/utils';
+import { BasicService } from 'src/common/basicService';
+import { User } from 'src/user/entities/user.entity';
 
 @Injectable()
-export class FontTemplateService {
-  constructor(
-    @InjectRepository(FontTemplate)
-    private fontTemplateRepository: Repository<FontTemplate>,
-  ) {}
-
-  async create(createFontTemplateDto: CreateFontTemplateDto): Promise<FontTemplate> {
-    const fontTemplate = this.fontTemplateRepository.create(createFontTemplateDto);
-    return await this.fontTemplateRepository.save(fontTemplate);
-  }
-
-  async findAll(): Promise<FontTemplate[]> {
-    return await this.fontTemplateRepository.find();
-  }
-
-  async findOne(id: number): Promise<FontTemplate> {
-    const fontTemplate = await this.fontTemplateRepository.findOne({ where: { id } });
-    if (!fontTemplate) {
-      throw new NotFoundException(`字体模板 ID ${id} 不存在`);
+export class FontTemplateService extends BasicService {
+    constructor(
+        @InjectRepository(FontTemplate)
+        private fontTemplateRepository: Repository<FontTemplate>,
+    ) {
+        super();
     }
-    return fontTemplate;
-  }
 
-  async findByFontFamily(fontFamily: string): Promise<FontTemplate[]> {
-    return await this.fontTemplateRepository.find({
-      where: { fontFamily, isActive: true },
-    });
-  }
+    async create(post) {
+        return await this.fontTemplateRepository.save(post);
+    }
 
-  async update(id: number, updateFontTemplateDto: Partial<CreateFontTemplateDto>): Promise<FontTemplate> {
-    const fontTemplate = await this.findOne(id);
-    Object.assign(fontTemplate, updateFontTemplateDto);
-    return await this.fontTemplateRepository.save(fontTemplate);
-  }
+    findAll() {
+        return `This action returns all font template`;
+    }
 
-  async remove(id: number): Promise<void> {
-    const fontTemplate = await this.findOne(id);
-    await this.fontTemplateRepository.remove(fontTemplate);
-  }
+    async findOne(id: string) {
+        return await this.fontTemplateRepository.findOne({ where: { id } });
+    }
 
-  async searchFonts(query: string): Promise<FontTemplate[]> {
-    return await this.fontTemplateRepository
-      .createQueryBuilder('font')
-      .where('font.name LIKE :query', { query: `%${query}%` })
-      .orWhere('font.fontFamily LIKE :query', { query: `%${query}%` })
-      .orWhere('font.metadata->>\'tags\' LIKE :query', { query: `%${query}%` })
-      .getMany();
-  }
+    async update(post) {
+        const item = await this.fontTemplateRepository.findOne({ where: { id: post.id } });
+        Object.assign(item, post);
+        return this.fontTemplateRepository.save(item);
+    }
+
+    async remove(id) {
+        return this.fontTemplateRepository.delete(id);
+    }
+
+    async getPage(post, userInfo) {
+        if (post.myUploads && !userInfo) {
+            throw new UnauthorizedException('请登录');
+        }
+
+        const where = null;
+        const queryBuilderName = 'FontTemplate';
+
+        function queryBuilderHook(qb) {
+            qb
+                .leftJoinAndSelect('FontTemplate.uploader', 'user')
+                .select([
+                    "FontTemplate.id",
+                    "FontTemplate.name",
+                    "FontTemplate.createTime",
+                    "FontTemplate.updateTime",
+                    "FontTemplate.thumbnail",
+                    "FontTemplate.description",
+                    "FontTemplate.isPublic",
+                    "FontTemplate.category",
+                    "FontTemplate.meta",
+                    "FontTemplate.url",
+                    "user.name",
+                    "user.account",
+                    "user.email",
+                    "user.isAdmin",
+                ]).orderBy('FontTemplate.createTime', 'DESC');
+
+            if (post.myUploads) {
+                qb.where('FontTemplate.uploaderId = :uploaderId', { uploaderId: userInfo.id });
+            }
+
+            if (post.match) {
+                let match = Array.isArray(post.match) ? post.match : [post.match];
+                match.forEach(matcher => {
+                    if (!match) {
+                        return;
+                    }
+
+                    qb.where('FontTemplate.name LIKE :searchTerm', { searchTerm: `%${matcher}%` })
+                        .orWhere('FontTemplate.description LIKE :searchTerm', { searchTerm: `%${matcher}%` });
+                });
+            }
+
+            if (post.category) {
+                qb.where('FontTemplate.category = :category', { category: post.category });
+            }
+        }
+
+        return await this.getPageFn({
+            queryBuilderHook,
+            queryBuilderName,
+            post,
+            where,
+            repo: this.fontTemplateRepository
+        });
+    }
+
+    async findByCategory(category: string) {
+        return await this.fontTemplateRepository.find({ where: { category } });
+    }
+
+    async findByUploader(uploaderId: string) {
+        return await this.fontTemplateRepository.find({ where: { uploaderId } });
+    }
 } 

@@ -1,52 +1,86 @@
-/*
- * @Author: chan-max jackieontheway666@gmail.com
- * @Date: 2025-05-25 09:01:10
- * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2025-05-25 09:04:20
- * @FilePath: /design-server/src/font-template/font-template.controller.ts
- * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
- */
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import {
+    Controller,
+    Get,
+    Post,
+    Body,
+    Patch,
+    Param,
+    Delete,
+    Query,
+    Request,
+    UseGuards,
+} from '@nestjs/common';
 import { FontTemplateService } from './font-template.service';
 import { CreateFontTemplateDto } from './dto/create-font-template.dto';
+import { UpdateFontTemplateDto } from './dto/update-font-template.dto';
+import { AuthGuard } from '@nestjs/passport';
+import {
+    ApiBearerAuth,
+    ApiOperation,
+    ApiParam,
+    ApiQuery,
+    ApiResponse,
+    ApiTags,
+} from '@nestjs/swagger';
+import { OptionalAuthGuard } from 'src/common/authGuard';
 
 @Controller('font-template')
+@ApiTags('字体模板')
 export class FontTemplateController {
-  constructor(private readonly fontTemplateService: FontTemplateService) {}
+    constructor(private readonly fontTemplateService: FontTemplateService) {}
 
-  @Post()
-  async create(@Body() createFontTemplateDto: CreateFontTemplateDto) {
-    return await this.fontTemplateService.create(createFontTemplateDto);
-  }
-
-  @Get()
-  async findAll(@Query('query') query?: string) {
-    if (query) {
-      return await this.fontTemplateService.searchFonts(query);
+    // 获取单个
+    @Get()
+    @ApiOperation({ summary: '获取单个模板' })
+    find(@Query() query) {
+        return this.fontTemplateService.findOne(query.id);
     }
-    return await this.fontTemplateService.findAll();
-  }
 
-  @Get(':id')
-  async findOne(@Param('id') id: string) {
-    return await this.fontTemplateService.findOne(+id);
-  }
+    @Post('create')
+    @ApiOperation({ summary: '创建模板' })
+    create(@Body() createFontTemplateDto: CreateFontTemplateDto) {
+        return this.fontTemplateService.create(createFontTemplateDto);
+    }
 
-  @Get('family/:fontFamily')
-  async findByFontFamily(@Param('fontFamily') fontFamily: string) {
-    return await this.fontTemplateService.findByFontFamily(fontFamily);
-  }
+    @Post('page')
+    @ApiOperation({ summary: '获取模板列表（分页）' })
+    @ApiBearerAuth()
+    @UseGuards(OptionalAuthGuard)
+    getPage(@Body() post, @Request() req) {
+        return this.fontTemplateService.getPage(post, req.user);
+    }
 
-  @Patch(':id')
-  async update(
-    @Param('id') id: string,
-    @Body() updateFontTemplateDto: Partial<CreateFontTemplateDto>,
-  ) {
-    return await this.fontTemplateService.update(+id, updateFontTemplateDto);
-  }
+    @Get()
+    @ApiOperation({ summary: '获取所有模板' })
+    findAll() {
+        return this.fontTemplateService.findAll();
+    }
 
-  @Delete(':id')
-  async remove(@Param('id') id: string) {
-    return await this.fontTemplateService.remove(+id);
-  }
+    @Get(':id')
+    @ApiOperation({ summary: '根据ID获取模板' })
+    findOne(@Param('id') id: string) {
+        return this.fontTemplateService.findOne(id);
+    }
+
+    @Post('update')
+    @ApiOperation({ summary: '更新模板' })
+    update(@Body() updateFontTemplateDto: UpdateFontTemplateDto) {
+        return this.fontTemplateService.update(updateFontTemplateDto);
+    }
+
+    @Post('delete')
+    @ApiOperation({ summary: '删除模板' })
+    remove(@Body() body) {
+        return this.fontTemplateService.remove(body.id);
+    }
+
+    @Get('category/:category')
+    findByCategory(@Param('category') category: string) {
+        return this.fontTemplateService.findByCategory(category);
+    }
+
+    @Get('uploader/:uploaderId')
+    findByUploader(@Param('uploaderId') uploaderId: string) {
+        return this.fontTemplateService.findByUploader(uploaderId);
+    }
 } 
