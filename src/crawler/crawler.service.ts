@@ -1,7 +1,37 @@
 import { Injectable } from '@nestjs/common';
+import { ExampleCrawlerTask } from './tasks/example.task';
 
 @Injectable()
 export class CrawlerService {
+  constructor(private readonly exampleCrawler: ExampleCrawlerTask) {}
+
+  /**
+   * 爬取单个图片
+   * @param url 图片URL
+   * @returns 保存的图片路径
+   */
+  async crawlImage(url: string): Promise<string> {
+    return this.exampleCrawler.crawlImage(url);
+  }
+
+  /**
+   * 爬取网页内容
+   * @param url 网页URL
+   * @returns 网页内容
+   */
+  async crawlWebpage(url: string): Promise<string> {
+    return this.exampleCrawler.crawlWebpage(url);
+  }
+
+  /**
+   * 批量爬取图片
+   * @param urls 图片URL列表
+   * @returns 爬取结果列表
+   */
+  async batchCrawl(urls: string[]): Promise<string[]> {
+    return this.exampleCrawler.batchCrawl(urls);
+  }
+
   /**
    * 开始爬取指定网站
    * @param url 目标网站URL

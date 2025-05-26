@@ -1,0 +1,30 @@
+<svg width="320" height="200" xmlns="http://www.w3.org/2000/svg">
+  <foreignObject x="0" y="0" width="320" height="200">
+    <body xmlns="http://www.w3.org/1999/xhtml">
+      <style>
+        .card {
+          width: 300px;
+          height: 180px;
+          padding: 20px;
+          border-radius: 12px;
+          background: linear-gradient(135deg, #667eea, #764ba2);
+          font-family: Arial, sans-serif;
+          color: red;
+          box-sizing: border-box;
+        }
+        .card h1 {
+          font-size: 20px;
+          margin: 0 0 10px;
+        }
+        .card p {
+          font-size: 14px;
+          margin: 0;
+        }
+      </style>
+      <div class="card">
+        <h1>Hello, SVG + HTML!</h1>
+        <p>This HTML content is styled and rendered inside SVG using foreignObject.</p>
+      </div>
+    </body>
+  </foreignObject>
+</svg>

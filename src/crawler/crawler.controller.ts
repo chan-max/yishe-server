@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2025-05-24 06:51:48
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2025-05-24 06:56:36
+ * @LastEditTime: 2025-05-26 05:47:46
  * @FilePath: /design-server/src/crawler/crawler.controller.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -65,5 +65,20 @@ export class CrawlerController {
   @Get('tasks')
   async getTaskList(@Query('status') status?: string) {
     return this.crawlerService.getTaskList(status);
+  }
+
+  @Post('image')
+  async crawlImage(@Body('url') url: string) {
+    return this.crawlerService.crawlImage(url);
+  }
+
+  @Post('webpage')
+  async crawlWebpage(@Body('url') url: string) {
+    return this.crawlerService.crawlWebpage(url);
+  }
+
+  @Post('batch')
+  async batchCrawl(@Body('urls') urls: string[]) {
+    return this.crawlerService.batchCrawl(urls);
   }
 } 

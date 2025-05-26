@@ -23,11 +23,19 @@ import {
     ApiTags,
 } from '@nestjs/swagger';
 import { OptionalAuthGuard } from 'src/common/authGuard';
+import { generateImage } from '../svg/text-to-png';
+import { Sticker } from '../sticker/entities/sticker.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Controller('font-template')
 @ApiTags('字体模板')
 export class FontTemplateController {
-    constructor(private readonly fontTemplateService: FontTemplateService) {}
+    constructor(
+        private readonly fontTemplateService: FontTemplateService,
+        @InjectRepository(Sticker)
+        private stickerRepository: Repository<Sticker>
+    ) {}
 
     // 获取单个
     @Get()
@@ -82,5 +90,45 @@ export class FontTemplateController {
     @Get('uploader/:uploaderId')
     findByUploader(@Param('uploaderId') uploaderId: string) {
         return this.fontTemplateService.findByUploader(uploaderId);
+    }
+
+    @Post('gen-image')
+    @ApiOperation({ summary: '生成图片并上传到COS，同时新建一条数据到sticker' })
+    async genImage(@Body() body: { fontId: string, text: string }) {
+        const { fontId, text } = body;
+        const fontTemplate = await this.fontTemplateService.findOne(fontId);
+        if (!fontTemplate) {
+            throw new Error('Font template not found');
+        }
+        const fontUrl = fontTemplate.url;
+        const config = {
+            text,
+            font: {
+                url: fontUrl,
+                name: 'CustomFont',
+                size: 144
+            },
+            canvas: {
+                width: 2400,
+                height: 800,
+                background: 'transparent'
+            },
+            textStyle: {
+                color: '#000000',
+                align: 'center' as CanvasTextAlign,
+                baseline: 'middle' as CanvasTextBaseline
+            },
+            output: {
+                filename: 'output.png',
+                directory: __dirname
+            }
+        };
+        const cosUrl = await generateImage(config);
+        const sticker = new Sticker();
+        sticker.url = cosUrl;
+        sticker.name = 'Generated Image';
+        sticker.description = 'Generated from font template';
+        await this.stickerRepository.save(sticker);
+        return sticker;
     }
 } 
