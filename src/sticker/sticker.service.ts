@@ -8,6 +8,7 @@ import { Sticker } from './entities/sticker.entity';
 import { BasicService } from 'src/common/basicService';
 import { User } from 'src/user/entities/user.entity';
 import { JwtService } from '@nestjs/jwt';
+import { CosService } from 'src/common/cos.service';
 
 @Injectable()
 export class StickerService extends BasicService {
@@ -15,7 +16,7 @@ export class StickerService extends BasicService {
   constructor(
     @InjectRepository(Sticker)
     private stickerRepository,
-    // private jwtService: JwtService,
+    private cosService: CosService,
   ) {
     super()
   }
@@ -44,8 +45,25 @@ export class StickerService extends BasicService {
     // return await this.stickerRepository.update(post.id, post);
   }
 
-  async remove(id) {
-    return this.stickerRepository.delete(id)
+  async remove(ids: string | string[]) {
+    // 确保 ids 是数组
+    const idArray = Array.isArray(ids) ? ids : [ids];
+    
+    // 查找所有要删除的贴纸
+    const stickers = await this.stickerRepository.findByIds(idArray);
+    if (!stickers.length) {
+      throw new Error('未找到要删除的贴纸');
+    }
+
+    // 删除 COS 上的文件
+    for (const sticker of stickers) {
+      if (sticker.url) {
+        await this.cosService.deleteFile(sticker.url);
+      }
+    }
+
+    // 删除数据库记录
+    return this.stickerRepository.delete(idArray);
   }
 
   async getPage(post, userInfo) {
@@ -57,7 +75,6 @@ export class StickerService extends BasicService {
     const where = null
     const queryBuilderName = 'Sticker'
 
-
     function queryBuilderHook(qb) {
       qb
         .leftJoinAndSelect('Sticker.uploader', 'user')
@@ -66,12 +83,10 @@ export class StickerService extends BasicService {
           "Sticker.name",
           "Sticker.createTime",
           "Sticker.updateTime",
-          "Sticker.thumbnail",
           "Sticker.description",
           "Sticker.isPublic",
           "Sticker.keywords",
           "Sticker.meta",
-          "Sticker.type",
           "Sticker.url",
           "user.name",
           "user.account",
@@ -79,16 +94,9 @@ export class StickerService extends BasicService {
           "user.isAdmin",
         ]).orderBy('Sticker.createTime', 'DESC')
 
-
-
       if (post.myUploads) {
         qb.where('Sticker.uploaderId = :uploaderId', { uploaderId: userInfo.id })
       }
-
-      if (post.type) {
-        qb.andWhere('Sticker.type IN (:...types)', { types: post.type.split(',') })
-      }
-
 
       if (post.match) {
 

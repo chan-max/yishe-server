@@ -56,7 +56,9 @@ export class StickerController {
   }
 
   @Post('delete')
-  remove(@Body() body) {
-    return this.stickerService.remove(body.id);
+  @ApiOperation({ summary: '删除贴纸' })
+  @ApiResponse({ status: 200, description: '删除成功' })
+  remove(@Body() body: { ids: string | string[] }) {
+    return this.stickerService.remove(body.ids);
   }
 }

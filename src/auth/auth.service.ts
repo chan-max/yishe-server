@@ -17,7 +17,6 @@ export class AuthService {
   getUser(user: Partial<User>) {
     const existUser = this.userRepository.findOne({
       where: { id: user.id, account: user.account },
-      relations: ['company']
     });
     return existUser;
   }
