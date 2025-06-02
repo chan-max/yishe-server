@@ -1,3 +1,11 @@
+/*
+ * @Author: chan-max jackieontheway666@gmail.com
+ * @Date: 2025-05-25 09:37:56
+ * @LastEditors: chan-max jackieontheway666@gmail.com
+ * @LastEditTime: 2025-05-30 22:27:15
+ * @FilePath: /yishe-admin/Users/jackie/workspace/design-server/src/user/entities/user.entity.ts
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 import {
   Column,
   Entity,

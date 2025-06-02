@@ -51,7 +51,9 @@ export class CosService {
    */
   async deleteFile(key: string): Promise<void> {
     if (key.startsWith('http')) {
-      key = key.substring(key.lastIndexOf('/') + 1);
+      // 从 URL 中提取相对路径
+      const url = new URL(key);
+      key = url.pathname.substring(1); // 移除开头的斜杠
     }
 
     try {

@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2025-05-26 07:09:36
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2025-05-26 08:31:08
+ * @LastEditTime: 2025-05-30 06:35:18
  * @FilePath: /design-server/src/svg/text-to-png.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -12,43 +12,23 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { CosService } from '../common/cos.service';
 
-// 默认配置
-const defaultConfig = {
-  // 文字内容
-  text: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
-  
-  // 字体配置
-  font: {
-    url: 'https://1s-1257307499.cos.ap-beijing.myqcloud.com/1748215622119_1s_Heart%20Breaking%20Bad.otf',
-    name: 'HeartBreakingBad',
-    size: 144
-  },
-  
-  // 画布配置
-  canvas: {
-    width: 2400,
-    height: 800,
-    background: 'transparent'
-  },
-  
-  // 文字样式
-  textStyle: {
-    color: '#000000',
-    align: 'center' as CanvasTextAlign,
-    baseline: 'middle' as CanvasTextBaseline
-  },
-  
-  // 输出配置
-  output: {
-    filename: 'output.png',
-    directory: __dirname
-  }
-};
-
 // 生成图片的函数
-export async function generateImage(config = defaultConfig) {
-  const fontFile = path.join(config.output.directory, `${config.font.name}.otf`);
-  const outputFile = path.join(config.output.directory, config.output.filename);
+export async function generateImage({
+  text = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+  fontUrl = 'https://1s-1257307499.cos.ap-beijing.myqcloud.com/1748215622119_1s_Heart%20Breaking%20Bad.otf',
+  fontName = 'HeartBreakingBad',
+  fontSize = 144,
+  canvasWidth = 2400,
+  canvasHeight = 800,
+  canvasBackground = 'transparent',
+  textColor = '#000000',
+  textAlign = 'center' as CanvasTextAlign,
+  textBaseline = 'middle' as CanvasTextBaseline,
+  outputFilename = 'output.png',
+  outputDirectory = __dirname
+}) {
+  const fontFile = path.join(outputDirectory, `${fontName}.otf`);
+  const outputFile = path.join(outputDirectory, outputFilename);
 
   // 实例化CosService
   const cosService = new CosService();
@@ -57,7 +37,7 @@ export async function generateImage(config = defaultConfig) {
     // 1. 下载字体
     if (!fs.existsSync(fontFile)) {
       console.log('开始下载字体文件...');
-      const res = await axios.get(config.font.url, { responseType: 'arraybuffer' });
+      const res = await axios.get(fontUrl, { responseType: 'arraybuffer' });
       fs.writeFileSync(fontFile, res.data);
       console.log('字体文件下载完成:', fontFile);
     } else {
@@ -72,27 +52,27 @@ export async function generateImage(config = defaultConfig) {
 
     // 2. 注册字体
     console.log('开始注册字体...');
-    registerFont(fontFile, { family: config.font.name });
+    registerFont(fontFile, { family: fontName });
     console.log('字体注册成功');
 
     // 3. 创建画布
-    const canvas = createCanvas(config.canvas.width, config.canvas.height);
+    const canvas = createCanvas(canvasWidth, canvasHeight);
     const ctx = canvas.getContext('2d');
     
     // 4. 背景
-    if (config.canvas.background !== 'transparent') {
-      ctx.fillStyle = config.canvas.background;
-      ctx.fillRect(0, 0, config.canvas.width, config.canvas.height);
+    if (canvasBackground !== 'transparent') {
+      ctx.fillStyle = canvasBackground;
+      ctx.fillRect(0, 0, canvasWidth, canvasHeight);
     }
 
     // 5. 设置字体
-    ctx.font = `${config.font.size}px "${config.font.name}"`;
-    ctx.fillStyle = config.textStyle.color;
-    ctx.textAlign = config.textStyle.align;
-    ctx.textBaseline = config.textStyle.baseline;
+    ctx.font = `${fontSize}px "${fontName}"`;
+    ctx.fillStyle = textColor;
+    ctx.textAlign = textAlign;
+    ctx.textBaseline = textBaseline;
 
     // 6. 绘制文字
-    ctx.fillText(config.text, config.canvas.width / 2, config.canvas.height / 2);
+    ctx.fillText(text, canvasWidth / 2, canvasHeight / 2);
 
     // 7. 导出 PNG
     const buffer = canvas.toBuffer('image/png');
@@ -102,7 +82,7 @@ export async function generateImage(config = defaultConfig) {
 
     // 8. 使用CosService上传到COS
     const fileObj = {
-      originalname: config.output.filename,
+      originalname: outputFilename,
       buffer: buffer
     };
     const uploadResult = await cosService.uploadFile(fileObj as any);
@@ -116,34 +96,26 @@ export async function generateImage(config = defaultConfig) {
 
 // 使用示例
 async function main() {
-  // 使用默认配置（透明背景）
-  await generateImage();
+  // 使用默认参数
+//   await generateImage({});
   
-  // 使用自定义配置示例
+  // 使用自定义参数示例
   /*
   await generateImage({
     text: 'Hello World',
-    font: {
-      url: 'https://example.com/font.ttf',
-      name: 'CustomFont',
-      size: 72
-    },
-    canvas: {
-      width: 1200,
-      height: 400,
-      background: '#f0f0f0' // 或 'transparent' 表示透明
-    },
-    textStyle: {
-      color: '#333333',
-      align: 'center',
-      baseline: 'middle'
-    },
-    output: {
-      filename: 'custom.png',
-      directory: __dirname
-    }
+    fontUrl: 'https://example.com/font.ttf',
+    fontName: 'CustomFont',
+    fontSize: 72,
+    canvasWidth: 1200,
+    canvasHeight: 400,
+    canvasBackground: '#f0f0f0',
+    textColor: '#333333',
+    textAlign: 'center',
+    textBaseline: 'middle',
+    outputFilename: 'custom.png',
+    outputDirectory: __dirname
   });
   */
 }
 
-// main(); 
+main();

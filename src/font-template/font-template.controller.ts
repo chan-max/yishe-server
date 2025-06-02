@@ -2,6 +2,7 @@ import {
     Controller,
     Get,
     Post,
+    
     Body,
     Patch,
     Param,
@@ -101,29 +102,20 @@ export class FontTemplateController {
             throw new Error('Font template not found');
         }
         const fontUrl = fontTemplate.url;
-        const config = {
+        const cosUrl = await generateImage({
             text,
-            font: {
-                url: fontUrl,
-                name: 'CustomFont',
-                size: 144
-            },
-            canvas: {
-                width: 2400,
-                height: 800,
-                background: 'transparent'
-            },
-            textStyle: {
-                color: '#000000',
-                align: 'center' as CanvasTextAlign,
-                baseline: 'middle' as CanvasTextBaseline
-            },
-            output: {
-                filename: 'output.png',
-                directory: __dirname
-            }
-        };
-        const cosUrl = await generateImage(config);
+            fontUrl,
+            fontName: 'CustomFont',
+            fontSize: 144,
+            canvasWidth: 2400,
+            canvasHeight: 800,
+            canvasBackground: 'transparent',
+            textColor: '#000000',
+            textAlign: 'center',
+            textBaseline: 'middle',
+            outputFilename: 'output.png',
+            outputDirectory: __dirname
+        });
         const sticker = new Sticker();
         sticker.url = cosUrl;
         sticker.name = 'Generated Image';

@@ -17,7 +17,8 @@ import { StickerModule } from './sticker/sticker.module';
 import { PsdTemplateModule } from './psd-template/psd-template.module';
 import { FontTemplateModule } from './font-template/font-template.module';
 import { KeyService } from 'src/utils/key.service';
-
+import { SentenceModule } from './sentence/sentence.module';
+import { ProductModule } from './product/product.module';
 
 // 环境配置信息
 import envConfig from '../config';
@@ -31,6 +32,8 @@ import envConfig from '../config';
     StickerModule,
     PsdTemplateModule,
     FontTemplateModule,
+    SentenceModule,
+    ProductModule,
   ],
   controllers: [AppController],
   providers: [AppService, KeyService],
