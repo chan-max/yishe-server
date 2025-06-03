@@ -24,6 +24,16 @@ jobs:
       - name: Build NestJS
         run: npm run build
 
+      - name: Create remote directory
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            mkdir -p ${{ secrets.REMOTE_PATH }}
+            chmod 755 ${{ secrets.REMOTE_PATH }}
+
       - name: Upload files to server
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -32,6 +42,9 @@ jobs:
           password: ${{ secrets.SERVER_PASSWORD }}
           source: "dist,package.json,package-lock.json"
           target: ${{ secrets.REMOTE_PATH }}
+          strip_components: 0
+          overwrite: true
+          debug: true
 
       - name: SSH into server and restart with PM2
         uses: appleboy/ssh-action@v1.0.3
@@ -40,7 +53,7 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd /www/workspace/yishe-nest
+            cd ${{ secrets.REMOTE_PATH }}
             npm install --production --legacy-peer-deps
             pm2 start dist/main.js --name yishe-nest || pm2 restart yishe-nest
 
