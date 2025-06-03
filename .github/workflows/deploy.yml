@@ -27,9 +27,9 @@ jobs:
       - name: Upload files to server
         uses: appleboy/scp-action@v0.1.7
         with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          password: ${{ secrets.SERVER_PASSWORD }}
           source: "dist,package.json,package-lock.json"
           target: ${{ secrets.REMOTE_PATH }}
 
@@ -42,4 +42,17 @@ jobs:
           script: |
             cd /www/workspace/yishe-nest
             npm install --production --legacy-peer-deps
-            pm2 start dist/main.js --name yishe-nest || pm2 restart yishe-nest 
+            pm2 start dist/main.js --name yishe-nest || pm2 restart yishe-nest
+
+      - name: Send Feishu Notification
+        if: success()
+        run: |
+          curl -X POST ${{ secrets.FEISHU_WEBHOOK_URL }} \
+            -H "Content-Type: application/json" \
+            -d '{
+              "msg_type": "text",
+              "content": {
+                "text": "✅ NestJS 项目部署成功！🎉\n分支: main\n时间: '"$(date +'%Y-%m-%d %H:%M:%S')"'"
+              }
+            }'
+
