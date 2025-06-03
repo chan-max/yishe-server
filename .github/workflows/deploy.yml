@@ -1,0 +1,45 @@
+name: Deploy NestJS to Server
+
+on:
+  push:
+    branches:
+      - main  # 监听 main 分支
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'  # 替换为你的 Node 版本
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build NestJS
+        run: npm run build
+
+      - name: Upload files to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "dist,package.json,package-lock.json"
+          target: ${{ secrets.REMOTE_PATH }}
+
+      - name: SSH into server and restart with PM2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /www/workspace/yishe-nest
+            npm install --production
+            pm2 start dist/main.js --name yishe-nest || pm2 restart yishe-nest 
