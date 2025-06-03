@@ -1,3 +1,11 @@
+/*
+ * @Author: chan-max jackieontheway666@gmail.com
+ * @Date: 2025-06-02 17:58:18
+ * @LastEditors: chan-max jackieontheway666@gmail.com
+ * @LastEditTime: 2025-06-02 19:49:04
+ * @FilePath: /design-server/src/product_model/entities/product_model.entity.ts
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 import {
     Column,
     Entity,
@@ -45,8 +53,8 @@ export class ProductModel {
     @Column({ nullable:true,default:0  })
     link_count: number; //  引用次数
 
-    @Column({ nullable:true,type:'json' })
-    thumbnail: any; // 缩略图地址 , 用作该模型的封面图 ， 不同于实物图
+    @Column({ nullable:true,type:'varchar', length: 1000 })
+    thumbnail: string; // 缩略图地址 , 用作该模型的封面图 ， 不同于实物图
 
     @Column({ type:'json',nullable:true })
     meta: JSON; // 模型图片

@@ -1,4 +1,11 @@
-
+/*
+ * @Author: chan-max jackieontheway666@gmail.com
+ * @Date: 2025-06-02 17:58:18
+ * @LastEditors: chan-max jackieontheway666@gmail.com
+ * @LastEditTime: 2025-06-02 20:32:30
+ * @FilePath: /design-server/src/custom_model/entities/custom_model.entity.ts
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 import {
     Column,
     Entity,
@@ -17,11 +24,11 @@ export class CustomModel {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Column({ nullable: true, type: 'json' })
-    thumbnail: any;
+    @Column({ nullable: true, type: 'varchar', length: 1000 })
+    thumbnail: string;
 
     // 缩略图，通过截屏上传
-    @Column({ nullable: true, type: 'json' })
+    @Column({ nullable: true, type: 'json',})
     thumbnails: any;
 
     @Column({ length: 100, default: '', nullable: true })
@@ -33,20 +40,20 @@ export class CustomModel {
     @Column({ length: 100, default: '', nullable: true })
     description: string; // 描述
 
-    @Column({ nullable: true, type: 'json' })
+    @Column({ type: 'json', nullable: true })
     meta: any; // 元数据
 
     @Column({ nullable: true, type: 'double' })
-    customPrice: any; // 用户自定义的价格
+    customPrice: number; // 用户自定义的价格
 
     @Column({ nullable: true, type: 'double' })
-    price: any; // 售价
+    price: number; // 售价
 
     @Column({ nullable: true, type: 'boolean' })
-    isPublic: any; //  是否为公开的模型
+    isPublic: boolean; //  是否为公开的模型
 
     @Column({ nullable: true, type: 'boolean', default: true })
-    customizable: any // 是否可定制
+    customizable: boolean; // 是否可定制
 
     @Column({
         name: 'create_time',
@@ -57,7 +64,7 @@ export class CustomModel {
 
 
     @Column({ default: null, nullable: true })
-    uploaderId: any; // 作者id
+    uploaderId: string; // 作者id
 
     @ManyToOne(() => User)
     @JoinColumn({ name: 'uploaderId' })

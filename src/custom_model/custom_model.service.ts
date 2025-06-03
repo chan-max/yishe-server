@@ -1,3 +1,11 @@
+/*
+ * @Author: chan-max jackieontheway666@gmail.com
+ * @Date: 2025-06-02 17:58:18
+ * @LastEditors: chan-max jackieontheway666@gmail.com
+ * @LastEditTime: 2025-06-02 20:27:32
+ * @FilePath: /design-server/src/custom_model/custom_model.service.ts
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { IPageResult, Pagination, } from 'src/utils/pagination';
 import { createQueryCondition } from 'src/utils/utils';
@@ -19,9 +27,23 @@ export class CustomModelService extends BasicService {
   }
 
   async create(post) {
-    return await this.customModelRepository.save(post);
+    console.log('Received post data:', JSON.stringify(post, null, 2));
+    
+    // 确保其他字段的类型正确
+    if (post.customPrice) post.customPrice = Number(post.customPrice);
+    if (post.price) post.price = Number(post.price);
+    if (post.isPublic !== undefined) post.isPublic = Boolean(post.isPublic);
+    if (post.customizable !== undefined) post.customizable = Boolean(post.customizable);
+    
+    try {
+      const result = await this.customModelRepository.save(post);
+      console.log('Save result:', JSON.stringify(result, null, 2));
+      return result;
+    } catch (error) {
+      console.error('Save error:', error);
+      throw error;
+    }
   }
-
 
   findAll() {
     return `This action returns all `;
@@ -30,7 +52,6 @@ export class CustomModelService extends BasicService {
   async findOne(id) {
     console.log(id)
     let res = await this.customModelRepository.findOne({ where: { id: (id) }, relations: ['uploader'] });
-
     return res
   }
 
@@ -45,7 +66,6 @@ export class CustomModelService extends BasicService {
   }
 
   async getPage(post, userInfo) {
-
     // 查询个人上传
     if (post.myUploads && !userInfo) {
       throw new UnauthorizedException('请登录');
@@ -83,10 +103,8 @@ export class CustomModelService extends BasicService {
 
       // 搜索 关键字 匹配 
       if (post.match) {
-
         let match = Array.isArray(post.match) ? post.match : [post.match]
         match.forEach(matcher => {
-
           if (!match) {
             return
           }
@@ -98,7 +116,6 @@ export class CustomModelService extends BasicService {
       }
 
       // 是否可定制
-
       if (post.customizable) {
         qb.where('CustomModel.customizable = :customizable', { customizable: post.customizable == '1' })
       }
@@ -109,13 +126,11 @@ export class CustomModelService extends BasicService {
         qb.orderBy('CustomModel.price', post.priceOrderBy)
       }
 
-
       // 指定基础模型
       if (post.baseModelId) {
         qb.where(`json_valid(CustomModel.meta)`).andWhere(`json_search(CustomModel.meta, "one",:value)`, { value: `%${post.baseModelId}%` })
       }
     }
-
 
     return await this.getPageFn({
       queryBuilderHook,
