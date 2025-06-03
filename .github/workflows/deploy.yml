@@ -19,7 +19,7 @@ jobs:
           node-version: '18'  # 替换为你的 Node 版本
 
       - name: Install Dependencies
-        run: npm install
+        run: npm install --legacy-peer-deps
 
       - name: Build NestJS
         run: npm run build
@@ -41,5 +41,5 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /www/workspace/yishe-nest
-            npm install --production
+            npm install --production --legacy-peer-deps
             pm2 start dist/main.js --name yishe-nest || pm2 restart yishe-nest 
