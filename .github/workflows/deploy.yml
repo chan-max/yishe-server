@@ -47,6 +47,7 @@ jobs:
           debug: true
 
       - name: SSH into server and restart with PM2
+        id: deploy
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SERVER_HOST }}
@@ -54,11 +55,22 @@ jobs:
           password: ${{ secrets.SERVER_PASSWORD }}
           script: |
             cd /www/workspace/yishe-nest
+            rm -rf node_modules
             npm install --production --legacy-peer-deps
-            pm2 start dist/main.js --name yishe-nest || pm2 restart yishe-nest
+            if [ ! -d "node_modules" ]; then
+              echo "::error::node_modules 目录创建失败"
+              exit 1
+            fi
+            pm2 delete yishe-nest || true
+            pm2 start dist/main.js --name yishe-nest
+            sleep 5
+            if ! pm2 list | grep -q "yishe-nest.*online"; then
+              echo "::error::服务启动失败"
+              exit 1
+            fi
 
       - name: Send Feishu Notification
-        if: success()
+        if: steps.deploy.outcome == 'success'
         run: |
           curl -X POST ${{ secrets.FEISHU_WEBHOOK_URL }} \
             -H "Content-Type: application/json" \
@@ -66,6 +78,18 @@ jobs:
               "msg_type": "text",
               "content": {
                 "text": "✅ NestJS 项目部署成功！🎉\n分支: main\n时间: '"$(date +'%Y-%m-%d %H:%M:%S')"'"
+              }
+            }'
+
+      - name: Send Failure Notification
+        if: steps.deploy.outcome == 'failure'
+        run: |
+          curl -X POST ${{ secrets.FEISHU_WEBHOOK_URL }} \
+            -H "Content-Type: application/json" \
+            -d '{
+              "msg_type": "text",
+              "content": {
+                "text": "❌ NestJS 项目部署失败！\n分支: main\n时间: '"$(date +'%Y-%m-%d %H:%M:%S')"'"
               }
             }'
 
