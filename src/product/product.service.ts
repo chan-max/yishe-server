@@ -73,7 +73,8 @@ export class ProductService extends BasicService {
       'stock',
       'specifications',
       'tags',
-      'isActive'
+      'isActive',
+      'isLimitedEdition'
     ];
 
     // 只复制允许的字段
@@ -115,6 +116,7 @@ export class ProductService extends BasicService {
           'Product.specifications',
           'Product.tags',
           'Product.isActive',
+          'Product.isLimitedEdition',
           'Product.createTime',
           'Product.updateTime',
         ])

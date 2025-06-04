@@ -43,6 +43,9 @@ export class Product {
   @Column({ type: 'boolean', default: true })
   isActive: boolean;
 
+  @Column({ type: 'tinyint', default: 0, comment: '是否绝版：0-否，1-是' })
+  isLimitedEdition: number;
+
   @Column({ type: 'json', nullable: true })
   meta: any; // 元数据
 
