@@ -55,12 +55,22 @@ jobs:
           password: ${{ secrets.SERVER_PASSWORD }}
           script: |
             cd /www/workspace/yishe-nest
+            # 安装系统依赖
+            apt-get update
+            apt-get install -y build-essential libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev pkg-config
+            # 清理旧的 node_modules
             rm -rf node_modules
+            # 使用 Node.js 18 版本
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            nvm use 18
+            # 安装依赖
             npm install --production --legacy-peer-deps
             if [ ! -d "node_modules" ]; then
               echo "::error::node_modules 目录创建失败"
               exit 1
             fi
+            # 重启服务
             pm2 delete yishe-nest || true
             pm2 start dist/main.js --name yishe-nest
             sleep 5
