@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2025-05-24 12:42:30
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2025-06-04 07:10:25
+ * @LastEditTime: 2025-06-04 23:51:32
  * @FilePath: /design-server/src/product/entities/product.entity.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -22,8 +22,8 @@ export class Product {
   @Column({ length: 1000, default: '', nullable: true })
   type: string; // 商品类型：服装、鼠标垫、挂毯等
 
-  @Column({ length: 1000, default: '', nullable: true })
-  images: string; // 商品图片，多个图片用逗号分隔
+  @Column({ type: 'json',  nullable: true })
+  images: string[]; // 商品图片数组
 
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   price: number;

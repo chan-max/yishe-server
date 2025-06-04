@@ -70,6 +70,43 @@ jobs:
               echo "::error::node_modules 目录创建失败"
               exit 1
             fi
+            # 创建 TypeORM 配置文件
+            cat > dist/config/typeorm.config.js << 'EOL'
+            module.exports = {
+              type: 'mysql',
+              host: process.env.DB_HOST,
+              port: parseInt(process.env.DB_PORT, 10) || 3306,
+              username: process.env.DB_USERNAME,
+              password: process.env.DB_PASSWORD,
+              database: process.env.DB_DATABASE,
+              entities: ['dist/**/*.entity{.ts,.js}'],
+              synchronize: false,
+              logging: true,
+              maxQueryExecutionTime: 1000,
+              extra: {
+                connectionLimit: 10,
+                queueLimit: 0,
+                waitForConnections: true,
+                connectTimeout: 60000,
+                acquireTimeout: 60000,
+                timeout: 60000,
+                maxIdle: 10,
+                idleTimeout: 60000,
+                enableKeepAlive: true,
+                keepAliveInitialDelay: 0,
+              },
+              poolSize: 10,
+              keepConnectionAlive: true,
+            };
+            EOL
+            # 调整 MySQL 配置
+            mysql -e "SET GLOBAL max_allowed_packet=67108864;" || true
+            # 如果使用的是宝塔面板，可以通过修改配置文件
+            if [ -f "/www/server/mysql/etc/my.cnf" ]; then
+              sed -i '/max_allowed_packet/d' /www/server/mysql/etc/my.cnf
+              echo "max_allowed_packet=64M" >> /www/server/mysql/etc/my.cnf
+              /etc/init.d/mysqld restart || true
+            fi
             # 重启服务
             pm2 delete yishe-nest || true
             pm2 start dist/main.js --name yishe-nest

@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2025-05-24 12:42:39
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2025-06-02 12:36:19
+ * @LastEditTime: 2025-06-04 23:41:39
  * @FilePath: /design-server/src/product/product.service.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -10,6 +10,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from './entities/product.entity';
 import { BasicService } from 'src/common/basicService';
+import { In } from 'typeorm';
 
 @Injectable()
 export class ProductService extends BasicService {
@@ -34,12 +35,43 @@ export class ProductService extends BasicService {
 
   async update(post) {
     const item = await this.productRepository.findOne(post.id);
-    Object.assign(item, post);
+    if (!item) {
+      throw new Error('商品不存在');
+    }
+
+    // 只更新允许的字段
+    const allowedFields = [
+      'name',
+      'description',
+      'type',
+      'images',
+      'price',
+      'salePrice',
+      'stock',
+      'specifications',
+      'tags',
+      'isActive'
+    ];
+
+    // 只复制允许的字段
+    allowedFields.forEach(field => {
+      if (post[field] !== undefined) {
+        item[field] = post[field];
+      }
+    });
+
     return this.productRepository.save(item);
   }
 
   async remove(id: string) {
     return this.productRepository.delete(id);
+  }
+
+  async removeMany(ids: string[]) {
+    if (!ids || ids.length === 0) {
+      return;
+    }
+    return this.productRepository.delete({ id: In(ids) });
   }
 
   async getPage(post) {

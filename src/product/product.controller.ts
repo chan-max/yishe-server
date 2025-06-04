@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2025-05-24 12:42:47
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2025-06-02 12:50:16
+ * @LastEditTime: 2025-06-04 23:44:04
  * @FilePath: /yishe-admin/Users/jackie/workspace/design-server/src/product/product.controller.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -31,8 +31,8 @@ export class ProductController {
 
   @Post('create')
   @ApiOperation({ summary: '创建商品' })
-  create(@Body() post: any) {
-    return this.productService.create(post);
+  create(@Body() createProductDto) {
+    return this.productService.create(createProductDto);
   }
 
   @Get()
@@ -49,19 +49,19 @@ export class ProductController {
 
   @Post('update')
   @ApiOperation({ summary: '更新商品' })
-  update(@Body() post: any) {
-    return this.productService.update(post);
+  update(@Body() updateProductDto) {
+    return this.productService.update(updateProductDto);
   }
 
   @Post('delete')
   @ApiOperation({ summary: '删除商品' })
-  remove(@Body() body: any) {
-    return this.productService.remove(body.id);
+  remove(@Body() body: { ids: string[] }) {
+    return this.productService.removeMany(body.ids);
   }
 
   @Post('page')
   @ApiOperation({ summary: '分页获取商品列表' })
-  getPage(@Body() post: any) {
-    return this.productService.getPage(post);
+  getPage(@Body() body) {
+    return this.productService.getPage(body);
   }
 } 
