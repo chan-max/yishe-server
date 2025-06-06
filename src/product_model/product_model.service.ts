@@ -5,13 +5,19 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ProductModel } from './entities/product_model.entity';
 import { IPageResult, Pagination, } from 'src/utils/pagination';
 import { createQueryCondition } from 'src/utils/utils';
+import { CosService } from 'src/common/cos.service';
+
 @Injectable()
 export class ProductModelService {
 
   constructor(
     @InjectRepository(ProductModel)
     private productModelRepository,
-  ) { }
+    private cosService: CosService,
+  ) {
+    // 设置 CosService 到 ProductModel 实体
+    ProductModel.setCosService(cosService);
+  }
 
   async create(createProductModelDto: CreateProductModelDto) {
     return await this.productModelRepository.save(createProductModelDto)
