@@ -50,6 +50,9 @@ export class Sticker {
     @Column({ type: 'boolean', default: false })
     isPublic: boolean; // 是否为公开的资源
 
+    @Column({ type: 'boolean', default: false })
+    isTexture: boolean; // 是否为材质
+
     @Column({ nullable: true, type: 'json' })
     meta: any; // 元数据
 

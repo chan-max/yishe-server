@@ -117,6 +117,10 @@ export class StickerService extends BasicService {
         qb.where('Sticker.group = :group', { group: post.group })
       }
 
+      if (post.isTexture !== undefined) {
+        qb.andWhere('Sticker.isTexture = :isTexture', { isTexture: post.isTexture })
+      }
+
     }
 
     return await this.getPageFn({
