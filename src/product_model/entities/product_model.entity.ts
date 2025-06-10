@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2025-06-02 17:58:18
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2025-06-07 08:45:47
+ * @LastEditTime: 2025-06-11 05:58:00
  * @FilePath: /design-server/src/product_model/entities/product_model.entity.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -14,7 +14,6 @@ import {
     OneToOne,
     JoinColumn,
     BeforeUpdate,
-    BeforeRemove,
 } from 'typeorm';
 import { CosService } from 'src/common/cos.service';
 
@@ -84,24 +83,5 @@ export class ProductModel {
     @BeforeUpdate()
     updateTimestamp() {
         this.updateTime = new Date();
-    }
-
-    @BeforeRemove()
-    async removeCosFiles() {
-        if (ProductModel.cosService) {
-            try {
-                // 删除模型文件
-                if (this.url) {
-                    await ProductModel.cosService.deleteFile(this.url);
-                }
-                // 删除缩略图
-                if (this.thumbnail) {
-                    await ProductModel.cosService.deleteFile(this.thumbnail);
-                }
-            } catch (error) {
-                console.error('删除 COS 文件失败:', error);
-                // 这里我们不抛出错误，因为文件删除失败不应该影响模型删除
-            }
-        }
     }
 }

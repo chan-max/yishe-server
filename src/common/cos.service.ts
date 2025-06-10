@@ -56,6 +56,8 @@ export class CosService {
       key = url.pathname.substring(1); // 移除开头的斜杠
     }
 
+    
+
     try {
       await this.cos.deleteObject({
         Bucket: this.config.Bucket,

@@ -39,6 +39,22 @@ export class ProductModelService {
   }
 
   async remove(id: number) {
+    const model = await this.productModelRepository.findOne({ id });
+    if (model) {
+      try {
+        // 删除模型文件
+        if (model.url) {
+          await this.cosService.deleteFile(model.url);
+        }
+        // 删除缩略图
+        if (model.thumbnail) {
+          await this.cosService.deleteFile(model.thumbnail);
+        }
+      } catch (error) {
+        console.error('删除 COS 文件失败:', error);
+        // 这里我们不抛出错误，因为文件删除失败不应该影响模型删除
+      }
+    }
     return this.productModelRepository.delete(id);
   }
 

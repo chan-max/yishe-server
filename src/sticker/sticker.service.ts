@@ -55,8 +55,10 @@ export class StickerService extends BasicService {
       throw new Error('未找到要删除的贴纸');
     }
 
+  
     // 删除 COS 上的文件
     for (const sticker of stickers) {
+
       if (sticker.url) {
         await this.cosService.deleteFile(sticker.url);
       }
