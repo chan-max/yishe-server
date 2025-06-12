@@ -64,6 +64,7 @@ export class ProductService extends BasicService {
 
     // 只更新允许的字段
     const allowedFields = [
+      'code',
       'name',
       'description',
       'type',
@@ -106,6 +107,7 @@ export class ProductService extends BasicService {
       qb
         .select([
           'Product.id',
+          'Product.code',
           'Product.name',
           'Product.description',
           'Product.type',
@@ -129,7 +131,8 @@ export class ProductService extends BasicService {
       if (post.search) {
         qb.where('Product.name LIKE :searchTerm', { searchTerm: `%${post.search}%` })
           .orWhere('Product.description LIKE :searchTerm', { searchTerm: `%${post.search}%` })
-          .orWhere('Product.tags LIKE :searchTerm', { searchTerm: `%${post.search}%` });
+          .orWhere('Product.tags LIKE :searchTerm', { searchTerm: `%${post.search}%` })
+          .orWhere('Product.code LIKE :searchTerm', { searchTerm: `%${post.search}%` });
       }
     }
 

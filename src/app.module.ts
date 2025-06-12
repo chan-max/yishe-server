@@ -23,6 +23,7 @@ import { ProductModule } from './product/product.module';
 import { CustomModelModule } from './custom_model/custom_model.module';
 import { CommentModule } from './comment/comment.module';
 import { ProductModelModule } from './product_model/product_model.module';
+import { DraftModule } from './draft/draft.module';
 // 环境配置信息
 
 import envConfig from '../config';
@@ -42,6 +43,7 @@ import envConfig from '../config';
     SentenceModule,
     ProductModule,
     ProductModelModule,
+    DraftModule,
   ],
   controllers: [AppController],
   

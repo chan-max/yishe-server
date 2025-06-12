@@ -23,6 +23,8 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { CreateProductDto } from './dto/create-product.dto';
+import { UpdateProductDto } from './dto/update-product.dto';
 
 @Controller('product')
 @ApiTags('商品管理')
@@ -31,7 +33,7 @@ export class ProductController {
 
   @Post('create')
   @ApiOperation({ summary: '创建商品' })
-  create(@Body() createProductDto) {
+  create(@Body() createProductDto: CreateProductDto) {
     return this.productService.create(createProductDto);
   }
 
@@ -49,7 +51,7 @@ export class ProductController {
 
   @Post('update')
   @ApiOperation({ summary: '更新商品' })
-  update(@Body() updateProductDto) {
+  update(@Body() updateProductDto: UpdateProductDto) {
     return this.productService.update(updateProductDto);
   }
 
