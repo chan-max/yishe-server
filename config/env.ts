@@ -32,5 +32,10 @@ export default {
     password: '666666', //'Redis 访问密码'
     lazyConnect:true,
   },
+  // 飞书机器人配置
+  FEISHU: {
+    DESIGN: 'https://open.feishu.cn/open-apis/bot/v2/hook/d3e5b95b-3d80-4d68-bd01-9bc11ea8c812', // 设计相关通知
+    SYSTEM: process.env.FEISHU_WEBHOOK_URL_SYSTEM || '', // 系统相关通知
+  },
 };
 

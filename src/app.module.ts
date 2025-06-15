@@ -24,6 +24,8 @@ import { CustomModelModule } from './custom_model/custom_model.module';
 import { CommentModule } from './comment/comment.module';
 import { ProductModelModule } from './product_model/product_model.module';
 import { DraftModule } from './draft/draft.module';
+import { DesignRequestModule } from './design-request/design-request.module';
+import { FeishuService } from './common/feishu.service';
 // 环境配置信息
 
 import envConfig from '../config';
@@ -35,18 +37,18 @@ import envConfig from '../config';
     AuthModule,
     FileModule,
     StickerModule,
-    CustomModelModule,
-    CommentModule,
-    CompanyModule,
     PsdTemplateModule,
     FontTemplateModule,
+    CompanyModule,
     SentenceModule,
     ProductModule,
+    CustomModelModule,
+    CommentModule,
     ProductModelModule,
     DraftModule,
+    DesignRequestModule,
   ],
   controllers: [AppController],
-  
-  providers: [AppService, KeyService],
+  providers: [AppService, KeyService, FeishuService],
 })
 export class AppModule {}
