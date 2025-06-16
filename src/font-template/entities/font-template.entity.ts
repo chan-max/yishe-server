@@ -42,6 +42,9 @@ export class FontTemplate {
     @Column({ length: 1000, default: '', nullable: true })
     description: string; // 描述
 
+    @Column({ length: 1000, default: '', nullable: true })
+    keywords: string; // 关键字
+
     @Column({ type: 'uuid', nullable: true })
     uploaderId: string; // 作者id
 

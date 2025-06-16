@@ -10,6 +10,9 @@ export class CreateFontTemplateDto {
     @ApiProperty({ description: '描述' })
     description: string;
 
+    @ApiProperty({ description: '关键字', required: false })
+    keywords: string;
+
     @ApiProperty({ description: '文件URL' })
     url: string;
 
