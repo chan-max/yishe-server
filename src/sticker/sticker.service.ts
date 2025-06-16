@@ -35,7 +35,6 @@ export class StickerService extends BasicService {
   }
 
   async update(post) {
-
     const item = await this.stickerRepository.findOne(post.id);
 
     Object.assign(item, post);
@@ -88,6 +87,8 @@ export class StickerService extends BasicService {
           "Sticker.description",
           "Sticker.isPublic",
           "Sticker.keywords",
+          "Sticker.group",
+          "Sticker.isTexture",
           "Sticker.meta",
           "Sticker.url",
           "user.name",
