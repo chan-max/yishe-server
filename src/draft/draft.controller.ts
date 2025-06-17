@@ -46,7 +46,6 @@ export class DraftController {
   @Post('page')
   @ApiBearerAuth()
   @UseGuards(OptionalAuthGuard)
-  @ApiOperation({ summary: '获取草稿列表' })
   getPage(@Body() post, @Request() req) {
     return this.draftService.getPage(post, req.user);
   }

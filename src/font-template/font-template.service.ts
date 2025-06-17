@@ -57,6 +57,7 @@ export class FontTemplateService extends BasicService {
                     "FontTemplate.createTime",
                     "FontTemplate.updateTime",
                     "FontTemplate.thumbnail",
+                    "FontTemplate.keywords",
                     "FontTemplate.description",
                     "FontTemplate.isPublic",
                     "FontTemplate.category",

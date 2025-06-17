@@ -32,7 +32,7 @@ export default {
     db: 0,
     family: 4,
     password: '666666', //'Redis 访问密码'
-    lazyConnect:true,
+    lazyConnect:false,
   },
 
   // 飞书机器人配置
