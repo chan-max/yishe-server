@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2025-05-24 12:42:39
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2025-06-04 23:41:39
+ * @LastEditTime: 2025-06-17 22:42:58
  * @FilePath: /design-server/src/product/product.service.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -96,6 +96,24 @@ export class ProductService extends BasicService {
     if (!ids || ids.length === 0) {
       return;
     }
+    // 先查出所有要删除的商品
+    const products = await this.productRepository.find({ where: { id: In(ids) } });
+    // 收集所有图片 URL
+    const allImages = products
+      .map(product => Array.isArray(product.images) ? product.images : [])
+      .flat();
+    // 删除 COS 文件
+    if (allImages.length > 0) {
+      try {
+        await Promise.all(
+          allImages.map(url => this.cosService.deleteFile(url))
+        );
+      } catch (error) {
+        console.error('批量删除 COS 文件失败:', error);
+        // 文件删除失败不影响数据库删除
+      }
+    }
+    // 删除数据库记录
     return this.productRepository.delete({ id: In(ids) });
   }
 
