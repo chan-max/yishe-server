@@ -75,6 +75,7 @@ export class ProductService extends BasicService {
       'specifications',
       'tags',
       'isActive',
+      'isPublish',
       'isLimitedEdition'
     ];
 
@@ -136,6 +137,7 @@ export class ProductService extends BasicService {
           'Product.specifications',
           'Product.tags',
           'Product.isActive',
+          'Product.isPublish',
           'Product.isLimitedEdition',
           'Product.createTime',
           'Product.updateTime',
@@ -144,6 +146,10 @@ export class ProductService extends BasicService {
 
       if (post.type) {
         qb.andWhere('Product.type = :type', { type: post.type });
+      }
+
+      if (post.isPublish !== undefined) {
+        qb.andWhere('Product.isPublish = :isPublish', { isPublish: post.isPublish });
       }
 
       if (post.search) {

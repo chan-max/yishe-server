@@ -79,6 +79,11 @@ export class CreateProductDto {
   @IsBoolean()
   isActive?: boolean;
 
+  @ApiProperty({ description: '是否发布', example: false })
+  @IsOptional()
+  @IsBoolean()
+  isPublish?: boolean;
+
   @ApiProperty({ description: '是否绝版', example: 0 })
   @IsOptional()
   @Transform(({ value }) => {

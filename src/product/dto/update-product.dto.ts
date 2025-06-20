@@ -84,6 +84,11 @@ export class UpdateProductDto {
   @IsBoolean()
   isActive?: boolean;
 
+  @ApiProperty({ description: '是否发布', required: false })
+  @IsOptional()
+  @IsBoolean()
+  isPublish?: boolean;
+
   @ApiProperty({ description: '是否绝版', required: false })
   @IsOptional()
   @Transform(({ value }) => {

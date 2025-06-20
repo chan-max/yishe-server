@@ -55,6 +55,12 @@ export class ProductController {
     return this.productService.update(updateProductDto);
   }
 
+  @Post('updatePublish')
+  @ApiOperation({ summary: '更新商品发布状态' })
+  updatePublish(@Body() body: { id: string; isPublish: boolean }) {
+    return this.productService.update(body);
+  }
+
   @Post('delete')
   @ApiOperation({ summary: '删除商品' })
   remove(@Body() body: { ids: string[] }) {
