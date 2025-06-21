@@ -74,6 +74,7 @@ export class ProductService extends BasicService {
       'stock',
       'specifications',
       'tags',
+      'keywords',
       'isActive',
       'isPublish',
       'isLimitedEdition'
@@ -136,6 +137,7 @@ export class ProductService extends BasicService {
           'Product.stock',
           'Product.specifications',
           'Product.tags',
+          'Product.keywords',
           'Product.isActive',
           'Product.isPublish',
           'Product.isLimitedEdition',
@@ -156,6 +158,7 @@ export class ProductService extends BasicService {
         qb.where('Product.name LIKE :searchTerm', { searchTerm: `%${post.search}%` })
           .orWhere('Product.description LIKE :searchTerm', { searchTerm: `%${post.search}%` })
           .orWhere('Product.tags LIKE :searchTerm', { searchTerm: `%${post.search}%` })
+          .orWhere('Product.keywords LIKE :searchTerm', { searchTerm: `%${post.search}%` })
           .orWhere('Product.code LIKE :searchTerm', { searchTerm: `%${post.search}%` });
       }
     }

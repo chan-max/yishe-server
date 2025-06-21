@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2025-05-24 12:42:30
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2025-06-20 08:38:14
+ * @LastEditTime: 2025-06-21 19:44:18
  * @FilePath: /design-server/src/product/entities/product.entity.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -42,6 +42,9 @@ export class Product {
 
   @Column({ length: 1000, default: '', nullable: true })
   tags: string; // 标签，多个标签用逗号分隔
+
+  @Column({ length: 1000, default: '', nullable: true })
+  keywords: string; // 关键词，用于搜索
 
   @Column({ type: 'boolean', default: true })
   isActive: boolean;

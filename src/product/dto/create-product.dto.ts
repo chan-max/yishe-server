@@ -74,6 +74,11 @@ export class CreateProductDto {
   @IsString()
   tags?: string;
 
+  @ApiProperty({ description: '商品关键词', required: false })
+  @IsOptional()
+  @IsString()
+  keywords?: string;
+
   @ApiProperty({ description: '是否上架', example: true })
   @IsOptional()
   @IsBoolean()
