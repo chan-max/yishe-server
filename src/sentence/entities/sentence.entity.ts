@@ -8,17 +8,8 @@ export class Sentence {
   @Column({ type: 'text' })
   content: string;
 
-  @Column({ nullable: true })
-  author: string;
-
-  @Column({ nullable: true })
-  source: string;
-
-  @Column({ nullable: true })
-  category: string;
-
-  @Column({ default: false })
-  isFavorite: boolean;
+  @Column({ type: 'text', nullable: true })
+  description: string;
 
   @CreateDateColumn()
   createdAt: Date;
