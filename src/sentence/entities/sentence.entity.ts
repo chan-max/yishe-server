@@ -8,6 +8,9 @@ export class Sentence {
   @Column({ type: 'text' })
   content: string;
 
+  @Column({ type: 'text', nullable: true })
+  description: string;
+
   @CreateDateColumn()
   createdAt: Date;
 

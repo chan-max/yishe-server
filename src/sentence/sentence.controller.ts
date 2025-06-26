@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Put, Query } from '@nestjs/common';
 import { SentenceService } from './sentence.service';
 
 @Controller('sentences')
@@ -7,12 +7,13 @@ export class SentenceController {
 
   @Post()
   create(@Body() createSentenceDto) {
-    return this.sentenceService.create(createSentenceDto);
+    return this.sentenceService.create(createSentenceDto.content, createSentenceDto.description);
   }
 
   @Get()
-  findAll() {
-    return this.sentenceService.findAll();
+  findAll(@Query() query) {
+    const { currentPage = 1, pageSize = 20 } = query;
+    return this.sentenceService.findAll(+currentPage, +pageSize);
   }
 
   @Get(':id')
@@ -22,7 +23,7 @@ export class SentenceController {
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateSentenceDto) {
-    return this.sentenceService.update(+id, updateSentenceDto);
+    return this.sentenceService.update(+id, updateSentenceDto.content, updateSentenceDto.description);
   }
 
   @Delete(':id')
