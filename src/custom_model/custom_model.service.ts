@@ -13,6 +13,7 @@ import { InjectRepository, } from '@nestjs/typeorm';
 import { CustomModel } from './entities/custom_model.entity';
 import { BasicService } from 'src/common/basicService';
 import { User } from 'src/user/entities/user.entity';
+import { CosService } from 'src/common/cos.service';
 
 @Injectable()
 export class CustomModelService extends BasicService {
@@ -22,6 +23,7 @@ export class CustomModelService extends BasicService {
     private customModelRepository,
     @InjectRepository(User)
     private userRepository,
+    private cosService: CosService,
   ) {
     super()
   }
@@ -62,6 +64,19 @@ export class CustomModelService extends BasicService {
   }
 
   async remove(id) {
+    // 先查找要删除的自定义商品
+    const customModel = await this.customModelRepository.findOne({ where: { id } });
+    if (customModel) {
+      try {
+        // 删除缩略图文件
+        if (customModel.thumbnail) {
+          await this.cosService.deleteFile(customModel.thumbnail);
+        }
+      } catch (error) {
+        console.error('删除 COS 文件失败:', error);
+        // 这里我们不抛出错误，因为文件删除失败不应该影响数据库删除
+      }
+    }
     return this.customModelRepository.delete(id)
   }
 
