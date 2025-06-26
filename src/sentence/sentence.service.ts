@@ -2,8 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Sentence } from './entities/sentence.entity';
-import { CreateSentenceDto } from './dto/create-sentence.dto';
-import { UpdateSentenceDto } from './dto/update-sentence.dto';
 
 @Injectable()
 export class SentenceService {
@@ -12,8 +10,8 @@ export class SentenceService {
     private sentenceRepository: Repository<Sentence>,
   ) {}
 
-  create(createSentenceDto: CreateSentenceDto) {
-    const sentence = this.sentenceRepository.create(createSentenceDto);
+  create(content: string) {
+    const sentence = this.sentenceRepository.create({ content });
     return this.sentenceRepository.save(sentence);
   }
 
@@ -25,19 +23,13 @@ export class SentenceService {
     return this.sentenceRepository.findOne({ where: { id } });
   }
 
-  async update(id: number, updateSentenceDto: UpdateSentenceDto) {
-    await this.sentenceRepository.update(id, updateSentenceDto);
+  async update(id: number, content: string) {
+    await this.sentenceRepository.update(id, { content });
     return this.findOne(id);
   }
 
   async remove(id: number) {
     const sentence = await this.findOne(id);
     return this.sentenceRepository.remove(sentence);
-  }
-
-  async toggleFavorite(id: number) {
-    const sentence = await this.findOne(id);
-    sentence.isFavorite = !sentence.isFavorite;
-    return this.sentenceRepository.save(sentence);
   }
 } 
