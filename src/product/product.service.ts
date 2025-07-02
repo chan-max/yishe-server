@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2025-05-24 12:42:39
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2025-06-17 22:42:58
+ * @LastEditTime: 2025-07-03 06:39:59
  * @FilePath: /design-server/src/product/product.service.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -61,6 +61,24 @@ export class ProductService extends BasicService {
         }
       }
     }
+    // 处理视频更新
+    if (post.videos !== undefined) {
+      const oldVideos = item.videos || [];
+      const newVideos = post.videos || [];
+      // 找出被删除的视频
+      const deletedVideos = oldVideos.filter(url => !newVideos.includes(url));
+      // 删除不再使用的 COS 文件
+      if (deletedVideos.length > 0) {
+        try {
+          await Promise.all(
+            deletedVideos.map(url => this.cosService.deleteFile(url))
+          );
+        } catch (error) {
+          console.error('删除 COS 视频文件失败:', error);
+          // 这里我们不抛出错误，因为文件删除失败不应该影响商品更新
+        }
+      }
+    }
 
     // 只更新允许的字段
     const allowedFields = [
@@ -69,6 +87,7 @@ export class ProductService extends BasicService {
       'description',
       'type',
       'images',
+      'videos',
       'price',
       'salePrice',
       'stock',
@@ -87,6 +106,8 @@ export class ProductService extends BasicService {
       }
     });
 
+
+    console.log(post.videos)
     return this.productRepository.save(item);
   }
 
@@ -100,15 +121,19 @@ export class ProductService extends BasicService {
     }
     // 先查出所有要删除的商品
     const products = await this.productRepository.find({ where: { id: In(ids) } });
-    // 收集所有图片 URL
+    // 收集所有图片和视频 URL
     const allImages = products
       .map(product => Array.isArray(product.images) ? product.images : [])
       .flat();
+    const allVideos = products
+      .map(product => Array.isArray(product.videos) ? product.videos : [])
+      .flat();
     // 删除 COS 文件
-    if (allImages.length > 0) {
+    const allFiles = [...allImages, ...allVideos];
+    if (allFiles.length > 0) {
       try {
         await Promise.all(
-          allImages.map(url => this.cosService.deleteFile(url))
+          allFiles.map(url => this.cosService.deleteFile(url))
         );
       } catch (error) {
         console.error('批量删除 COS 文件失败:', error);
@@ -132,6 +157,7 @@ export class ProductService extends BasicService {
           'Product.description',
           'Product.type',
           'Product.images',
+          'Product.videos',
           'Product.price',
           'Product.salePrice',
           'Product.stock',

@@ -28,6 +28,9 @@ export class Product {
   @Column({ type: 'json',  nullable: true })
   images: string[]; // 商品图片数组
 
+  @Column({ type: 'json', nullable: true })
+  videos: string[]; // 商品视频数组
+
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   price: number;
 
