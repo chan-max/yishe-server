@@ -15,4 +15,7 @@ export class CreateDraftDto {
 
     @ApiProperty({ description: '元数据' })
     meta: any;
+
+    @ApiProperty({ description: '自定义模型ID', required: false })
+    customModelId?: string;
 } 

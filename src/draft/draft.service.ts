@@ -85,6 +85,10 @@ export class DraftService extends BasicService {
         qb.andWhere('Draft.type = :type', { type: post.type })
       }
 
+      if (post.customModelId) {
+        qb.andWhere('Draft.customModelId = :customModelId', { customModelId: post.customModelId })
+      }
+
       if (post.match) {
         let match = Array.isArray(post.match) ? post.match : [post.match]
         match.forEach(matcher => {

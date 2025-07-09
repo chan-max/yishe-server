@@ -8,6 +8,7 @@ import {
     JoinColumn
 } from 'typeorm';
 import { User } from 'src/user/entities/user.entity';
+import { CustomModel } from 'src/custom_model/entities/custom_model.entity';
 
 @Entity('draft')
 export class Draft {
@@ -29,12 +30,19 @@ export class Draft {
     @Column({ default: null, nullable: true })
     uploaderId: any;
 
+    @Column({ default: null, nullable: true })
+    customModelId: string; // 可为空，关联CustomModel
+
     @Column({ nullable: true, type: 'json' })
     meta: any;
 
     @ManyToOne(() => User)
     @JoinColumn({ name: 'uploaderId' })
     uploader;
+
+    @ManyToOne(() => CustomModel, { nullable: true })
+    @JoinColumn({ name: 'customModelId' })
+    customModel;
 
     @Column({
         name: 'create_time',
