@@ -23,6 +23,9 @@ export class AuthService {
 
   // 生成token
   createToken(user: Partial<User>) {
+
+    console.log('生成token',user.id, user.account)
+
     return this.jwtService.sign({
       id: user.id,
       account: user.account,
@@ -36,6 +39,9 @@ export class AuthService {
   // 用户登录
   async login(user: Partial<User>) {
     const token = this.createToken(user);
+
+    console.log('token',token)
+
     const redis = new RedisInstance(0);
 
     redis.setItem(`user-token-${user.id}-${user.account}`, token, 60 * 60 * 8 * 365);

@@ -78,7 +78,7 @@ export class DraftService extends BasicService {
           "user.email",
           "user.isAdmin",
         ])
-        .where('Draft.uploaderId = :uploaderId', { uploaderId: userInfo.id })
+        .where('Draft.uploaderId = :uploaderId', { uploaderId: userInfo?.id })
         .orderBy('Draft.createTime', 'DESC')
 
       if (post.type) {
@@ -109,4 +109,4 @@ export class DraftService extends BasicService {
       repo: this.draftRepository
     })
   }
-} 
+}
