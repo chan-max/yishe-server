@@ -24,20 +24,21 @@ export class BasicService {
 
     var qb = (repo).createQueryBuilder()
 
-    var db = qb
-      .skip(page)
-      .take(limit)
-      .where(where || createQueryCondition(post, []))
+    if (where) {
+      qb.where(where)
+    }
 
     if (queryBuilderHook) {
-      queryBuilderHook(db)
+      queryBuilderHook(qb)
     }
+
+    qb.skip(page).take(limit)
 
     if (post.random) {
       qb.orderBy('RAND()')
     }
 
-    const result = await pagination.findByPage(db);
+    const result = await pagination.findByPage(qb);
     return result;
   }
 }
