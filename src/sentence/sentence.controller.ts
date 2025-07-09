@@ -1,6 +1,9 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Put, Query } from '@nestjs/common';
 import { SentenceService } from './sentence.service';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { PageSentenceDto } from './dto/page-sentence.dto';
 
+@ApiTags('句子管理')
 @Controller('sentences')
 export class SentenceController {
   constructor(private readonly sentenceService: SentenceService) {}
@@ -10,10 +13,9 @@ export class SentenceController {
     return this.sentenceService.create(createSentenceDto.content, createSentenceDto.description);
   }
 
-  @Get()
-  findAll(@Query() query) {
-    const { currentPage = 1, pageSize = 20 } = query;
-    return this.sentenceService.findAll(+currentPage, +pageSize);
+  @Post('page')
+  getPage(@Body() query: PageSentenceDto) {
+    return this.sentenceService.getPage(query);
   }
 
   @Get(':id')

@@ -59,7 +59,7 @@ export class DesignRequestService {
     });
 
     return {
-      items,
+      list: items,
       total,
       page,
       pageSize,
@@ -99,7 +99,7 @@ export class DesignRequestService {
     });
 
     return {
-      items,
+      list: items,
       total,
       page,
       pageSize,

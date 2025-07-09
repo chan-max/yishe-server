@@ -2,13 +2,16 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Sentence } from './entities/sentence.entity';
+import { BasicService } from 'src/common/basicService';
 
 @Injectable()
-export class SentenceService {
+export class SentenceService extends BasicService {
   constructor(
     @InjectRepository(Sentence)
     private sentenceRepository: Repository<Sentence>,
-  ) {}
+  ) {
+    super();
+  }
 
   create(content: string, description?: string) {
     const sentence = this.sentenceRepository.create({ content, description });
@@ -29,6 +32,37 @@ export class SentenceService {
       currentPage,
       pageSize
     };
+  }
+
+  async getPage(post) {
+    const where = null;
+    const queryBuilderName = 'Sentence';
+
+    function queryBuilderHook(qb) {
+      qb
+        .select([
+          "Sentence.id",
+          "Sentence.content",
+          "Sentence.description",
+          "Sentence.createdAt",
+          "Sentence.updatedAt",
+        ])
+        .orderBy('Sentence.createdAt', 'DESC');
+
+      // 支持搜索功能
+      if (post.search) {
+        qb.where('Sentence.content LIKE :searchTerm', { searchTerm: `%${post.search}%` })
+          .orWhere('Sentence.description LIKE :searchTerm', { searchTerm: `%${post.search}%` });
+      }
+    }
+
+    return await this.getPageFn({
+      queryBuilderHook,
+      queryBuilderName,
+      post,
+      where,
+      repo: this.sentenceRepository
+    });
   }
 
   findOne(id: number) {
