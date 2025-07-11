@@ -74,6 +74,7 @@ export class DraftService extends BasicService {
           "Draft.meta",
           "Draft.url",
           "user.name",
+          "Draft.customModelId",
           "user.account",
           "user.email",
           "user.isAdmin",
