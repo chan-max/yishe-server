@@ -40,7 +40,7 @@ export class CustomModelController {
   }
 
   @Post('delete')
-  remove(@Body() body) {
-    return this.customModelService.remove(body.id);
+  remove(@Body() body: { ids: string | string[] }) {
+    return this.customModelService.remove(body.ids);
   }
 }

@@ -6,6 +6,7 @@ import { Draft } from './entities/draft.entity';
 import { BasicService } from 'src/common/basicService';
 import { User } from 'src/user/entities/user.entity';
 import { CosService } from 'src/common/cos.service';
+import { In } from 'typeorm';
 
 @Injectable()
 export class DraftService extends BasicService {
@@ -37,7 +38,7 @@ export class DraftService extends BasicService {
     const idArray = Array.isArray(ids) ? ids : [ids];
     
     // 查找所有要删除的草稿
-    const drafts = await this.draftRepository.findByIds(idArray);
+    const drafts = await this.draftRepository.find({ where: { id: In(idArray) } });
     if (!drafts.length) {
       throw new Error('未找到要删除的草稿');
     }
@@ -45,7 +46,12 @@ export class DraftService extends BasicService {
     // 删除 COS 上的文件
     for (const draft of drafts) {
       if (draft.url) {
-        await this.cosService.deleteFile(draft.url);
+        try {
+          await this.cosService.deleteFile(draft.url);
+        } catch (error) {
+          console.error('删除 COS 文件失败:', error);
+          // 这里我们不抛出错误，因为文件删除失败不应该影响数据库删除
+        }
       }
     }
 

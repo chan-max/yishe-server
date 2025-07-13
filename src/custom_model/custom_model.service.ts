@@ -14,6 +14,7 @@ import { CustomModel } from './entities/custom_model.entity';
 import { BasicService } from 'src/common/basicService';
 import { User } from 'src/user/entities/user.entity';
 import { CosService } from 'src/common/cos.service';
+import { In } from 'typeorm';
 
 @Injectable()
 export class CustomModelService extends BasicService {
@@ -67,21 +68,30 @@ export class CustomModelService extends BasicService {
     return this.customModelRepository.save(item);
   }
 
-  async remove(id) {
-    // 先查找要删除的自定义商品
-    const customModel = await this.customModelRepository.findOne({ where: { id } });
-    if (customModel) {
-      try {
-        // 删除缩略图文件
-        if (customModel.thumbnail) {
+  async remove(ids: string | string[]) {
+    // 确保 ids 是数组
+    const idArray = Array.isArray(ids) ? ids : [ids];
+    
+    // 查找所有要删除的自定义模型
+    const customModels = await this.customModelRepository.find({ where: { id: In(idArray) } });
+    if (!customModels.length) {
+      throw new Error('未找到要删除的自定义模型');
+    }
+
+    // 删除 COS 上的文件
+    for (const customModel of customModels) {
+      if (customModel.thumbnail) {
+        try {
           await this.cosService.deleteFile(customModel.thumbnail);
+        } catch (error) {
+          console.error('删除 COS 文件失败:', error);
+          // 这里我们不抛出错误，因为文件删除失败不应该影响数据库删除
         }
-      } catch (error) {
-        console.error('删除 COS 文件失败:', error);
-        // 这里我们不抛出错误，因为文件删除失败不应该影响数据库删除
       }
     }
-    return this.customModelRepository.delete(id)
+
+    // 删除数据库记录
+    return this.customModelRepository.delete(idArray);
   }
 
   async getPage(post, userInfo) {
