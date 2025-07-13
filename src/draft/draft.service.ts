@@ -70,6 +70,7 @@ export class DraftService extends BasicService {
     function queryBuilderHook(qb) {
       qb
         .leftJoinAndSelect('Draft.uploader', 'user')
+        .leftJoinAndSelect('Draft.customModel', 'customModel')
         .select([
           "Draft.id",
           "Draft.name",
@@ -84,6 +85,10 @@ export class DraftService extends BasicService {
           "user.account",
           "user.email",
           "user.isAdmin",
+          "customModel.id",
+          "customModel.name",
+          "customModel.description",
+          "customModel.thumbnail",
         ])
         .where('Draft.uploaderId = :uploaderId', { uploaderId: userInfo?.id })
         .orderBy('Draft.createTime', 'DESC')

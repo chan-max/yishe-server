@@ -13,6 +13,7 @@ import { InjectRepository, } from '@nestjs/typeorm';
 import { CustomModel } from './entities/custom_model.entity';
 import { BasicService } from 'src/common/basicService';
 import { User } from 'src/user/entities/user.entity';
+import { Draft } from 'src/draft/entities/draft.entity';
 import { CosService } from 'src/common/cos.service';
 import { In } from 'typeorm';
 
@@ -24,6 +25,8 @@ export class CustomModelService extends BasicService {
     private customModelRepository,
     @InjectRepository(User)
     private userRepository,
+    @InjectRepository(Draft)
+    private draftRepository,
     private cosService: CosService,
   ) {
     super()
@@ -88,6 +91,29 @@ export class CustomModelService extends BasicService {
           // 这里我们不抛出错误，因为文件删除失败不应该影响数据库删除
         }
       }
+    }
+
+    // 处理关联的草稿文件
+    const drafts = await this.draftRepository.find({ where: { customModelId: In(idArray) } });
+    if (drafts.length > 0) {
+      console.log(`找到 ${drafts.length} 个关联的草稿文件，准备删除`);
+      
+      // 删除关联草稿的COS文件
+      for (const draft of drafts) {
+        if (draft.url) {
+          try {
+            await this.cosService.deleteFile(draft.url);
+            console.log(`成功删除草稿COS文件: ${draft.url}`);
+          } catch (error) {
+            console.error('删除草稿COS文件失败:', error);
+            // 这里我们不抛出错误，因为文件删除失败不应该影响数据库删除
+          }
+        }
+      }
+      
+      // 删除关联的草稿记录
+      const deleteResult = await this.draftRepository.delete({ customModelId: In(idArray) });
+      console.log(`成功删除 ${deleteResult.affected} 个关联草稿记录`);
     }
 
     // 删除数据库记录
