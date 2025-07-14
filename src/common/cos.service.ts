@@ -46,6 +46,30 @@ export class CosService {
   }
 
   /**
+   * 直接上传buffer到 COS
+   * @param buffer 文件buffer
+   * @param originalname 文件名
+   * @param key 可选，COS路径
+   */
+  async uploadBuffer(buffer: Buffer, originalname: string, key?: string): Promise<{ url: string; key: string }> {
+    const fileKey = key || `${new Date().getTime()}_1s_${originalname}`;
+    try {
+      const result = await this.cos.putObject({
+        Bucket: this.config.Bucket,
+        Region: this.config.Region,
+        Key: fileKey,
+        Body: buffer,
+      });
+      return {
+        url: `https://${result.Location}`,
+        key: fileKey,
+      };
+    } catch (error) {
+      throw new Error(`上传文件失败: ${error.message}`);
+    }
+  }
+
+  /**
    * 删除 COS 中的文件
    * @param key 文件在 COS 中的存储路径
    */

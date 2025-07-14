@@ -9,6 +9,10 @@ import { BasicService } from 'src/common/basicService';
 import { User } from 'src/user/entities/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import { CosService } from 'src/common/cos.service';
+import { AiService } from '../ai/ai.service';
+import * as sharp from 'sharp';
+import * as path from 'path';
+import * as fs from 'fs';
 
 @Injectable()
 export class StickerService extends BasicService {
@@ -17,6 +21,7 @@ export class StickerService extends BasicService {
     @InjectRepository(Sticker)
     private stickerRepository,
     private cosService: CosService,
+    private aiService: AiService,
   ) {
     super()
   }
@@ -95,35 +100,32 @@ export class StickerService extends BasicService {
           "user.account",
           "user.email",
           "user.isAdmin",
-        ]).orderBy('Sticker.createTime', 'DESC')
+        ])
 
-      if (post.myUploads) {
-        qb.where('Sticker.uploaderId = :uploaderId', { uploaderId: userInfo.id })
+      // 名称模糊搜索
+      if (post.imageName) {
+        qb.andWhere('Sticker.name LIKE :imageName', { imageName: `%${post.imageName}%` })
       }
-
-      if (post.match) {
-
-        let match = Array.isArray(post.match) ? post.match : [post.match]
-        match.forEach(matcher => {
-
-          if (!match) {
-            return
-          }
-
-          qb.where('Sticker.name LIKE :searchTerm', { searchTerm: `%${matcher}%` })
-            .orWhere('Sticker.description LIKE :searchTerm', { searchTerm: `%${matcher}%` })
-            .orWhere('Sticker.keywords LIKE :searchTerm', { searchTerm: `%${matcher}%` });
-        });
+      // 描述模糊搜索
+      if (post.description) {
+        qb.andWhere('Sticker.description LIKE :desc', { desc: `%${post.description}%` })
       }
-
-      if (post.group) {
-        qb.where('Sticker.group = :group', { group: post.group })
+      // 关键字模糊搜索
+      if (post.keywords) {
+        qb.andWhere('Sticker.keywords LIKE :kw', { kw: `%${post.keywords}%` })
       }
-
-      if (post.isTexture !== undefined) {
-        qb.andWhere('Sticker.isTexture = :isTexture', { isTexture: post.isTexture })
+      // 创建时间区间
+      if (post.startTime && post.endTime) {
+        qb.andWhere('Sticker.createTime BETWEEN :start AND :end', { start: post.startTime, end: post.endTime })
       }
-
+      // 排序
+      if (post.sortingFields) {
+        // 例："createTime DESC" 或 "name ASC"
+        const [field, order] = post.sortingFields.split(' ')
+        qb.orderBy(`Sticker.${field}`, (order || 'DESC').toUpperCase())
+      } else {
+        qb.orderBy('Sticker.createTime', 'DESC')
+      }
     }
 
     return await this.getPageFn({
@@ -133,5 +135,89 @@ export class StickerService extends BasicService {
       where,
       repo: this.stickerRepository
     })
+  }
+
+  /**
+   * AI生成贴纸信息（名称、描述、关键字）
+   * @param id 贴纸id
+   */
+  async aiGenerateInfo(id: string, prompt?: string) {
+    const sticker = await this.stickerRepository.findOne({ id });
+    if (!sticker) throw new Error('未找到贴纸');
+    if (!sticker.url) throw new Error('贴纸无图片URL');
+
+    let imageUrl = sticker.url;
+    let tempPngPath = '';
+    let cosPngKey = '';
+    let isSvg = imageUrl.endsWith('.svg') || imageUrl.includes('.svg?');
+    try {
+      if (isSvg) {
+        // 1. 下载svg到本地
+        const svgRes = await fetch(imageUrl);
+        const svgBuffer = await svgRes.arrayBuffer();
+        const svgData = Buffer.from(svgBuffer);
+        // 2. 转为png
+        const fileName = `ai_tmp_${Date.now()}.png`;
+        tempPngPath = path.join('/tmp', fileName);
+        await sharp(svgData).png().toFile(tempPngPath);
+        // 3. 上传到cos（用uploadBuffer）
+        const fileBuffer = fs.readFileSync(tempPngPath);
+        const cosRes = await this.cosService.uploadBuffer(fileBuffer, fileName);
+        imageUrl = cosRes.url;
+        cosPngKey = cosRes.key;
+      }
+      // 4. 拼接结构和格式要求
+      let finalPrompt = '';
+      if (prompt) {
+        finalPrompt = `${prompt}\n请以如下 JSON 格式返回：{name:'图片名称', description:'图片描述', keywords:'图片关键字'}。只返回 JSON，不要其他解释，也不要用\`\`\`json或\`\`\`包裹。`;
+      } else {
+        finalPrompt = "请分析这张图片内容，并以如下 JSON 格式返回：{name:'图片名称', description:'图片描述', keywords:'图片关键字'}。只返回 JSON，不要其他解释，也不要用```json或```包裹。";
+      }
+      const params = {
+        model: 'qwen-vl-max',
+        messages: [
+          {
+            role: 'user',
+            content: [
+              { type: 'image_url', image_url: { url: imageUrl } },
+              { type: 'text', text: finalPrompt }
+            ]
+          }
+        ]
+      };
+      const res = await this.aiService.qwenChat(params);
+      let text = res.choices?.[0]?.message?.content || JSON.stringify(res);
+      // 尝试提取JSON
+      let info;
+      try {
+        const match = text.match(/{[\s\S]*}/);
+        if (match) {
+          info = JSON.parse(match[0]);
+        } else {
+          info = {};
+        }
+      } catch (e) {
+        info = {};
+      }
+      // 更新贴纸信息
+      sticker.name = info.name || sticker.name;
+      sticker.description = info.description || sticker.description;
+      sticker.keywords = info.keywords || sticker.keywords;
+      await this.stickerRepository.save(sticker);
+      return {
+        name: sticker.name,
+        description: sticker.description,
+        keywords: sticker.keywords,
+        raw: text
+      };
+    } finally {
+      // 5. 删除临时png（cos和本地）
+      if (isSvg && cosPngKey) {
+        await this.cosService.deleteFile(cosPngKey);
+      }
+      if (isSvg && tempPngPath && fs.existsSync(tempPngPath)) {
+        fs.unlinkSync(tempPngPath);
+      }
+    }
   }
 }

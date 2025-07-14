@@ -83,14 +83,14 @@ export class CustomModelService extends BasicService {
 
     // 删除 COS 上的文件
     for (const customModel of customModels) {
-      if (customModel.thumbnail) {
+        if (customModel.thumbnail) {
         try {
           await this.cosService.deleteFile(customModel.thumbnail);
-        } catch (error) {
-          console.error('删除 COS 文件失败:', error);
-          // 这里我们不抛出错误，因为文件删除失败不应该影响数据库删除
-        }
+      } catch (error) {
+        console.error('删除 COS 文件失败:', error);
+        // 这里我们不抛出错误，因为文件删除失败不应该影响数据库删除
       }
+    }
     }
 
     // 处理关联的草稿文件

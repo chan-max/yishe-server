@@ -61,4 +61,9 @@ export class StickerController {
   remove(@Body() body: { ids: string | string[] }) {
     return this.stickerService.remove(body.ids);
   }
+
+  @Post('ai-generate-info')
+  async aiGenerateInfo(@Body() body: { id: string, prompt?: string }) {
+    return await this.stickerService.aiGenerateInfo(body.id, body.prompt);
+  }
 }

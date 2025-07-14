@@ -47,7 +47,7 @@ export class DraftService extends BasicService {
     for (const draft of drafts) {
       if (draft.url) {
         try {
-          await this.cosService.deleteFile(draft.url);
+        await this.cosService.deleteFile(draft.url);
         } catch (error) {
           console.error('删除 COS 文件失败:', error);
           // 这里我们不抛出错误，因为文件删除失败不应该影响数据库删除
