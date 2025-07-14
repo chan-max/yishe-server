@@ -6,6 +6,10 @@ import { ProductModel } from './entities/product_model.entity';
 import { IPageResult, Pagination, } from 'src/utils/pagination';
 import { createQueryCondition } from 'src/utils/utils';
 import { CosService } from 'src/common/cos.service';
+import { AiService } from '../ai/ai.service';
+import * as sharp from 'sharp';
+import * as path from 'path';
+import * as fs from 'fs';
 
 @Injectable()
 export class ProductModelService {
@@ -14,6 +18,7 @@ export class ProductModelService {
     @InjectRepository(ProductModel)
     private productModelRepository,
     private cosService: CosService,
+    private aiService: AiService,
   ) {
     // 设置 CosService 到 ProductModel 实体
     ProductModel.setCosService(cosService);
@@ -74,5 +79,62 @@ export class ProductModelService {
 
     const result = pagination.findByPage(db);
     return result;
+  }
+
+  /**
+   * AI生成商品模型信息（名称、描述、关键字）
+   * @param id 商品模型id
+   * @param prompt 可选，用户自定义提示词
+   */
+  async aiGenerateInfo(id: string, prompt?: string) {
+    const model = await this.productModelRepository.findOne({ id });
+    if (!model) throw new Error('未找到商品模型');
+    const imageUrl = model.thumbnail;
+    if (!imageUrl) throw new Error('商品模型无缩略图');
+
+    // 拼接结构和格式要求
+    let finalPrompt = '';
+    if (prompt) {
+      finalPrompt = `${prompt}\n请以如下 JSON 格式返回：{name:'模型名称', description:'模型描述', keywords:'模型关键字'}。只返回 JSON，不要其他解释，也不要用\`\`\`json或\`\`\`包裹。`;
+    } else {
+      finalPrompt = "请分析这张商品模型图片内容，并以如下 JSON 格式返回：{name:'模型名称', description:'模型描述', keywords:'模型关键字'}。只返回 JSON，不要其他解释，也不要用```json或```包裹。";
+    }
+    const params = {
+      model: 'qwen-vl-max',
+      messages: [
+        {
+          role: 'user',
+          content: [
+            { type: 'image_url', image_url: { url: imageUrl } },
+            { type: 'text', text: finalPrompt }
+          ]
+        }
+      ]
+    };
+    const res = await this.aiService.qwenChat(params);
+    let text = res.choices?.[0]?.message?.content || JSON.stringify(res);
+    // 尝试提取JSON
+    let info;
+    try {
+      const match = text.match(/{[\s\S]*}/);
+      if (match) {
+        info = JSON.parse(match[0]);
+      } else {
+        info = {};
+      }
+    } catch (e) {
+      info = {};
+    }
+    // 无论有无变化都写入数据库
+    model.name = info.name || '';
+    model.description = info.description || '';
+    model.keywords = info.keywords || '';
+    await this.productModelRepository.save(model);
+    return {
+      name: model.name,
+      description: model.description,
+      keywords: model.keywords,
+      raw: text
+    };
   }
 }

@@ -46,4 +46,9 @@ export class ProductModelController {
     return this.productModelService.update(post);
   }
 
+  @Post('ai-generate-info')
+  async aiGenerateInfo(@Body() body: { id: string; prompt?: string }) {
+    return this.productModelService.aiGenerateInfo(body.id, body.prompt);
+  }
+
 }

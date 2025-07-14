@@ -12,6 +12,10 @@ import { Product } from './entities/product.entity';
 import { BasicService } from 'src/common/basicService';
 import { In } from 'typeorm';
 import { CosService } from '../common/cos.service';
+import { AiService } from '../ai/ai.service';
+import * as sharp from 'sharp';
+import * as path from 'path';
+import * as fs from 'fs';
 
 @Injectable()
 export class ProductService extends BasicService {
@@ -19,6 +23,7 @@ export class ProductService extends BasicService {
     @InjectRepository(Product)
     private productRepository,
     private cosService: CosService,
+    private aiService: AiService,
   ) {
     super();
   }
@@ -203,5 +208,90 @@ export class ProductService extends BasicService {
       where,
       repo: this.productRepository,
     });
+  }
+
+  /**
+   * AI生成商品信息（名称、描述、关键字）
+   * @param id 商品id
+   * @param prompt 可选，用户自定义提示词
+   */
+  async aiGenerateInfo(id: string, prompt?: string) {
+    const product = await this.productRepository.findOne({ id });
+    if (!product) throw new Error('未找到商品');
+    const images = product.images || [];
+    if (!images.length) throw new Error('商品无图片');
+    let imageUrl = images[0];
+    let tempPngPath = '';
+    let cosPngKey = '';
+    let isSvg = imageUrl.endsWith('.svg') || imageUrl.includes('.svg?');
+    try {
+      if (isSvg) {
+        // 1. 下载svg到本地
+        const svgRes = await fetch(imageUrl);
+        const svgBuffer = await svgRes.arrayBuffer();
+        const svgData = Buffer.from(svgBuffer);
+        // 2. 转为png
+        const fileName = `ai_tmp_${Date.now()}.png`;
+        tempPngPath = path.join('/tmp', fileName);
+        await sharp(svgData).png().toFile(tempPngPath);
+        // 3. 上传到cos（用uploadBuffer）
+        const fileBuffer = fs.readFileSync(tempPngPath);
+        const cosRes = await this.cosService.uploadBuffer(fileBuffer, fileName);
+        imageUrl = cosRes.url;
+        cosPngKey = cosRes.key;
+      }
+      // 4. 拼接结构和格式要求
+      let finalPrompt = '';
+      if (prompt) {
+        finalPrompt = `${prompt}\n请以如下 JSON 格式返回：{name:'商品名称', description:'商品描述', keywords:'商品关键字'}。只返回 JSON，不要其他解释，也不要用\`\`\`json或\`\`\`包裹。`;
+      } else {
+        finalPrompt = "请分析这张商品图片内容，并以如下 JSON 格式返回：{name:'商品名称', description:'商品描述', keywords:'商品关键字'}。只返回 JSON，不要其他解释，也不要用```json或```包裹。";
+      }
+      const params = {
+        model: 'qwen-vl-max',
+        messages: [
+          {
+            role: 'user',
+            content: [
+              { type: 'image_url', image_url: { url: imageUrl } },
+              { type: 'text', text: finalPrompt }
+            ]
+          }
+        ]
+      };
+      const res = await this.aiService.qwenChat(params);
+      let text = res.choices?.[0]?.message?.content || JSON.stringify(res);
+      // 尝试提取JSON
+      let info;
+      try {
+        const match = text.match(/{[\s\S]*}/);
+        if (match) {
+          info = JSON.parse(match[0]);
+        } else {
+          info = {};
+        }
+      } catch (e) {
+        info = {};
+      }
+      // 更新商品信息
+      product.name = info.name || product.name;
+      product.description = info.description || product.description;
+      product.keywords = info.keywords || product.keywords;
+      await this.productRepository.save(product);
+      return {
+        name: product.name,
+        description: product.description,
+        keywords: product.keywords,
+        raw: text
+      };
+    } finally {
+      // 5. 删除临时png（cos和本地）
+      if (isSvg && cosPngKey) {
+        await this.cosService.deleteFile(cosPngKey);
+      }
+      if (isSvg && tempPngPath && fs.existsSync(tempPngPath)) {
+        fs.unlinkSync(tempPngPath);
+      }
+    }
   }
 } 

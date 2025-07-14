@@ -13,11 +13,13 @@ import { Product } from './entities/product.entity';
 import { ProductService } from './product.service';
 import { ProductController } from './product.controller';
 import { CommonModule } from '../common/common.module';
+import { AiModule } from '../ai/ai.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Product]),
     CommonModule,
+    AiModule,
   ],
   controllers: [ProductController],
   providers: [ProductService],

@@ -72,4 +72,10 @@ export class ProductController {
   getPage(@Body() body) {
     return this.productService.getPage(body);
   }
+
+  @Post('ai-generate-info')
+  @ApiOperation({ summary: 'AI自动生成商品内容' })
+  async aiGenerateInfo(@Body() body: { id: string; prompt?: string }) {
+    return this.productService.aiGenerateInfo(body.id, body.prompt);
+  }
 } 
