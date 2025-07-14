@@ -33,7 +33,7 @@ export class ProductController {
 
   @Post('create')
   @ApiOperation({ summary: '创建商品' })
-  create(@Body() createProductDto) {
+  create(@Body() createProductDto: CreateProductDto) {
     return this.productService.create(createProductDto);
   }
 

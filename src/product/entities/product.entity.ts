@@ -6,7 +6,8 @@
  * @FilePath: /design-server/src/product/entities/product.entity.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
-import { Entity, PrimaryGeneratedColumn, Column, BeforeUpdate } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, BeforeUpdate, ManyToOne, JoinColumn } from 'typeorm';
+import { CustomModel } from 'src/custom_model/entities/custom_model.entity';
 
 @Entity('product')
 export class Product {
@@ -60,6 +61,13 @@ export class Product {
 
   @Column({ type: 'json', nullable: true })
   meta: any; // 元数据
+
+  @Column({ type: 'uuid', nullable: true, comment: '关联定制模型ID' })
+  customModelId: string;
+
+  @ManyToOne(() => CustomModel, { nullable: true })
+  @JoinColumn({ name: 'customModelId' })
+  customModel: CustomModel;
 
   @Column({
     name: 'create_time',

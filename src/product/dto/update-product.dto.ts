@@ -105,4 +105,9 @@ export class UpdateProductDto {
   })
   @Type(() => Number)
   isLimitedEdition?: number | string;
+
+  @ApiProperty({ description: '关联定制模型ID', required: false })
+  @IsOptional()
+  @IsString()
+  customModelId?: string;
 } 

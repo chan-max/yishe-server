@@ -96,7 +96,8 @@ export class ProductService extends BasicService {
       'keywords',
       'isActive',
       'isPublish',
-      'isLimitedEdition'
+      'isLimitedEdition',
+      'customModelId'
     ];
 
     // 只复制允许的字段
@@ -169,7 +170,9 @@ export class ProductService extends BasicService {
           'Product.isLimitedEdition',
           'Product.createTime',
           'Product.updateTime',
+          'Product.customModelId',
         ])
+        .leftJoinAndSelect('Product.customModel', 'customModel')
         .orderBy('Product.createTime', 'DESC');
 
       if (post.type) {
@@ -178,6 +181,10 @@ export class ProductService extends BasicService {
 
       if (post.isPublish !== undefined) {
         qb.andWhere('Product.isPublish = :isPublish', { isPublish: post.isPublish });
+      }
+
+      if (post.customModelId) {
+        qb.andWhere('Product.customModelId = :customModelId', { customModelId: post.customModelId });
       }
 
       if (post.search) {

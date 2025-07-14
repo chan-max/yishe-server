@@ -79,6 +79,11 @@ export class CreateProductDto {
   @IsString()
   keywords?: string;
 
+  @ApiProperty({ description: '关联定制模型ID', required: false })
+  @IsOptional()
+  @IsString()
+  customModelId?: string;
+
   @ApiProperty({ description: '是否上架', example: true })
   @IsOptional()
   @IsBoolean()
