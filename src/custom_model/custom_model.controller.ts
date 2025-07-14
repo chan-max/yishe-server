@@ -28,9 +28,9 @@ export class CustomModelController {
 
 
 
-  @Get()
-  find(@Query() query) {
-    return this.customModelService.findOne(query.id);
+  @Post('')
+  find(@Body() body) {
+    return this.customModelService.findOne(body.id);
   }
 
 
