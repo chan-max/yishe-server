@@ -69,7 +69,7 @@ export class StickerService extends BasicService {
 
   async getPage(post, userInfo) {
 
-    if (post.myUploads && !userInfo) {
+    if (!userInfo) {
       throw new UnauthorizedException('请登录');
     }
 
