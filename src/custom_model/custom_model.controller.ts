@@ -49,4 +49,11 @@ export class CustomModelController {
     const { id, prompt } = body;
     return await this.customModelService.aiGenerateInfo(id, prompt);
   }
+
+  @Post('to-product')
+  @ApiOperation({ summary: '将设计模型转为产品' })
+  async toProduct(@Body() body) {
+    const { id } = body;
+    return await this.customModelService.customModelToProduct(id);
+  }
 }

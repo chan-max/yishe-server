@@ -7,9 +7,10 @@ import { Draft } from 'src/draft/entities/draft.entity';
 import {TypeOrmModule} from '@nestjs/typeorm'
 import { CosService } from 'src/common/cos.service';
 import { AiModule } from '../ai/ai.module';
+import { ProductModule } from '../product/product.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([CustomModel,User,Draft]), AiModule],
+  imports: [TypeOrmModule.forFeature([CustomModel,User,Draft]), AiModule, ProductModule],
   controllers: [CustomModelController],
   providers: [CustomModelService, CosService]
 })
