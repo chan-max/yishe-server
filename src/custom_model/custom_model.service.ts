@@ -16,6 +16,10 @@ import { User } from 'src/user/entities/user.entity';
 import { Draft } from 'src/draft/entities/draft.entity';
 import { CosService } from 'src/common/cos.service';
 import { In } from 'typeorm';
+import * as sharp from 'sharp';
+import * as path from 'path';
+import * as fs from 'fs';
+import { AiService } from '../ai/ai.service';
 
 @Injectable()
 export class CustomModelService extends BasicService {
@@ -28,6 +32,7 @@ export class CustomModelService extends BasicService {
     @InjectRepository(Draft)
     private draftRepository,
     private cosService: CosService,
+    private aiService: AiService,
   ) {
     super()
   }
@@ -190,5 +195,85 @@ export class CustomModelService extends BasicService {
       where,
       repo: this.customModelRepository
     })
+  }
+
+  async aiGenerateInfo(id: string, prompt?: string) {
+    const model = await this.customModelRepository.findOne({ id });
+    if (!model) throw new Error('未找到设计模型');
+    if (!model.thumbnail) throw new Error('模型无缩略图');
+
+    let imageUrl = model.thumbnail;
+    let tempPngPath = '';
+    let cosPngKey = '';
+    let isSvg = imageUrl.endsWith('.svg') || imageUrl.includes('.svg?');
+    try {
+      if (isSvg) {
+        // 1. 下载svg到本地
+        const svgRes = await fetch(imageUrl);
+        const svgBuffer = await svgRes.arrayBuffer();
+        const svgData = Buffer.from(svgBuffer);
+        // 2. 转为png
+        const fileName = `ai_tmp_${Date.now()}.png`;
+        tempPngPath = path.join('/tmp', fileName);
+        await sharp(svgData).png().toFile(tempPngPath);
+        // 3. 上传到cos
+        const fileBuffer = fs.readFileSync(tempPngPath);
+        const cosRes = await this.cosService.uploadBuffer(fileBuffer, fileName);
+        imageUrl = cosRes.url;
+        cosPngKey = cosRes.key;
+      }
+      // 4. 拼接结构和格式要求
+      let finalPrompt = '';
+      if (prompt) {
+        finalPrompt = `${prompt}\n请以如下 JSON 格式返回：{name:'模型名称', description:'模型描述', keywords:'关键字'}。内容尽量使用中文，除英文词之外，只返回 JSON，不要其他解释，也不要用\`\`\`json或\`\`\`包裹。`;
+      } else {
+        finalPrompt = "请分析这张图片内容，并以如下 JSON 格式返回：{name:'模型名称', description:'模型描述', keywords:'关键字'}。只返回 JSON，不要其他解释，也不要用```json或```包裹。";
+      }
+      const params = {
+        model: 'qwen-vl-max',
+        messages: [
+          {
+            role: 'user',
+            content: [
+              { type: 'image_url', image_url: { url: imageUrl } },
+              { type: 'text', text: finalPrompt }
+            ]
+          }
+        ]
+      };
+      const res = await this.aiService.qwenChat(params);
+      let text = res.choices?.[0]?.message?.content || JSON.stringify(res);
+      // 尝试提取JSON
+      let info;
+      try {
+        const match = text.match(/{[\s\S]*}/);
+        if (match) {
+          info = JSON.parse(match[0]);
+        } else {
+          info = {};
+        }
+      } catch (e) {
+        info = {};
+      }
+      // 更新模型信息
+      model.name = info.name || model.name;
+      model.description = info.description || model.description;
+      model.keywords = info.keywords || model.keywords;
+      await this.customModelRepository.save(model);
+      return {
+        name: model.name,
+        description: model.description,
+        keywords: model.keywords,
+        raw: text
+      };
+    } finally {
+      // 5. 删除临时png（cos和本地）
+      if (isSvg && cosPngKey) {
+        await this.cosService.deleteFile(cosPngKey);
+      }
+      if (isSvg && tempPngPath && fs.existsSync(tempPngPath)) {
+        fs.unlinkSync(tempPngPath);
+      }
+    }
   }
 }

@@ -27,13 +27,13 @@ export class CustomModel {
     @Column({ nullable: true, type: 'varchar', length: 1000 })
     thumbnail: string;
 
-    @Column({ length: 100, default: '', nullable: true })
+    @Column({ length: 200, default: '', nullable: true })
     keywords: string; // 描述
 
-    @Column({ length: 100, default: '', nullable: true })
+    @Column({ length: 200, default: '', nullable: true })
     name: string; //名称
 
-    @Column({ length: 100, default: '', nullable: true })
+    @Column({ length: 2000, default: '', nullable: true })
     description: string; // 描述
 
     @Column({ type: 'json', nullable: true })

@@ -43,4 +43,10 @@ export class CustomModelController {
   remove(@Body() body: { ids: string | string[] }) {
     return this.customModelService.remove(body.ids);
   }
+
+  @Post('ai-generate-info')
+  async aiGenerateInfo(@Body() body) {
+    const { id, prompt } = body;
+    return await this.customModelService.aiGenerateInfo(id, prompt);
+  }
 }
