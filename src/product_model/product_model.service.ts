@@ -95,9 +95,9 @@ export class ProductModelService {
     // 拼接结构和格式要求
     let finalPrompt = '';
     if (prompt) {
-      finalPrompt = `${prompt}\n请以如下 JSON 格式返回：{name:'模型名称', description:'模型描述', keywords:'模型关键字'}。只返回 JSON，不要其他解释，也不要用\`\`\`json或\`\`\`包裹。`;
+      finalPrompt = `请分析这张商品内容 ,提示词为${prompt}\n请以如下 JSON 格式返回：{name:'模型名称', description:'模型描述', keywords:'模型关键字'}。只返回 JSON，不要其他解释，也不要用\`\`\`json或\`\`\`包裹。`;
     } else {
-      finalPrompt = "请分析这张商品模型图片内容，并以如下 JSON 格式返回：{name:'模型名称', description:'模型描述', keywords:'模型关键字'}。只返回 JSON，不要其他解释，也不要用```json或```包裹。";
+      finalPrompt = "请分析这张商品内容，并以如下 JSON 格式返回：{name:'模型名称', description:'模型描述', keywords:'模型关键字'}。只返回 JSON，不要其他解释，也不要用```json或```包裹。";
     }
     const params = {
       model: 'qwen-vl-max',
