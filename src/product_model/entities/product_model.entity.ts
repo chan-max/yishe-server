@@ -47,8 +47,8 @@ export class ProductModel {
     @Column({ length: 1000, default: '', nullable: true })
     keywords: string; // 描述
 
-    @Column({ nullable:true,default:0  })
-    thumbnail: string; // 缩略图地址 , 用作该模型的封面图 ， 不同于实物图
+    @Column({ nullable: true, type: 'varchar', length: 1000 })
+    thumbnail: string;
 
     @Column({ type:'json',nullable:true })
     meta: JSON; // 模型图片
