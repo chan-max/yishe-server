@@ -206,11 +206,10 @@ export class CustomModelService extends BasicService {
     let imageUrl = model.thumbnail;
     // 直接用图片地址，不处理svg
     let finalPrompt = '';
-    if (prompt) {
-      finalPrompt = `${prompt}\n请以如下 JSON 格式返回：{name:'模型名称', description:'模型描述', keywords:'关键字'}。内容尽量使用中文，除英文词之外，只返回 JSON，不要其他解释，也不要用\`\`\`json或\`\`\`包裹。`;
-    } else {
-      finalPrompt = "请分析这张图片内容，并以如下 JSON 格式返回：{name:'模型名称', description:'模型描述', keywords:'关键字'}。只返回 JSON，不要其他解释，也不要用```json或```包裹。";
-    }
+    const basePrompt = "内容尽量使用中文，除英文词之外，只返回 JSON，不要其他解释，也不要用```json或```包裹。请以如下 JSON 格式返回：{name:'模型名称', description:'模型描述', keywords:'关键字'}。";
+    finalPrompt = prompt
+      ? `${prompt}\n${basePrompt}`
+      : `请分析这张图片内容，并${basePrompt}`;
 
     const params = {
       model: 'qwen-vl-max',

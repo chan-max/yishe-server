@@ -221,11 +221,10 @@ export class ProductService extends BasicService {
     let imageUrl = images[0];
     // 移除SVG相关逻辑，直接处理图片
     let finalPrompt = '';
-    if (prompt) {
-      finalPrompt = `${prompt}\n请以如下 JSON 格式返回：{name:'商品名称', description:'商品描述', keywords:'商品关键字'}。只返回 JSON，不要其他解释，也不要用\`\`\`json或\`\`\`包裹。`;
-    } else {
-      finalPrompt = "请分析这张商品图片内容，并以如下 JSON 格式返回：{name:'商品名称', description:'商品描述', keywords:'商品关键字'}。只返回 JSON，不要其他解释，也不要用```json或```包裹。";
-    }
+    const basePrompt = "只返回 JSON，不要其他解释，也不要用```json或```包裹。请以如下 JSON 格式返回：{name:'商品名称', description:'商品描述', keywords:'商品关键字'}。";
+    finalPrompt = prompt
+      ? `${prompt}\n${basePrompt}`
+      : `请分析这张商品图片内容，并${basePrompt}`;
     const params = {
       model: 'qwen-vl-max',
       messages: [
