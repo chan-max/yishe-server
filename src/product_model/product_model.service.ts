@@ -7,9 +7,6 @@ import { IPageResult, Pagination, } from 'src/utils/pagination';
 import { createQueryCondition } from 'src/utils/utils';
 import { CosService } from 'src/common/cos.service';
 import { AiService } from '../ai/ai.service';
-import * as sharp from 'sharp';
-import * as path from 'path';
-import * as fs from 'fs';
 
 @Injectable()
 export class ProductModelService {

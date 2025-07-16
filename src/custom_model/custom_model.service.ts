@@ -16,7 +16,6 @@ import { User } from 'src/user/entities/user.entity';
 import { Draft } from 'src/draft/entities/draft.entity';
 import { CosService } from 'src/common/cos.service';
 import { In } from 'typeorm';
-import * as sharp from 'sharp';
 import * as path from 'path';
 import * as fs from 'fs';
 import { AiService } from '../ai/ai.service';

@@ -96,6 +96,7 @@ export class StickerService extends BasicService {
           "Sticker.isTexture",
           "Sticker.meta",
           "Sticker.url",
+          "Sticker.suffix", // 新增后缀字段
           "user.name",
           "user.account",
           "user.email",
@@ -145,11 +146,13 @@ export class StickerService extends BasicService {
     const sticker = await this.stickerRepository.findOne({ id });
     if (!sticker) throw new Error('未找到贴纸');
     if (!sticker.url) throw new Error('贴纸无图片URL');
+    if (!sticker.suffix) throw new Error('贴纸缺少文件后缀（suffix 字段）');
 
     let imageUrl = sticker.url;
     let tempPngPath = '';
     let cosPngKey = '';
-    let isSvg = imageUrl.endsWith('.svg') || imageUrl.includes('.svg?');
+    // 使用 suffix 字段判断是否为 svg
+    let isSvg = sticker.suffix.toLowerCase() === '.svg';
     try {
       if (isSvg) {
         // 1. 下载svg到本地
