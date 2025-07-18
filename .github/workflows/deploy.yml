@@ -1,142 +1,107 @@
-name: Deploy NestJS to Server
+name: Build and Release Electron App
 
 on:
   push:
     branches:
-      - main  # 监听 main 分支
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  packages: write
 
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
+  build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [macos-latest, windows-latest]
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Check out Git repository
+        uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - name: Install Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: '18'  # 替换为你的 Node 版本
+          node-version: 20
+          cache: 'npm'
 
-      - name: Install Dependencies
-        run: npm install --legacy-peer-deps
+      - name: Install dependencies
+        run: npm ci
 
-      - name: Build NestJS
-        run: npm run build
-
-      - name: Create remote directory
-        uses: appleboy/ssh-action@v1.0.3
+      - name: Build/Release Electron app
+        uses: samuelmeuli/action-electron-builder@v1
         with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USERNAME }}
-          password: ${{ secrets.SERVER_PASSWORD }}
-          script: |
-            mkdir -p /www/workspace/yishe-nest
-            chmod 755 /www/workspace/yishe-nest
+          github_token: ${{ secrets.github_token }}
+          release: true
+        env:
+          GH_TOKEN: ${{ secrets.github_token }}
 
-      - name: Upload files to server
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: electron-builds-${{ matrix.os }}
+          path: dist/*.exe,dist/*.dmg
+          retention-days: 1
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+      - name: Download all build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Deploy to Tencent Cloud
+        if: success()
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USERNAME }}
           password: ${{ secrets.SERVER_PASSWORD }}
-          source: "dist,package.json,package-lock.json"
-          target: /www/workspace/yishe-nest
-          strip_components: 0
+          port: 22
+          source: "artifacts/**"
+          target: "/www/wwwroot/49.232.186.238_1525"
+          rm: false
           overwrite: true
+          command_timeout: "10m"
+          timeout: "10m"
           debug: true
 
-      - name: SSH into server and restart with PM2
-        id: deploy
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USERNAME }}
-          password: ${{ secrets.SERVER_PASSWORD }}
-          script: |
-            cd /www/workspace/yishe-nest
-            # 安装系统依赖
-            apt-get update
-            apt-get install -y build-essential libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev pkg-config
-            # 清理旧的 node_modules
-            rm -rf node_modules
-            # 使用 Node.js 18 版本
-            export NVM_DIR="$HOME/.nvm"
-            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-            nvm use 18
-            # 安装依赖
-            npm install --production --legacy-peer-deps
-            if [ ! -d "node_modules" ]; then
-              echo "::error::node_modules 目录创建失败"
-              exit 1
-            fi
-            # 创建 TypeORM 配置文件
-            cat > dist/config/typeorm.config.js << 'EOL'
-            module.exports = {
-              type: 'mysql',
-              host: process.env.DB_HOST,
-              port: parseInt(process.env.DB_PORT, 10) || 3306,
-              username: process.env.DB_USERNAME,
-              password: process.env.DB_PASSWORD,
-              database: process.env.DB_DATABASE,
-              entities: ['dist/**/*.entity{.ts,.js}'],
-              synchronize: false,
-              logging: true,
-              maxQueryExecutionTime: 1000,
-              extra: {
-                connectionLimit: 10,
-                queueLimit: 0,
-                waitForConnections: true,
-                connectTimeout: 60000,
-                acquireTimeout: 60000,
-                timeout: 60000,
-                maxIdle: 10,
-                idleTimeout: 60000,
-                enableKeepAlive: true,
-                keepAliveInitialDelay: 0,
-              },
-              poolSize: 10,
-              keepConnectionAlive: true,
-            };
-            EOL
-            # 调整 MySQL 配置
-            mysql -e "SET GLOBAL max_allowed_packet=67108864;" || true
-            # 如果使用的是宝塔面板，可以通过修改配置文件
-            if [ -f "/www/server/mysql/etc/my.cnf" ]; then
-              sed -i '/max_allowed_packet/d' /www/server/mysql/etc/my.cnf
-              echo "max_allowed_packet=64M" >> /www/server/mysql/etc/my.cnf
-              /etc/init.d/mysqld restart || true
-            fi
-            # 重启服务
-            pm2 delete yishe-nest || true
-            pm2 start dist/main.js --name yishe-nest --env production
-            sleep 5
-            if ! pm2 list | grep -q "yishe-nest.*online"; then
-              echo "::error::服务启动失败"
-              exit 1
-            fi
-
       - name: Send Feishu Notification
-        if: steps.deploy.outcome == 'success'
-        run: |
-          curl -X POST ${{ secrets.FEISHU_WEBHOOK_URL }} \
-            -H "Content-Type: application/json" \
-            -d '{
-              "msg_type": "text",
-              "content": {
-                "text": "🎉 衣设后台服务部署成功！\n\n📌 部署信息：\n• 环境：生产环境\n• 分支：main\n• 时间：'"$(date +'%Y-%m-%d %H:%M:%S')"'\n• 服务器：'"${{ secrets.SERVER_HOST }}"'\n\n✨ 服务已通过 PM2 启动，运行状态正常。\n\n💡 如需查看服务状态，请使用命令：pm2 status yishe-nest"
+        if: always()
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const status = '${{ job.status }}';
+            const emoji = status === 'success' ? '🚀' : '❌';
+            const commitSha = '${{ github.sha }}'.substring(0, 7);
+            
+            const message = {
+              msg_type: "text",
+              content: {
+                text: `${emoji} 衣设Electron应用构建${status === 'success' ? '成功' : '失败'}通知\n\n` +
+                      `项目: ${{ github.repository }}\n` +
+                      `分支: main\n` +
+                      `提交: ${commitSha}\n` +
+                      `提交者: ${{ github.actor }}\n` +
+                      `提交信息: ${{ github.event.head_commit.message }}\n` +
+                      `构建时间: ${new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' })}\n` +
+                      `状态: ${status === 'success' ? '✅ 成功' : '❌ 失败'}\n\n` +
+                      `下载地址: https://github.com/${{ github.repository }}/releases/latest\n` +
+                      `服务器路径: /www/wwwroot/49.232.186.238_1525`
               }
-            }'
-
-      - name: Send Failure Notification
-        if: steps.deploy.outcome == 'failure'
-        run: |
-          curl -X POST ${{ secrets.FEISHU_WEBHOOK_URL }} \
-            -H "Content-Type: application/json" \
-            -d '{
-              "msg_type": "text",
-              "content": {
-                "text": "❌ NestJS 项目部署失败！\n分支: main\n时间: '"$(date +'%Y-%m-%d %H:%M:%S')"'"
-              }
-            }'
-
+            };
+            
+            await fetch('${{ secrets.FEISHU_WEBHOOK_URL }}', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(message)
+            }); 
