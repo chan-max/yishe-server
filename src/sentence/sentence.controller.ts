@@ -18,6 +18,12 @@ export class SentenceController {
     return this.sentenceService.getPage(query);
   }
 
+  @Post('ai-generate')
+  @ApiOperation({ summary: 'AI生成句子' })
+  async aiGenerate(@Body() body: { prompt: string }) {
+    return this.sentenceService.aiGenerateSentence(body.prompt);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.sentenceService.findOne(+id);

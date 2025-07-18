@@ -3,12 +3,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Sentence } from './entities/sentence.entity';
 import { BasicService } from 'src/common/basicService';
+import { AiService } from '../ai/ai.service';
 
 @Injectable()
 export class SentenceService extends BasicService {
   constructor(
     @InjectRepository(Sentence)
     private sentenceRepository: Repository<Sentence>,
+    private aiService: AiService, // 新增注入
   ) {
     super();
   }
@@ -77,5 +79,36 @@ export class SentenceService extends BasicService {
   async remove(id: number) {
     const sentence = await this.findOne(id);
     return this.sentenceRepository.remove(sentence);
+  }
+
+  /**
+   * AI 生成句子和描述
+   */
+  async aiGenerateSentence(prompt: string) {
+    // 默认提示词，要求AI返回JSON格式，包含content和description
+    const defaultPrompt = "请用中文生成一句优美的句子，并为该句子生成一句简洁的描述介绍。只返回如下JSON格式：{content:'句子', description:'描述'}，不要其他解释、前后缀、标点或多余描述。";
+    const finalPrompt = prompt && prompt.trim() ? `${defaultPrompt} 这是额外的要求${prompt}` : defaultPrompt;
+    const params = {
+      model: 'qwen-turbo',
+      messages: [
+        { role: 'user', content: [{ type: 'text', text: finalPrompt }] }
+      ]
+    };
+    const res = await this.aiService.qwenChat(params);
+    const text = res.choices?.[0]?.message?.content || '';
+    let content = '', description = '';
+    try {
+      const match = text.match(/{[\s\S]*}/);
+      if (match) {
+        const obj = JSON.parse(match[0]);
+        content = obj.content || '';
+        description = obj.description || '';
+      } else {
+        content = text.trim();
+      }
+    } catch {
+      content = text.trim();
+    }
+    return { content, description };
   }
 } 
