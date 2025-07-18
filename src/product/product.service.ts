@@ -214,12 +214,16 @@ export class ProductService extends BasicService {
    * @param prompt 可选，用户自定义提示词
    */
   async aiGenerateInfo(id: string, prompt?: string) {
-    const product = await this.productRepository.findOne({ id });
+    // 查询商品并关联customModel
+    const product = await this.productRepository.findOne({ where: { id }, relations: ['customModel'] });
     if (!product) throw new Error('未找到商品');
-    const images = product.images || [];
-    if (!images.length) throw new Error('商品无图片');
-    let imageUrl = images[0];
-    // 移除SVG相关逻辑，直接处理图片
+    let imageUrl = '';
+    if (product.customModel && product.customModel.thumbnail) {
+      imageUrl = product.customModel.thumbnail;
+    } else if (product.images && product.images.length > 0) {
+      imageUrl = product.images[0];
+    }
+    if (!imageUrl) throw new Error('商品无图片');
     let finalPrompt = '';
     const basePrompt = "只返回 JSON，不要其他解释，也不要用```json或```包裹。请以如下 JSON 格式返回：{name:'商品名称', description:'商品描述', keywords:'商品关键字'}。";
     finalPrompt = prompt
