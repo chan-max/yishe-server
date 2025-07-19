@@ -5,6 +5,7 @@ import { CrawlerMaterial } from './entities/crawler-material.entity';
 import { Repository } from 'typeorm';
 import { CreateCrawlerMaterialDto } from './dto/create-crawler-material.dto';
 import { UpdateCrawlerMaterialDto } from './dto/update-crawler-material.dto';
+import { CosService } from 'src/common/cos.service';
 
 @Injectable()
 export class CrawlerService {
@@ -12,6 +13,7 @@ export class CrawlerService {
     private readonly exampleCrawler: ExampleCrawlerTask,
     @InjectRepository(CrawlerMaterial)
     private readonly crawlerMaterialRepository: Repository<CrawlerMaterial>,
+    private readonly cosService: CosService, // 注入 COS 服务
   ) {}
 
   /**
@@ -167,6 +169,18 @@ export class CrawlerService {
    */
   async deleteMaterial(ids: string[] | string) {
     const idArr = Array.isArray(ids) ? ids : [ids];
+    // 先查出所有素材，删除 COS 文件
+    const materials = await this.crawlerMaterialRepository.findByIds(idArr);
+    for (const material of materials) {
+      if (material.url) {
+        try {
+          await this.cosService.deleteFile(material.url);
+        } catch (e) {
+          // 记录日志但不中断
+          console.warn('删除COS文件失败:', material.url, e.message);
+        }
+      }
+    }
     return this.crawlerMaterialRepository.delete(idArr);
   }
 } 
