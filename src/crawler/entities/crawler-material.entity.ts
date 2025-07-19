@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2025-07-19 07:26:34
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2025-07-19 07:57:18
+ * @LastEditTime: 2025-07-19 08:47:13
  * @FilePath: /design-server/src/crawler/entities/crawler-material.entity.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -36,6 +36,9 @@ export class CrawlerMaterial {
 
     @Column({ length: 20, default: '', nullable: true })
     suffix: string;
+
+    @Column({ length: 100, default: '', nullable: true })
+    source: string;
 
     @Column({ default: null, nullable: true })
     uploaderId: any;
