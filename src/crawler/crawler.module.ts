@@ -4,9 +4,10 @@ import { CrawlerService } from './crawler.service';
 import { ExampleCrawlerTask } from './tasks/example.task';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CrawlerMaterial } from './entities/crawler-material.entity';
+import { CommonModule } from '../common/common.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([CrawlerMaterial])],
+  imports: [TypeOrmModule.forFeature([CrawlerMaterial]), CommonModule],
   controllers: [CrawlerController],
   providers: [CrawlerService, ExampleCrawlerTask],
   exports: [CrawlerService],
