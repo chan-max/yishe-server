@@ -8,6 +8,7 @@
  */
 import { Controller, Get, Post, Body, Query, Param } from '@nestjs/common';
 import { CrawlerService } from './crawler.service';
+import { UpdateCrawlerMaterialDto } from './dto/update-crawler-material.dto';
 @Controller('crawler')
 export class CrawlerController {
   constructor(private readonly crawlerService: CrawlerService) {}
@@ -80,5 +81,37 @@ export class CrawlerController {
   @Post('batch')
   async batchCrawl(@Body('urls') urls: string[]) {
     return this.crawlerService.batchCrawl(urls);
+  }
+
+  /**
+   * 分页获取爬图素材
+   */
+  @Post('material/page')
+  async getMaterialPage(@Body() body) {
+    return this.crawlerService.getMaterialPage(body);
+  }
+
+  /**
+   * 获取单个素材
+   */
+  @Get('material')
+  async getMaterial(@Query('id') id: string) {
+    return this.crawlerService.findMaterialById(id);
+  }
+
+  /**
+   * 更新素材
+   */
+  @Post('material/update')
+  async updateMaterial(@Body() dto: UpdateCrawlerMaterialDto) {
+    return this.crawlerService.updateMaterial(dto);
+  }
+
+  /**
+   * 删除素材
+   */
+  @Post('material/delete')
+  async deleteMaterial(@Body('ids') ids: string[] | string) {
+    return this.crawlerService.deleteMaterial(ids);
   }
 } 

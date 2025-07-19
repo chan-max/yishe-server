@@ -27,6 +27,7 @@ import { DraftModule } from './draft/draft.module';
 import { DesignRequestModule } from './design-request/design-request.module';
 import { FeishuService } from './common/feishu.service';
 import { AiModule } from './ai/ai.module';
+import { CrawlerModule } from './crawler/crawler.module';
 // 环境配置信息
 
 import envConfig from '../config';
@@ -49,6 +50,7 @@ import envConfig from '../config';
     DraftModule,
     DesignRequestModule,
     AiModule,
+    CrawlerModule,
   ],
   controllers: [AppController],
   providers: [AppService, KeyService, FeishuService],

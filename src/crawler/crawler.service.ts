@@ -1,9 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { ExampleCrawlerTask } from './tasks/example.task';
+import { InjectRepository } from '@nestjs/typeorm';
+import { CrawlerMaterial } from './entities/crawler-material.entity';
+import { Repository } from 'typeorm';
+import { CreateCrawlerMaterialDto } from './dto/create-crawler-material.dto';
+import { UpdateCrawlerMaterialDto } from './dto/update-crawler-material.dto';
 
 @Injectable()
 export class CrawlerService {
-  constructor(private readonly exampleCrawler: ExampleCrawlerTask) {}
+  constructor(
+    private readonly exampleCrawler: ExampleCrawlerTask,
+    @InjectRepository(CrawlerMaterial)
+    private readonly crawlerMaterialRepository: Repository<CrawlerMaterial>,
+  ) {}
 
   /**
    * 爬取单个图片
@@ -115,5 +124,49 @@ export class CrawlerService {
         },
       ],
     };
+  }
+
+  /**
+   * 分页查询爬图素材
+   */
+  async getMaterialPage(query: any) {
+    const qb = this.crawlerMaterialRepository.createQueryBuilder('material');
+    if (query.imageName) {
+      qb.andWhere('material.name LIKE :name', { name: `%${query.imageName}%` });
+    }
+    if (query.startTime && query.endTime) {
+      qb.andWhere('material.createTime BETWEEN :start AND :end', { start: query.startTime, end: query.endTime });
+    }
+    qb.orderBy('material.createTime', 'DESC');
+    const page = Number(query.currentPage) || 1;
+    const pageSize = Number(query.pageSize) || 20;
+    qb.skip((page - 1) * pageSize).take(pageSize);
+    const [list, total] = await qb.getManyAndCount();
+    return { list, total };
+  }
+
+  /**
+   * 查询单个素材
+   */
+  async findMaterialById(id: string) {
+    return this.crawlerMaterialRepository.findOne({ where: { id } });
+  }
+
+  /**
+   * 更新素材
+   */
+  async updateMaterial(dto: UpdateCrawlerMaterialDto) {
+    const entity = await this.crawlerMaterialRepository.findOne({ where: { id: dto.id } });
+    if (!entity) throw new Error('素材不存在');
+    Object.assign(entity, dto);
+    return this.crawlerMaterialRepository.save(entity);
+  }
+
+  /**
+   * 删除素材
+   */
+  async deleteMaterial(ids: string[] | string) {
+    const idArr = Array.isArray(ids) ? ids : [ids];
+    return this.crawlerMaterialRepository.delete(idArr);
   }
 } 
