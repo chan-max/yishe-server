@@ -183,4 +183,12 @@ export class CrawlerService {
     }
     return this.crawlerMaterialRepository.delete(idArr);
   }
+
+  /**
+   * 新增素材
+   */
+  async createMaterial(dto: CreateCrawlerMaterialDto) {
+    const entity = this.crawlerMaterialRepository.create(dto);
+    return this.crawlerMaterialRepository.save(entity);
+  }
 } 

@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2025-05-24 06:51:48
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2025-05-26 05:47:46
+ * @LastEditTime: 2025-07-20 01:36:12
  * @FilePath: /design-server/src/crawler/crawler.controller.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -113,5 +113,13 @@ export class CrawlerController {
   @Post('material/delete')
   async deleteMaterial(@Body('ids') ids: string[] | string) {
     return this.crawlerService.deleteMaterial(ids);
+  }
+
+  /**
+   * 新增素材
+   */
+  @Post('material/add')
+  async addMaterial(@Body() dto: import('./dto/create-crawler-material.dto').CreateCrawlerMaterialDto) {
+    return this.crawlerService.createMaterial(dto);
   }
 } 
