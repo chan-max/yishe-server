@@ -152,7 +152,7 @@ export class StickerService extends BasicService {
     let tempPngPath = '';
     let cosPngKey = '';
     // 使用 suffix 字段判断是否为 svg
-    let isSvg = sticker.suffix.toLowerCase() === '.svg';
+    let isSvg = sticker.suffix.toLowerCase() === 'svg';
     try {
       if (isSvg) {
         // 1. 下载svg到本地
@@ -169,6 +169,8 @@ export class StickerService extends BasicService {
         imageUrl = cosRes.url;
         cosPngKey = cosRes.key;
       }
+
+
       // 4. 拼接结构和格式要求
       let finalPrompt = '';
       const basePrompt = "尽量使用中文，除了英文专属的词，比如logo等,请以如下 JSON 格式返回：{name:'图片名称', description:'图片描述', keywords:'图片关键字'}。只返回 JSON，不要其他解释，也不要用```json或```包裹。";

@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { CreateCrawlerMaterialDto } from './dto/create-crawler-material.dto';
 import { UpdateCrawlerMaterialDto } from './dto/update-crawler-material.dto';
 import { CosService } from 'src/common/cos.service';
+import { StickerService } from 'src/sticker/sticker.service';
 
 @Injectable()
 export class CrawlerService {
@@ -14,6 +15,7 @@ export class CrawlerService {
     @InjectRepository(CrawlerMaterial)
     private readonly crawlerMaterialRepository: Repository<CrawlerMaterial>,
     private readonly cosService: CosService, // 注入 COS 服务
+    private readonly stickerService: StickerService, // 注入贴纸服务
   ) {}
 
   /**
@@ -190,5 +192,63 @@ export class CrawlerService {
   async createMaterial(dto: CreateCrawlerMaterialDto) {
     const entity = this.crawlerMaterialRepository.create(dto);
     return this.crawlerMaterialRepository.save(entity);
+  }
+
+  /**
+   * 批量入库到贴纸
+   * @param ids 爬虫素材ID列表
+   * @param uploaderId 上传者ID
+   * @returns 入库结果
+   */
+  async batchImportToSticker(ids: string[], uploaderId?: string) {
+    const results = {
+      success: [],
+      failed: [],
+      total: ids.length
+    };
+
+    // 查询所有素材
+    const materials = await this.crawlerMaterialRepository.findByIds(ids);
+    
+    for (const material of materials) {
+      try {
+        // 构建贴纸数据
+        const stickerData = {
+          name: material.name || `素材_${material.id}`,
+          description: material.description || '',
+          keywords: material.keywords || '',
+          url: material.url,
+          suffix: material.suffix || '',
+          uploaderId: uploaderId || material.uploaderId,
+          isPublic: false,
+          isTexture: false,
+          group: '爬虫素材',
+          meta: {
+            source: 'crawler_material',
+            originalId: material.id,
+            originalSource: material.source
+          }
+        };
+
+        // 创建贴纸
+        const sticker = await this.stickerService.create(stickerData);
+        
+        // 入库成功后，删除对应的爬虫素材
+        await this.crawlerMaterialRepository.delete(material.id);
+        
+        results.success.push({
+          materialId: material.id,
+          stickerId: sticker.id,
+          name: sticker.name
+        });
+      } catch (error) {
+        results.failed.push({
+          materialId: material.id,
+          error: error.message
+        });
+      }
+    }
+
+    return results;
   }
 } 

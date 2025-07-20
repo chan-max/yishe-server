@@ -3,12 +3,13 @@ import { StickerService } from './sticker.service';
 import { StickerController } from './sticker.controller';
 import { Sticker } from './entities/sticker.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { CosService } from 'src/common/cos.service';
+import { CommonModule } from '../common/common.module';
 import { AiModule } from '../ai/ai.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Sticker]), AiModule],
+  imports: [TypeOrmModule.forFeature([Sticker]), CommonModule, AiModule],
   controllers: [StickerController],
-  providers: [StickerService, CosService]
+  providers: [StickerService],
+  exports: [StickerService]
 })
 export class StickerModule {}
