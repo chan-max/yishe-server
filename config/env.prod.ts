@@ -15,7 +15,7 @@ export default {
     type: 'mysql',
     host: '49.232.186.238', // 主机，默认为localhost
     port: 3306, // 端口号
-    username: 's1', // 用户名
+    username: 'root', // 用户名
     password: '666666', // 密码
     database: 's1', //数据库名
     dateStrings: true, // 设置返回日期为字符串
