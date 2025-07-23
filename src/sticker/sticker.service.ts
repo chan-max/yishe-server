@@ -37,10 +37,22 @@ export class StickerService extends BasicService {
    */
   async calculatePhashByUrl(url: string, ext: string = 'jpg'): Promise<string> {
     let phash = '';
-    const tempPath = path.join(os.tmpdir(), `sticker_phash_${Date.now()}.${ext}`);
+    const isSvg = ext.toLowerCase() === 'svg';
+    const finalExt = isSvg ? 'png' : ext;
+    const tempPath = path.join(os.tmpdir(), `sticker_phash_${Date.now()}.${finalExt}`);
+    
     try {
       const res = await axios.get(url, { responseType: 'arraybuffer' });
-      fs.writeFileSync(tempPath, res.data);
+      
+      if (isSvg) {
+        // SVG需要转换为PNG
+        const svgData = Buffer.from(res.data);
+        await sharp(svgData).png().toFile(tempPath);
+      } else {
+        // 非SVG直接写入文件
+        fs.writeFileSync(tempPath, res.data);
+      }
+      
       phash = await imghash.hash(tempPath, 12, 'hex');
       fs.unlinkSync(tempPath);
     } catch (e) {
