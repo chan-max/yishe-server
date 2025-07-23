@@ -29,23 +29,37 @@ export class StickerService extends BasicService {
     super()
   }
 
+  /**
+   * 计算图片的感知哈希
+   * @param url 图片地址
+   * @param ext 文件后缀，可选
+   * @returns Promise<string> phash
+   */
+  async calculatePhashByUrl(url: string, ext: string = 'jpg'): Promise<string> {
+    let phash = '';
+    const tempPath = path.join(os.tmpdir(), `sticker_phash_${Date.now()}.${ext}`);
+    try {
+      const res = await axios.get(url, { responseType: 'arraybuffer' });
+      fs.writeFileSync(tempPath, res.data);
+      phash = await imghash.hash(tempPath, 12, 'hex');
+      fs.unlinkSync(tempPath);
+    } catch (e) {
+      phash = '000000000000';
+      console.error('[phash计算失败]', e);
+      console.log('url', url);
+      // 清理临时文件
+      if (fs.existsSync(tempPath)) {
+        fs.unlinkSync(tempPath);
+      }
+    }
+    return phash;
+  }
+
   /* 创建 */
   async create(post) {
     let phash = '';
     if (post.url) {
-      try {
-        const ext = post.suffix || 'jpg';
-        const tempPath = path.join(os.tmpdir(), `sticker_phash_${Date.now()}.${ext}`);
-        console.log('临时目录',tempPath)
-        const res = await axios.get(post.url, { responseType: 'arraybuffer' });
-        fs.writeFileSync(tempPath, res.data);
-        phash = await imghash.hash(tempPath, 8, 'hex');
-        fs.unlinkSync(tempPath);
-      } catch (e) {
-        phash = '000000000000';
-        console.error('[phash计算失败]', e);
-        console.log('url', post.url);
-      }
+      phash = await this.calculatePhashByUrl(post.url, post.suffix || 'jpg');
     }
     post.phash = phash;
     return await this.stickerRepository.save(post);

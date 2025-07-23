@@ -66,4 +66,14 @@ export class StickerController {
   async aiGenerateInfo(@Body() body: { id: string, prompt?: string }) {
     return await this.stickerService.aiGenerateInfo(body.id, body.prompt);
   }
+
+  @Post('phash')
+  @ApiOperation({ summary: '计算图片感知哈希' })
+  async calculatePhash(@Body() body: { url: string, ext?: string }) {
+    if (!body.url) {
+      return { phash: '' };
+    }
+    const phash = await this.stickerService.calculatePhashByUrl(body.url, body.ext || 'jpg');
+    return { phash };
+  }
 }
