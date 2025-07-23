@@ -135,16 +135,54 @@ export class CrawlerService {
    */
   async getMaterialPage(query: any) {
     const qb = this.crawlerMaterialRepository.createQueryBuilder('material');
+    
+    // 按名称搜索
     if (query.imageName) {
       qb.andWhere('material.name LIKE :name', { name: `%${query.imageName}%` });
     }
+    
+    // 时间范围过滤
     if (query.startTime && query.endTime) {
-      qb.andWhere('material.createTime BETWEEN :start AND :end', { start: query.startTime, end: query.endTime });
+      // 前端传递的是毫秒级时间戳，需要转换为Date对象
+      const startTimestamp = Number(query.startTime);
+      const endTimestamp = Number(query.endTime);
+      
+      // 验证时间戳是否有效
+      if (isNaN(startTimestamp) || isNaN(endTimestamp)) {
+        console.warn('Invalid timestamp format:', { startTime: query.startTime, endTime: query.endTime });
+      } else {
+        const startDate = new Date(startTimestamp);
+        const endDate = new Date(endTimestamp);
+        
+        qb.andWhere('material.createTime BETWEEN :start AND :end', { 
+          start: startDate, 
+          end: endDate 
+        });
+      }
+    } else if (query.startTime) {
+      // 只有开始时间，查询从开始时间到现在
+      const startTimestamp = Number(query.startTime);
+      if (!isNaN(startTimestamp)) {
+        const startDate = new Date(startTimestamp);
+        qb.andWhere('material.createTime >= :start', { start: startDate });
+      }
+    } else if (query.endTime) {
+      // 只有结束时间，查询从最早到结束时间
+      const endTimestamp = Number(query.endTime);
+      if (!isNaN(endTimestamp)) {
+        const endDate = new Date(endTimestamp);
+        qb.andWhere('material.createTime <= :end', { end: endDate });
+      }
     }
+    
+    // 按创建时间倒序排列
     qb.orderBy('material.createTime', 'DESC');
+    
+    // 分页处理
     const page = Number(query.currentPage) || 1;
     const pageSize = Number(query.pageSize) || 20;
     qb.skip((page - 1) * pageSize).take(pageSize);
+    
     const [list, total] = await qb.getManyAndCount();
     return { list, total };
   }
