@@ -13,6 +13,9 @@ import { AiService } from '../ai/ai.service';
 import * as sharp from 'sharp';
 import * as path from 'path';
 import * as fs from 'fs';
+import * as imghash from 'imghash'
+import axios from 'axios';
+import * as os from 'os';
 
 @Injectable()
 export class StickerService extends BasicService {
@@ -28,7 +31,24 @@ export class StickerService extends BasicService {
 
   /* 创建 */
   async create(post) {
-    return await this.stickerRepository.save(post)
+    let phash = '';
+    if (post.url) {
+      try {
+        const ext = post.suffix || 'jpg';
+        const tempPath = path.join(os.tmpdir(), `sticker_phash_${Date.now()}.${ext}`);
+        console.log('临时目录',tempPath)
+        const res = await axios.get(post.url, { responseType: 'arraybuffer' });
+        fs.writeFileSync(tempPath, res.data);
+        phash = await imghash.hash(tempPath, 8, 'hex');
+        fs.unlinkSync(tempPath);
+      } catch (e) {
+        phash = '000000000000';
+        console.error('[phash计算失败]', e);
+        console.log('url', post.url);
+      }
+    }
+    post.phash = phash;
+    return await this.stickerRepository.save(post);
   }
 
   findAll() {
@@ -97,6 +117,7 @@ export class StickerService extends BasicService {
           "Sticker.meta",
           "Sticker.url",
           "Sticker.suffix", // 新增后缀字段
+          "Sticker.phash", // 感知哈希
           "user.name",
           "user.account",
           "user.email",

@@ -47,6 +47,9 @@ export class Sticker {
     @Column({ length: 20, default: '', nullable: true })
     suffix: string; // 图片类型后缀，如 png、jpg 等
 
+    @Column({ length: 64, default: '', nullable: true })
+    phash: string; // 感知哈希
+
     @Column({default: null, nullable: true })
     uploaderId: any; // 作者id
 

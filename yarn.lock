@@ -305,6 +305,28 @@
   resolved "https://registry.npmmirror.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
+"@canvas/image-data@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.npmmirror.com/@canvas/image-data/-/image-data-1.0.0.tgz"
+  integrity sha512-BxOqI5LgsIQP1odU5KMwV9yoijleOPzHL18/YvNqF9KFSGF2K/DLlYAbDQsWqd/1nbaFuSkYD/191dpMtNh4vw==
+
+"@canvas/image@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.npmmirror.com/@canvas/image/-/image-2.0.0.tgz"
+  integrity sha512-DQKEftZ5M4eM8Rzhv8FFZGdOsO8bVjzPC/9pBF+P//HjQM/Xf+PvQRTv97mVpsHt+Pejs1V7ooK6xf+dYgDNpw==
+  dependencies:
+    "@canvas/image-data" "^1.0.0"
+    "@cwasm/jpeg-turbo" "^0.1.1"
+    "@cwasm/lodepng" "^0.1.2"
+    "@cwasm/nsbmp" "^0.1.0"
+    "@cwasm/nsgif" "^0.1.0"
+    "@cwasm/webp" "^0.1.3"
+    decode-ico "^0.4.1"
+    fast-base64-decode "^1.0.0"
+    fast-base64-encode "^1.0.0"
+    fast-base64-length "^1.0.0"
+    simple-get "^4.0.1"
+
 "@colors/colors@1.5.0":
   version "1.5.0"
   resolved "https://registry.npmmirror.com/@colors/colors/-/colors-1.5.0.tgz"
@@ -337,6 +359,41 @@
     "@css-inline/css-inline-linux-x64-gnu" "0.14.1"
     "@css-inline/css-inline-linux-x64-musl" "0.14.1"
     "@css-inline/css-inline-win32-x64-msvc" "0.14.1"
+
+"@cwasm/jpeg-turbo@^0.1.1":
+  version "0.1.3"
+  resolved "https://registry.npmmirror.com/@cwasm/jpeg-turbo/-/jpeg-turbo-0.1.3.tgz"
+  integrity sha512-FkZxwwC6r4zhzlqM0nYGaMj/MDSrZPxLOdPdM6ySlgsMfOpNAZcLQkpNF4jP+DmsuUvRoeUD0YSMBvg3jYfK6w==
+  dependencies:
+    "@canvas/image-data" "^1.0.0"
+
+"@cwasm/lodepng@^0.1.2":
+  version "0.1.7"
+  resolved "https://registry.npmmirror.com/@cwasm/lodepng/-/lodepng-0.1.7.tgz"
+  integrity sha512-8YNWLJkylTHzOxSq0D1xVd/XfLezuczYX20xuYjxb+bYZ2yU63kx1uk4HLxFXfWT3Qd/8ls3vDBwX3amkpOaLA==
+  dependencies:
+    "@canvas/image-data" "^1.0.0"
+
+"@cwasm/nsbmp@^0.1.0":
+  version "0.1.3"
+  resolved "https://registry.npmmirror.com/@cwasm/nsbmp/-/nsbmp-0.1.3.tgz"
+  integrity sha512-APiz9Rj2E049rBapTtwnCGqQeqJjmC85busDQ44UCaujU+LoggUm06NuS1WIBAZcDMRbJOgCFcRWc0tMT2kpfg==
+  dependencies:
+    "@canvas/image-data" "^1.0.0"
+
+"@cwasm/nsgif@^0.1.0":
+  version "0.1.2"
+  resolved "https://registry.npmmirror.com/@cwasm/nsgif/-/nsgif-0.1.2.tgz"
+  integrity sha512-LOD5HlL0O5jpnIAl+dLSZcB3v0RBNBjtoaymdCEPe2kyKzaP20BF+jy/QUyOZogQsgMVjusZES3tgwwoiiJ2rA==
+  dependencies:
+    "@canvas/image-data" "^1.0.0"
+
+"@cwasm/webp@^0.1.3":
+  version "0.1.5"
+  resolved "https://registry.npmmirror.com/@cwasm/webp/-/webp-0.1.5.tgz"
+  integrity sha512-ceIZQkyxK+s7mmItNcWqqHdOBiJAxYxTnrnPNgUNjldB1M9j+Bp/3eVIVwC8rUFyN/zoFwuT0331pyY3ackaNA==
+  dependencies:
+    "@canvas/image-data" "^1.0.0"
 
 "@eslint-community/eslint-utils@^4.2.0":
   version "4.7.0"
@@ -1960,6 +2017,11 @@ bl@^4.0.3, bl@^4.1.0:
     inherits "^2.0.4"
     readable-stream "^3.4.0"
 
+blockhash-core@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.npmmirror.com/blockhash-core/-/blockhash-core-0.1.0.tgz"
+  integrity sha512-Cv7BgBo0jjVPaeuel4cvxf9LqIGsYNIPz9DAGvvrF9LRlEq9Q3HXu+S8bklPCae0sCxAXic4HGMoImf3FeO3Nw==
+
 body-parser@1.20.1:
   version "1.20.1"
   resolved "https://registry.npmmirror.com/body-parser/-/body-parser-1.20.1.tgz"
@@ -2675,6 +2737,23 @@ debug@2.6.9:
   integrity sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==
   dependencies:
     ms "2.0.0"
+
+decode-bmp@^0.2.0:
+  version "0.2.1"
+  resolved "https://registry.npmmirror.com/decode-bmp/-/decode-bmp-0.2.1.tgz"
+  integrity sha512-NiOaGe+GN0KJqi2STf24hfMkFitDUaIoUU3eKvP/wAbLe8o6FuW5n/x7MHPR0HKvBokp6MQY/j7w8lewEeVCIA==
+  dependencies:
+    "@canvas/image-data" "^1.0.0"
+    to-data-view "^1.1.0"
+
+decode-ico@^0.4.1:
+  version "0.4.1"
+  resolved "https://registry.npmmirror.com/decode-ico/-/decode-ico-0.4.1.tgz"
+  integrity sha512-69NZfbKIzux1vBOd31al3XnMnH+2mqDhEgLdpygErm4d60N+UwA5Sq5WFjmEDQzumgB9fElojGwWG0vybVfFmA==
+  dependencies:
+    "@canvas/image-data" "^1.0.0"
+    decode-bmp "^0.2.0"
+    to-data-view "^1.1.0"
 
 decompress-response@^6.0.0:
   version "6.0.0"
@@ -3395,6 +3474,21 @@ extsprintf@1.3.0:
   resolved "https://registry.npmmirror.com/extsprintf/-/extsprintf-1.3.0.tgz"
   integrity sha512-11Ndz7Nv+mvAC1j0ktTa7fAb0vLyGGX+rMHNBYQviQDGU0Hw7lhctJANqbPhu9nV9/izT/IntTgZ7Im/9LJs9g==
 
+fast-base64-decode@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.npmmirror.com/fast-base64-decode/-/fast-base64-decode-1.0.0.tgz"
+  integrity sha512-qwaScUgUGBYeDNRnbc/KyllVU88Jk1pRHPStuF/lO7B0/RTRLj7U0lkdTAutlBblY08rwZDff6tNU9cjv6j//Q==
+
+fast-base64-encode@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.npmmirror.com/fast-base64-encode/-/fast-base64-encode-1.0.0.tgz"
+  integrity sha512-z2XCzVK4fde2cuTEHu2QGkLD6BPtJNKJPn0Z7oINvmhq/quUuIIVPYKUdN0gYeZqOyurjJjBH/bUzK5gafyHvw==
+
+fast-base64-length@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.npmmirror.com/fast-base64-length/-/fast-base64-length-1.0.0.tgz"
+  integrity sha512-MV+/ioblHx6SMjc/1l4EAnRJyAku6+6DxZ6RW0FoFCF1Aol/Ldb6FqwE3Kn3Ju1aam2m1KCIVoCljhgcG+Umzg==
+
 fast-deep-equal@^3.1.1, fast-deep-equal@^3.1.3:
   version "3.1.3"
   resolved "https://registry.npmmirror.com/fast-deep-equal/-/fast-deep-equal-3.1.3.tgz"
@@ -3482,6 +3576,11 @@ file-entry-cache@^6.0.1:
   integrity sha512-7Gps/XWymbLk2QLYK4NzpMOrYjMhdIxXuIvy2QBsLE6ljuodKvdkWs/cpyJJ3CVIVpH0Oi1Hvg1ovbMzLdFBBg==
   dependencies:
     flat-cache "^3.0.4"
+
+file-type@^10.10.0:
+  version "10.11.0"
+  resolved "https://registry.npmmirror.com/file-type/-/file-type-10.11.0.tgz"
+  integrity sha512-uzk64HRpUZyTGZtVuvrjP0FYxzQrBf4rojot6J65YMEbwBLB0CWm0CLojVpwpmFmxcE/lkvYICgfcGozbBq6rw==
 
 filelist@^1.0.4:
   version "1.0.4"
@@ -4094,6 +4193,23 @@ ignore@^5.2.0:
   version "5.3.2"
   resolved "https://registry.npmmirror.com/ignore/-/ignore-5.3.2.tgz"
   integrity sha512-hsBTNUqQTDwkWtcdYI2i06Y/nUBEsNEDJKjWdigLvegy8kDuJAS8uRlpkkcQpyEXL0Z/pjDy5HBmMjRCJ2gq+g==
+
+image-type@^4.1.0:
+  version "4.1.0"
+  resolved "https://registry.npmmirror.com/image-type/-/image-type-4.1.0.tgz"
+  integrity sha512-CFJMJ8QK8lJvRlTCEgarL4ro6hfDQKif2HjSvYCdQZESaIPV4v9imrf7BQHK+sQeTeNeMpWciR9hyC/g8ybXEg==
+  dependencies:
+    file-type "^10.10.0"
+
+imghash@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.npmmirror.com/imghash/-/imghash-1.0.1.tgz"
+  integrity sha512-Un0hjGVZaW+6PBZ3cJ+zEyOzIHNdonfaHo4w7JTduArTl0wiZaC+XgzDKiICYB5Qz3Mj/tPJBkuAx8wxB/+mWg==
+  dependencies:
+    "@canvas/image" "^2.0.0"
+    blockhash-core "^0.1.0"
+    image-type "^4.1.0"
+    jpeg-js "^0.4.1"
 
 import-fresh@^3.2.1:
   version "3.3.1"
@@ -4792,6 +4908,11 @@ jest@^28.0.0, jest@28.1.3:
     import-local "^3.0.2"
     jest-cli "^28.1.3"
 
+jpeg-js@^0.4.1:
+  version "0.4.4"
+  resolved "https://registry.npmmirror.com/jpeg-js/-/jpeg-js-0.4.4.tgz"
+  integrity sha512-WZzeDOEtTOBK4Mdsar0IqEU5sMr3vSV2RqkAIzUEV2BHnUfKGyswWFPFwK5EeDo93K3FohSHbLAjj0s1Wzd+dg==
+
 js-beautify@^1.6.14:
   version "1.15.4"
   resolved "https://registry.npmmirror.com/js-beautify/-/js-beautify-1.15.4.tgz"
@@ -5018,6 +5139,11 @@ leven@^3.1.0:
   version "3.1.0"
   resolved "https://registry.npmmirror.com/leven/-/leven-3.1.0.tgz"
   integrity sha512-qsda+H8jTaUaN/x5vzW2rzc+8Rw4TAQ/4KjB46IwK5VH+IlVeeeje/EoZRpiXvIqjFgK84QffqPztGI3VBLG1A==
+
+leven@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.npmmirror.com/leven/-/leven-4.0.0.tgz"
+  integrity sha512-puehA3YKku3osqPlNuzGDUHq8WpwXupUg1V6NXdV38G+gr+gkBwFC8g1b/+YcIvp8gnqVIus+eJCH/eGsRmJNw==
 
 levn@^0.4.1:
   version "0.4.1"
@@ -7175,7 +7301,7 @@ simple-concat@^1.0.0:
   resolved "https://registry.npmmirror.com/simple-concat/-/simple-concat-1.0.1.tgz"
   integrity sha512-cSFtAPtRhljv69IK0hTVZQ+OfE9nePi/rtJmw5UjHeVyVroEqJXP1sFztKUy1qU+xvz3u/sfYJLa947b7nAN2Q==
 
-simple-get@^4.0.0:
+simple-get@^4.0.0, simple-get@^4.0.1:
   version "4.0.1"
   resolved "https://registry.npmmirror.com/simple-get/-/simple-get-4.0.1.tgz"
   integrity sha512-brv7p5WgH0jmQJr1ZDDfKDOSeWWg+OVypG99A/5vYGPqJ6pxiaHLy8nxtFjBA7oMa01ebA9gfh1uMCFqOuXxvA==
@@ -7708,6 +7834,11 @@ tmpl@1.0.5:
   version "1.0.5"
   resolved "https://registry.npmmirror.com/tmpl/-/tmpl-1.0.5.tgz"
   integrity sha512-3f0uOEAQwIqGuWW2MVzYg8fV/QNnc/IpuJNG837rLuczAaLVHslWHZQj4IGiEl5Hs3kkbhwL9Ab7Hrsmuj+Smw==
+
+to-data-view@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.npmmirror.com/to-data-view/-/to-data-view-1.1.0.tgz"
+  integrity sha512-1eAdufMg6mwgmlojAx3QeMnzB/BTVp7Tbndi3U7ftcT2zCZadjxkkmLmd97zmaxWi+sgGcgWrokmpEoy0Dn0vQ==
 
 to-regex-range@^5.0.1:
   version "5.0.1"
