@@ -40,6 +40,9 @@ export class CrawlerMaterial {
     @Column({ length: 100, default: '', nullable: true })
     source: string;
 
+    @Column({ length: 100, default: '', nullable: true })
+    phash: string;
+
     @Column({ default: null, nullable: true })
     uploaderId: any;
 

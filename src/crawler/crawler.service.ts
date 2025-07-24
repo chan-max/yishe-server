@@ -229,6 +229,10 @@ export class CrawlerService {
    */
   async createMaterial(dto: CreateCrawlerMaterialDto) {
     const entity = this.crawlerMaterialRepository.create(dto);
+    if (dto.url) {
+      // 计算感知哈希
+      entity.phash = await this.stickerService.calculatePhashByUrl(dto.url, dto.suffix || 'jpg');
+    }
     return this.crawlerMaterialRepository.save(entity);
   }
 
