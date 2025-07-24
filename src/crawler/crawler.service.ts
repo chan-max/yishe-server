@@ -175,8 +175,14 @@ export class CrawlerService {
       }
     }
     
-    // 按创建时间倒序排列
-    qb.orderBy('material.createTime', 'DESC');
+    // 排序处理
+    if (query.sortingFields) {
+      // 例："createTime DESC" 或 "createTime ASC"
+      const [field, order] = query.sortingFields.split(' ');
+      qb.orderBy(`material.${field}`, (order || 'DESC').toUpperCase());
+    } else {
+      qb.orderBy('material.createTime', 'DESC');
+    }
     
     // 分页处理
     const page = Number(query.currentPage) || 1;

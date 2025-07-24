@@ -168,11 +168,11 @@ export class StickerService extends BasicService {
       }
       // 排序
       if (post.sortingFields) {
-        // 例："createTime DESC" 或 "name ASC"
-        const [field, order] = post.sortingFields.split(' ')
-        qb.orderBy(`Sticker.${field}`, (order || 'DESC').toUpperCase())
+        // 例："createTime DESC" 或 "createTime ASC"
+        const [field, order] = post.sortingFields.split(' ');
+        qb.orderBy(`Sticker.${field}`, (order || 'DESC').toUpperCase());
       } else {
-        qb.orderBy('Sticker.createTime', 'DESC')
+        qb.orderBy('Sticker.createTime', 'DESC');
       }
     }
 
