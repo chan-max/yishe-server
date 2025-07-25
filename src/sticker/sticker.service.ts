@@ -85,6 +85,10 @@ export class StickerService extends BasicService {
     return await this.stickerRepository.findOne({ id });
   }
 
+  async findById(id: string | number) {
+    return await this.stickerRepository.findOne({ where: { id } });
+  }
+
   async update(post) {
     const item = await this.stickerRepository.findOne(post.id);
 
@@ -150,6 +154,10 @@ export class StickerService extends BasicService {
           "user.isAdmin",
         ])
 
+      // id精确查询
+      if (post.id) {
+        qb.andWhere('Sticker.id = :id', { id: post.id })
+      }
       // 名称模糊搜索
       if (post.imageName) {
         qb.andWhere('Sticker.name LIKE :imageName', { imageName: `%${post.imageName}%` })

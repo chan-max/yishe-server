@@ -183,6 +183,11 @@ export class CrawlerService {
       }
     }
     
+    // id精确查询
+    if (query.id) {
+      qb.andWhere('material.id = :id', { id: query.id });
+    }
+    
     // 排序处理
     if (query.sortingFields) {
       // 例："createTime DESC" 或 "createTime ASC"
@@ -340,5 +345,9 @@ export class CrawlerService {
       if (list.length < batchSize) break;
     }
     return { total, updated };
+  }
+
+  async findById(id: string | number) {
+    return await this.crawlerMaterialRepository.findOne({ where: { id } });
   }
 } 
