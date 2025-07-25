@@ -280,8 +280,12 @@ export class StickerService extends BasicService {
     let updated = 0;
     let total = 0;
     while (true) {
+      // 兼容 phash 为 null 或 ''
       const [list, count] = await repo.findAndCount({
-        where: { phash: null },
+        where: [
+          { phash: null },
+          { phash: '' }
+        ],
         take: batchSize,
       });
       if (total === 0) total = count;
