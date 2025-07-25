@@ -8,6 +8,11 @@ import { UpdateCrawlerMaterialDto } from './dto/update-crawler-material.dto';
 import { CosService } from 'src/common/cos.service';
 import { StickerService } from 'src/sticker/sticker.service';
 
+// 在文件顶部添加过滤函数
+function removeNonBMP(str: string): string {
+  return str ? str.replace(/[\u{10000}-\u{10FFFF}]/gu, '') : '';
+}
+
 @Injectable()
 export class CrawlerService {
   constructor(
@@ -262,9 +267,9 @@ export class CrawlerService {
       try {
         // 构建贴纸数据
         const stickerData = {
-          name: material.name || `素材_${material.id}`,
-          description: material.description || '',
-          keywords: material.keywords || '',
+          name: removeNonBMP(material.name || `素材_${material.id}`),
+          description: removeNonBMP(material.description || ''),
+          keywords: removeNonBMP(material.keywords || ''),
           url: material.url,
           suffix: material.suffix || '',
           uploaderId: uploaderId || material.uploaderId,

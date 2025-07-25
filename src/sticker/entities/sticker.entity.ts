@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2025-05-20 06:12:19
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2025-06-02 05:21:37
+ * @LastEditTime: 2025-07-25 08:46:19
  * @FilePath: /yishe-admin/Users/jackie/workspace/design-server/src/sticker/entities/sticker.entity.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -32,16 +32,16 @@ export class Sticker {
     @Column({ length: 1000, default: '', nullable: true })
     key: string;
 
-    @Column({ length: 1000, default: '', nullable: true })
+    @Column({ length: 1000, default: '', nullable: true, charset: 'utf8mb4', collation: 'utf8mb4_unicode_ci' })
     keywords: string; // 描述
 
-    @Column({ length: 1000, default: '', nullable: true })
+    @Column({ length: 1000, default: '', nullable: true,charset: 'utf8mb4', collation: 'utf8mb4_unicode_ci' })
     name: string; //文件类型
 
     @Column({ length: 1000, default: '', nullable: true })
     group: string; // 贴纸分组
 
-    @Column({ length: 1000, default: '', nullable: true })
+    @Column({ length: 1000, default: '', nullable: true ,charset: 'utf8mb4', collation: 'utf8mb4_unicode_ci'})
     description: string; // 描述
 
     @Column({ length: 20, default: '', nullable: true })
