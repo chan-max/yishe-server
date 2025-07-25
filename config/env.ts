@@ -37,5 +37,12 @@ export default {
     DESIGN: 'https://open.feishu.cn/open-apis/bot/v2/hook/d3e5b95b-3d80-4d68-bd01-9bc11ea8c812', // 设计相关通知
     SYSTEM: process.env.FEISHU_WEBHOOK_URL_SYSTEM || '', // 系统相关通知
   },
+  // COS配置
+  COS: {
+    SecretId: 'AKIDMdmaMD0uiNwkVH0gTJFKXaXJyV4hHmAL',
+    SecretKey: 'HPdigqyzpgTNICCQnK0ZF6zrrpkbL4un',
+    Bucket: '1s-1257307499',
+    Region: 'ap-beijing'
+  },
 };
 

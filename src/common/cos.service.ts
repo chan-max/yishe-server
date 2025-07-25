@@ -2,16 +2,12 @@ import { Injectable } from '@nestjs/common';
 import * as COS from 'cos-nodejs-sdk-v5';
 import * as fs from 'fs';
 import * as path from 'path';
+import config from '../../config';
 
 @Injectable()
 export class CosService {
   private cos: COS;
-  private readonly config = {
-    SecretId: 'AKIDMdmaMD0uiNwkVH0gTJFKXaXJyV4hHmAL',
-    SecretKey: 'HPdigqyzpgTNICCQnK0ZF6zrrpkbL4un',
-    Bucket: '1s-1257307499',
-    Region: 'ap-beijing'
-  };
+  private readonly config = config.COS;
 
   constructor() {
     this.cos = new COS({

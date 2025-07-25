@@ -17,6 +17,7 @@ import { StickerModule } from './sticker/sticker.module';
 import { PsdTemplateModule } from './psd-template/psd-template.module';
 import { FontTemplateModule } from './font-template/font-template.module';
 import { KeyService } from 'src/utils/key.service';
+import { EncryptService } from 'src/utils/encrypt.service';
 import { CompanyModule } from './company/company.module';
 import { SentenceModule } from './sentence/sentence.module';
 import { ProductModule } from './product/product.module';
@@ -53,6 +54,6 @@ import envConfig from '../config';
     CrawlerModule,
   ],
   controllers: [AppController],
-  providers: [AppService, KeyService, FeishuService],
+  providers: [AppService, KeyService, EncryptService, FeishuService],
 })
 export class AppModule {}
