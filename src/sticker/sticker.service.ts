@@ -56,7 +56,7 @@ export class StickerService extends BasicService {
       phash = await imghash.hash(tempPath, 12, 'hex');
       fs.unlinkSync(tempPath);
     } catch (e) {
-      phash = '000000000000';
+      phash = '';
       console.error('[phash计算失败]', e);
       console.log('url', url);
       // 清理临时文件
@@ -70,7 +70,7 @@ export class StickerService extends BasicService {
   /* 创建 */
   async create(post) {
     let phash = '';
-    if (post.url) {
+    if (post.url && !post.phash) {
       phash = await this.calculatePhashByUrl(post.url, post.suffix || 'jpg');
     }
     post.phash = phash;
@@ -270,5 +270,34 @@ export class StickerService extends BasicService {
         fs.unlinkSync(tempPngPath);
       }
     }
+  }
+
+  /**
+   * 分批为所有未生成 phash 的贴纸生成 phash
+   */
+  async batchGeneratePhashForAllStickers(batchSize = 100): Promise<{ total: number, updated: number }> {
+    const repo = this.stickerRepository;
+    let updated = 0;
+    let total = 0;
+    while (true) {
+      const [list, count] = await repo.findAndCount({
+        where: { phash: null },
+        take: batchSize,
+      });
+      if (total === 0) total = count;
+      if (!list.length) break;
+      for (const item of list) {
+        if (item.url) {
+          const phash = await this.calculatePhashByUrl(item.url, item.suffix || 'jpg');
+          if (phash) {
+            item.phash = phash;
+            await repo.save(item);
+            updated++;
+          }
+        }
+      }
+      if (list.length < batchSize) break;
+    }
+    return { total, updated };
   }
 }

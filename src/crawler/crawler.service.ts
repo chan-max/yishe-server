@@ -304,4 +304,34 @@ export class CrawlerService {
 
     return results;
   }
+
+  /**
+   * 分批为所有未生成 phash 的爬虫素材生成 phash
+   */
+  async batchGeneratePhashForAllCrawlerMaterials(batchSize = 100): Promise<{ total: number, updated: number }> {
+    const repo = this.crawlerMaterialRepository;
+    let updated = 0;
+    let total = 0;
+    while (true) {
+      const [list, count] = await repo.findAndCount({
+        where: { phash: null },
+        take: batchSize,
+      });
+      if (total === 0) total = count;
+      if (!list.length) break;
+      for (const item of list) {
+        if (item.url) {
+          // 复用 stickerService 的 phash 计算
+          const phash = await this.stickerService.calculatePhashByUrl(item.url, item.suffix || 'jpg');
+          if (phash) {
+            item.phash = phash;
+            await repo.save(item);
+            updated++;
+          }
+        }
+      }
+      if (list.length < batchSize) break;
+    }
+    return { total, updated };
+  }
 } 

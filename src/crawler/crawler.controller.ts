@@ -9,6 +9,7 @@
 import { Controller, Get, Post, Body, Query, Param } from '@nestjs/common';
 import { CrawlerService } from './crawler.service';
 import { UpdateCrawlerMaterialDto } from './dto/update-crawler-material.dto';
+import { ApiOperation } from '@nestjs/swagger';
 @Controller('crawler')
 export class CrawlerController {
   constructor(private readonly crawlerService: CrawlerService) {}
@@ -129,5 +130,10 @@ export class CrawlerController {
   @Post('material/import-to-sticker')
   async batchImportToSticker(@Body() body: { ids: string[], uploaderId?: string }) {
     return this.crawlerService.batchImportToSticker(body.ids, body.uploaderId);
+  }
+
+  @Post('material/batch-generate-phash')
+  async batchGeneratePhash() {
+    return await this.crawlerService.batchGeneratePhashForAllCrawlerMaterials();
   }
 } 

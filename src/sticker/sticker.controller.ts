@@ -76,4 +76,9 @@ export class StickerController {
     const phash = await this.stickerService.calculatePhashByUrl(body.url, body.ext || 'jpg');
     return { phash };
   }
+
+  @Post('batch-generate-phash')
+  async batchGeneratePhash() {
+    return await this.stickerService.batchGeneratePhashForAllStickers();
+  }
 }
