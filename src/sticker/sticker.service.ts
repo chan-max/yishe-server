@@ -162,6 +162,10 @@ export class StickerService extends BasicService {
       if (post.keywords) {
         qb.andWhere('Sticker.keywords LIKE :kw', { kw: `%${post.keywords}%` })
       }
+      // 后缀精确查询
+      if (post.suffix) {
+        qb.andWhere('Sticker.suffix = :suffix', { suffix: post.suffix })
+      }
       // 创建时间区间
       if (post.startTime && post.endTime) {
         qb.andWhere('Sticker.createTime BETWEEN :start AND :end', { start: post.startTime, end: post.endTime })

@@ -145,7 +145,10 @@ export class CrawlerService {
     if (query.imageName) {
       qb.andWhere('material.name LIKE :name', { name: `%${query.imageName}%` });
     }
-    
+    // 后缀精确查询
+    if (query.suffix) {
+      qb.andWhere('material.suffix = :suffix', { suffix: query.suffix });
+    }
     // 时间范围过滤
     if (query.startTime && query.endTime) {
       // 前端传递的是毫秒级时间戳，需要转换为Date对象
