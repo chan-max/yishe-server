@@ -39,6 +39,9 @@ export class CustomModel {
     @Column({ type: 'json', nullable: true })
     meta: any; // 元数据
 
+    @Column({ type: 'boolean', default: false, nullable: false, comment: '是否为母版' })
+    isTemplate: boolean;
+
     @Column({
         name: 'create_time',
         type: 'timestamp',

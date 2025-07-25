@@ -147,6 +147,7 @@ export class CustomModelService extends BasicService {
           "CustomModel.description",
           "CustomModel.keywords",
           "CustomModel.meta",
+          "CustomModel.isTemplate",
           "user.name",
           "user.account",
           "user.email",
@@ -175,6 +176,11 @@ export class CustomModelService extends BasicService {
       // 是否可定制
       if (post.customizable) {
         qb.where('CustomModel.customizable = :customizable', { customizable: post.customizable == '1' })
+      }
+
+      // 是否为母版过滤
+      if (post.isTemplate !== undefined && post.isTemplate !== null && post.isTemplate !== '') {
+        qb.andWhere('CustomModel.isTemplate = :isTemplate', { isTemplate: !!post.isTemplate });
       }
 
       qb.orderBy('CustomModel.createTime', post.createTimeOrderBy || 'DESC')
