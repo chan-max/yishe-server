@@ -27,6 +27,9 @@ export class CustomModel {
     @Column({ nullable: true, type: 'varchar', length: 1000 })
     thumbnail: string;
 
+    @Column({ length: 64, default: '', nullable: true })
+    phash: string; // 感知哈希
+
     @Column({ length: 200, default: '', nullable: true })
     keywords: string; // 描述
 

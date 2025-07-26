@@ -18,6 +18,10 @@ import { CosService } from 'src/common/cos.service';
 import { In } from 'typeorm';
 import * as path from 'path';
 import * as fs from 'fs';
+import * as sharp from 'sharp';
+import * as imghash from 'imghash';
+import axios from 'axios';
+import * as os from 'os';
 import { AiService } from '../ai/ai.service';
 import { ProductService } from '../product/product.service';
 
@@ -38,6 +42,55 @@ export class CustomModelService extends BasicService {
     super()
   }
 
+  /**
+   * 计算图片的感知哈希
+   * @param url 图片地址
+   * @param ext 文件后缀，可选
+   * @returns Promise<string> phash
+   */
+  async calculatePhashByUrl(url: string, ext: string = 'jpg'): Promise<string> {
+    let phash = '';
+    const isSvg = ext.toLowerCase() === 'svg';
+    const finalExt = isSvg ? 'png' : ext;
+    const tempPath = path.join(os.tmpdir(), `custom_model_phash_${Date.now()}.${finalExt}`);
+    
+    try {
+      const res = await axios.get(url, { responseType: 'arraybuffer' });
+      
+      if (isSvg) {
+        // SVG需要转换为PNG
+        const svgData = Buffer.from(res.data);
+        await sharp(svgData).png().toFile(tempPath);
+      } else {
+        // 非SVG直接写入文件
+        fs.writeFileSync(tempPath, res.data);
+      }
+      
+      phash = await imghash.hash(tempPath, 12, 'hex');
+      fs.unlinkSync(tempPath);
+    } catch (e) {
+      phash = '';
+      console.error('[custom_model phash计算失败]', e);
+      console.log('url', url);
+      // 清理临时文件
+      if (fs.existsSync(tempPath)) {
+        fs.unlinkSync(tempPath);
+      }
+    }
+    return phash;
+  }
+
+  /**
+   * 从URL中获取文件扩展名
+   * @param url 文件URL
+   * @returns string 文件扩展名
+   */
+  private getFileExtension(url: string): string {
+    if (!url) return 'jpg';
+    const match = url.match(/\.([a-zA-Z0-9]+)(\?|$)/);
+    return match ? match[1].toLowerCase() : 'jpg';
+  }
+
   async create(post) {
     console.log('Received post data:', JSON.stringify(post, null, 2));
     
@@ -46,6 +99,12 @@ export class CustomModelService extends BasicService {
     if (post.price) post.price = Number(post.price);
     if (post.isPublic !== undefined) post.isPublic = Boolean(post.isPublic);
     if (post.customizable !== undefined) post.customizable = Boolean(post.customizable);
+    
+    // 生成缩略图hash
+    if (post.thumbnail && !post.phash) {
+      const ext = this.getFileExtension(post.thumbnail);
+      post.phash = await this.calculatePhashByUrl(post.thumbnail, ext);
+    }
     
     try {
       const result = await this.customModelRepository.save(post);
@@ -72,6 +131,9 @@ export class CustomModelService extends BasicService {
     // 如果缩略图有变化，且原来有缩略图，先删除旧的
     if (post.thumbnail && item.thumbnail && post.thumbnail !== item.thumbnail) {
       await this.cosService.deleteFile(item.thumbnail);
+      // 重新生成缩略图hash
+      const ext = this.getFileExtension(post.thumbnail);
+      post.phash = await this.calculatePhashByUrl(post.thumbnail, ext);
     }
     Object.assign(item, post);
     return this.customModelRepository.save(item);
@@ -148,6 +210,7 @@ export class CustomModelService extends BasicService {
           "CustomModel.keywords",
           "CustomModel.meta",
           "CustomModel.isTemplate",
+          "CustomModel.phash",
           "user.name",
           "user.account",
           "user.email",
@@ -334,5 +397,39 @@ export class CustomModelService extends BasicService {
     };
     // 创建产品
     return await this.productService.create(params);
+  }
+
+  /**
+   * 分批为所有未生成 phash 的自定义模型生成 hash
+   */
+  async batchGeneratePhashForAllCustomModels(batchSize = 100): Promise<{ total: number, updated: number }> {
+    const repo = this.customModelRepository;
+    let updated = 0;
+    let total = 0;
+    while (true) {
+      // 兼容 phash 为 null 或 ''
+      const [list, count] = await repo.findAndCount({
+        where: [
+          { phash: null },
+          { phash: '' }
+        ],
+        take: batchSize,
+      });
+      if (total === 0) total = count;
+      if (!list.length) break;
+      for (const item of list) {
+        if (item.thumbnail) {
+          const ext = this.getFileExtension(item.thumbnail);
+          const phash = await this.calculatePhashByUrl(item.thumbnail, ext);
+          if (phash) {
+            item.phash = phash;
+            await repo.save(item);
+            updated++;
+          }
+        }
+      }
+      if (list.length < batchSize) break;
+    }
+    return { total, updated };
   }
 }

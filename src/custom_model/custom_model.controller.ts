@@ -56,4 +56,12 @@ export class CustomModelController {
     const { id } = body;
     return await this.customModelService.customModelToProduct(id);
   }
+
+  @Get('batch-generate-phash')
+  @ApiOperation({ summary: '批量生成缩略图感知哈希' })
+  @ApiQuery({ name: 'batchSize', required: false, description: '批次大小', type: Number })
+  async batchGeneratePhash(@Query('batchSize') batchSize?: number) {
+    const size = batchSize || 100;
+    return await this.customModelService.batchGeneratePhashForAllCustomModels(size);
+  }
 }
